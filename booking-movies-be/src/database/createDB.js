@@ -64,7 +64,16 @@ const create_table_movies = [
         area_id INT,
         total_screens INT DEFAULT 0,
         total_seats INT DEFAULT 0,
+        manager_id INT,
+        FOREIGN KEY (manager_id) REFERENCES users(id), 
         FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE SET NULL ON UPDATE CASCADE
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS movie_theater (
+        theater_id INT PRIMARY KEY,
+        movie_id INT,
+        FOREIGN KEY (theater_id) REFERENCES theaters(id),
+        FOREIGN KEY (movie_id) REFERENCES movies(id)        
     );`,
 
     `CREATE TABLE IF NOT EXISTS screens (
