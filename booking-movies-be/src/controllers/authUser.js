@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const UserVerification = require('../models/UserVerification');
+const Theaters = require('../models/Theater')
 const path = require("path");
 dotenv.config();
 
@@ -241,12 +242,21 @@ const loginUser = async (req, res) => {
             })
         } else {
             const user = await User.login(email, password);
+            let theaterIds = null;
+            if (user.role_id == 2) {
+                const theaters = await Theaters.findAll({
+                    where: {
+                        manager_id: user.id
+                    },
+                    attributes: ['id']
+                });
+                theaterIds = theaters.map(theater => theater.id);
+            }
             const token = jwt.sign(
-                { id: user.id, email: user.email, role_id: user.role_id },
+                { id: user.id, email: user.email, role_id: user.role_id, theater_id: theaterIds },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
-            res.cookie("token", token, { httpOnly: true, secure: true });
             return res.status(200).json({
                 status: "Success",
                 message: "Login successful",
@@ -262,6 +272,9 @@ const loginUser = async (req, res) => {
     }
 };
 const logoutUser = async (req, res) => {
-
+    return res.status(200).json({
+        status: "Success",
+        message: "Logout successful",
+    });
 };
 module.exports = { registerUser, loginUser, logoutUser, checkinVerification, verified };
