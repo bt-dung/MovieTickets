@@ -66,7 +66,7 @@ Movies.insertMovie = async (movieData) => {
         const existingMovie = await Movies.findByPk(movieData.id);
         if (!existingMovie) {
             const newMovie = await Movies.create(movieData);
-            console.log('Movie created:', newMovie);
+            console.log('Movie created:', newMovie.title);
         } else {
             console.log(`Movie already exists: ${movieData.title}`);
         }
@@ -110,9 +110,4 @@ Movies.deleteMovie = async (movieId) => {
         throw error;
     }
 };
-sequelize.sync().then(() => {
-    console.log('Movie table created successfully!');
-}).catch((error) => {
-    console.error('Unable to create table : ', error);
-});
 module.exports = Movies;

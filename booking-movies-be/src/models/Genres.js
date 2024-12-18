@@ -37,10 +37,6 @@ Genre.insertGenres = async (genresData) => {
         throw error;
     }
 };
-sequelize.sync().then(() => {
-    console.log('Genre table created successfully!');
-}).catch((error) => {
-    console.error('Unable to create table : ', error);
-});
+
 
 module.exports = Genre;

@@ -19,7 +19,6 @@ let transporter = nodemailer.createTransport({
         user: process.env.AUTH_EMAIL,
         pass: process.env.AUTH_PASS,
     },
-    debug: true,
     logger: true
 })
 
@@ -231,9 +230,9 @@ const verified = (req, res) => {
 };
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = await req.body;
-        email = email?.trim();
-        password = password?.trim();
+        let { email, password } = await req.body;
+        email = email.trim();
+        password = password.trim();
 
         if (email == "" || password == "") {
             res.json({
