@@ -231,9 +231,10 @@ const verified = (req, res) => {
 };
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = await req.body;
+        let { email, password } = await req.body;
         email = email?.trim();
         password = password?.trim();
+        console.log("email", email)
 
         if (email == "" || password == "") {
             res.json({
