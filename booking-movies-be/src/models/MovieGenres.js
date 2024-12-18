@@ -27,9 +27,5 @@ const MovieGenres = sequelize.define('movie_genres', {
     timestamps: false,
     id: false,
 });
-sequelize.sync().then(() => {
-    console.log('MovieGenre table created successfully!');
-}).catch((error) => {
-    console.error('Unable to create table : ', error);
-});
+
 module.exports = MovieGenres;

@@ -10,9 +10,22 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await postData("/api/v1/login", user);
-    const data = res.json()
-    console.log(data)
+    const body = JSON.stringify(user);
+    const res = await postData("/api/v1/login", body);
+    const data = res.json();
+    console.log(data);
+    // try {
+    //   const res = await fetch("http://localhost:5000/api/v1/login", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(user),
+    //   });
+
+    //   const data = await res.json();
+    //   console.log("Response:", data);
+    // } catch (error) {
+    //   console.error("Error during fetch:", error);
+    // }
   };
 
   return (

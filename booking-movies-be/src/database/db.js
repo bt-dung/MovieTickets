@@ -7,16 +7,15 @@ dotenv.config();
 const sequelize = new Sequelize(process.env.DATABASE_NAME, 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
-    logging: console.log,
+    logging: false,
 });
-sequelize.sync({ force: false })
+sequelize.sync()
     .then(() => {
         console.log('Database synced!');
     })
     .catch(err => {
         console.error('Error syncing database:', err);
     });
-
 const connectDB = async () => {
     try {
         await sequelize.authenticate()
