@@ -1,14 +1,32 @@
 import React, { useState } from "react";
+import { postData } from "../../api/api";
+import axios from "axios";
 
 const Login = () => {
   const [user, setUser] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
-  const handleLogin = () => {
-    
-  }
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const body = JSON.stringify(user);
+    const res = await postData("/api/v1/login", body);
+    const data = res.json();
+    console.log(data);
+    // try {
+    //   const res = await fetch("http://localhost:5000/api/v1/login", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(user),
+    //   });
+
+    //   const data = await res.json();
+    //   console.log("Response:", data);
+    // } catch (error) {
+    //   console.error("Error during fetch:", error);
+    // }
+  };
 
   return (
     <>
@@ -29,8 +47,10 @@ const Login = () => {
                     Email<span>*</span>
                   </label>
                   <input
-                    value={user.username}
-                    onChange={(e) => setUser({...user, username: e.target.value })}
+                    value={user.email}
+                    onChange={(e) =>
+                      setUser({ ...user, email: e.target.value })
+                    }
                     type="text"
                     placeholder="Enter Your Email"
                     id="email2"
@@ -43,7 +63,9 @@ const Login = () => {
                   </label>
                   <input
                     value={user.password}
-                    onChange={(e) => setUser({...user, password: e.target.value })}
+                    onChange={(e) =>
+                      setUser({ ...user, password: e.target.value })
+                    }
                     type="password"
                     placeholder="Password"
                     id="pass3"
