@@ -192,6 +192,15 @@ const createTableDB = () => {
             return;
         }
         console.log("Connected!");
+        create_table_movies.forEach((query, index) => {
+            con.query(query, function (err, result) {
+                if (err) {
+                    console.error(`Error creating table at query ${index + 1}:`, err);
+                } else {
+                    console.log(`Table created successfully for query ${index + 1}`);
+                }
+            });
+        });
         con.end();
     });
 };

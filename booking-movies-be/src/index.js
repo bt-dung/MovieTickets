@@ -7,6 +7,8 @@ const cookieParser = require("cookie-parser");
 const { insertData, insertGenres } = require('./database/updateDB');
 const authRoute = require('./routes/auth.route')
 const verification = require('./routes/verify.route')
+const Showtime = require('./routes/showtime.route')
+const ScheduleShowtime = require('./controllers/Showtime')
 
 const app = express();
 dotenv.config();
@@ -24,6 +26,7 @@ app.get('/', (req, res) => {
 })
 app.use("/user", verification);
 app.use("/api/v1", authRoute);
+app.use("/admin", Showtime);
 createTableDB();
 connectDB();
 insertGenres();

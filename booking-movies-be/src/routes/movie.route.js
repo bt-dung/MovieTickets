@@ -4,3 +4,5 @@ const { getMovie, getAllMovies } = require("../controllers/Movies")
 
 router.get("/movies", getAllMovies)
     .get("/movies/:id", getMovie);
+
+module.exports = router;
