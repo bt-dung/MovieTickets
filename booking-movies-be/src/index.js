@@ -8,7 +8,6 @@ const { insertData, insertGenres } = require('./database/updateDB');
 const authRoute = require('./routes/auth.route')
 const verification = require('./routes/verify.route')
 const Showtime = require('./routes/showtime.route')
-const ScheduleShowtime = require('./controllers/Showtime')
 
 const app = express();
 dotenv.config();
