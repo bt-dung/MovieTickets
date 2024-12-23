@@ -89,23 +89,6 @@ User.insertUser = async (userData) => {
     }
 };
 
-User.update = async function (id, data) {
-    try {
-        const [updatedRowsCount, updatedRows] = await User.update(data, {
-            where: { id: id },
-            returning: true
-        });
-        if (updatedRowsCount === 0) {
-            throw new Error('User  not found');
-        }
-
-        return updatedRows[0];
-    } catch (error) {
-        console.error('Error updating user:', error);
-        throw error;
-    }
-};
-
 User.login = async function (email, password) {
     try {
         const user = await User.findOne({ where: { email } });

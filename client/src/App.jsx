@@ -5,55 +5,44 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./pages/login/Login";
+import { PrivateRoute } from "./routes/PrivateRoute";
+import { RoleRoute } from "./routes/RoleRoute";
+import { UserProvider, useUser } from "./context/UserContext";
+import { userRoutes, adminRoutes } from "./routes/AppRoute";
+import { getRoutesByRole } from "./utils/routeHelper";
 
 function App() {
   return (
+    <UserProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </UserProvider>
+  );
+
+}
+function AppRoutes() {
+
+  const { userRole } = useUser();
+
+  const availableRoutes = getRoutesByRole(userRole, userRoutes, adminRoutes);
+  return (
     <>
-      {/* <Router>
+      <Router>
         <div className="App">
           <Routes>
-            {publicRoutes.map((route, index) => {
+            <Route path="/login" element={<Login />} />
+            {availableRoutes.map((route, index) => {
               const Page = route.component;
-              let Layout = MainLayout;
+              let Layout = route.layout || MainLayout;
 
-              if (route.layout) {
-                Layout = route.layout;
-              } else if (route.layout === null) {
-                Layout = Fragment;
-              }
-
-              return (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={
-                    <Layout>
-                      <Page />
-                    </Layout>
-                  }
-                />
-              );
-            })}
-              
-            {privateRoutes.map((route, index) => {
-              const Page = route.component;
-              let Layout = MainLayout;
-              if (route.layout) {
-                Layout = route.layout;
-              } else if (route.layout === null) {
-                Layout = Fragment;
-              }
-              const allowedRoles = route.allowedRoles || [
-                "ROLE_ADMIN",
-                "ROLE_MANAGER",
-              ];
               return (
                 <Route
                   key={index}
                   path={route.path}
                   element={
                     <PrivateRoute>
-                      <RoleRoute allowedRoles={allowedRoles}>
+                      <RoleRoute allowedRoles={route.allowedRoles}>
                         <Layout>
                           <Page />
                         </Layout>
@@ -63,12 +52,10 @@ function App() {
                 />
               );
             })}
-
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
-      </Router> */}
-      <Login />
+      </Router>
     </>
   );
 }
