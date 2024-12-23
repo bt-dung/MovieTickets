@@ -31,30 +31,9 @@ const create_table_movies = [
         FOREIGN KEY (membership_level_id) REFERENCES membership_levels(id) ON DELETE SET NULL ON UPDATE CASCADE
     );`,
 
-    `CREATE TABLE IF NOT EXISTS movies (
+    `CREATE TABLE IF NOT EXISTS areas (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        original_language VARCHAR(10),
-        overview TEXT,
-        release_date DATE,
-        adult TINYINT(1) DEFAULT 0,
-        img_bg VARCHAR(255),
-        img_poster VARCHAR(255),
-        vote_average DECIMAL(3, 2),
-        vote_count INT
-    );`,
-
-    `CREATE TABLE IF NOT EXISTS genres (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL
-    );`,
-
-    `CREATE TABLE IF NOT EXISTS movie_genres (
-        movie_id INT,
-        genre_id INT,
-        PRIMARY KEY (movie_id, genre_id),
-        FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
-        FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
+        name VARCHAR(255) NOT NULL
     );`,
 
     `CREATE TABLE IF NOT EXISTS theaters (
@@ -69,11 +48,37 @@ const create_table_movies = [
         FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE SET NULL ON UPDATE CASCADE
     );`,
 
+    `CREATE TABLE IF NOT EXISTS movies (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        original_language VARCHAR(10),
+        overview TEXT,
+        release_date DATE,
+        adult TINYINT(1) DEFAULT 0,
+        img_bg VARCHAR(255),
+        img_poster VARCHAR(255),
+        vote_average DECIMAL(3, 2),
+        vote_count INT
+    );`,
+
     `CREATE TABLE IF NOT EXISTS movie_theater (
         theater_id INT PRIMARY KEY,
         movie_id INT,
         FOREIGN KEY (theater_id) REFERENCES theaters(id),
         FOREIGN KEY (movie_id) REFERENCES movies(id)        
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS genres (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS movie_genres (
+        movie_id INT,
+        genre_id INT,
+        PRIMARY KEY (movie_id, genre_id),
+        FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
+        FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
     );`,
 
     `CREATE TABLE IF NOT EXISTS screens (
@@ -110,7 +115,6 @@ const create_table_movies = [
         FOREIGN KEY (screen_id) REFERENCES screens(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
-
     `CREATE TABLE IF NOT EXISTS seatShowtime (
         id INT AUTO_INCREMENT PRIMARY KEY,
         showtime_id INT,
@@ -137,11 +141,6 @@ const create_table_movies = [
         FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
-    `CREATE TABLE IF NOT EXISTS areas (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL
-    );`,
-
     `CREATE TABLE IF NOT EXISTS events (
         id INT AUTO_INCREMENT PRIMARY KEY,
         theater_id INT,
@@ -150,14 +149,6 @@ const create_table_movies = [
         start_date DATE,
         end_date DATE,
         FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE ON UPDATE CASCADE
-    );`,
-
-    `CREATE TABLE IF NOT EXISTS user_verification (
-        user_id INT NOT NULL,
-        uniqueString VARCHAR(255),
-        createAt DATE,
-        expiresAt DATE,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
     `CREATE TABLE IF NOT EXISTS services (
@@ -169,15 +160,24 @@ const create_table_movies = [
     );`,
 
     `CREATE TABLE IF NOT EXISTS invoice_services (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    invoice_id INT,
-    service_id INT,
-    quantity INT NOT NULL DEFAULT 1,
-    total_price DECIMAl(10,2) DEFAULT 0, 
-    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        invoice_id INT,
+        service_id INT,
+        quantity INT NOT NULL DEFAULT 1,
+        total_price DECIMAl(10,2) DEFAULT 0, 
+        FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS user_verification (
+        user_id INT NOT NULL,
+        uniqueString VARCHAR(255),
+        createAt DATE,
+        expiresAt DATE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 ];
+
 
 const createTableDB = () => {
     const con = mysql.createConnection({
