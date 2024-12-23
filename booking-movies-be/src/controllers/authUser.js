@@ -6,7 +6,8 @@ const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const UserVerification = require('../models/UserVerification');
-const Theaters = require('../models/Theater')
+const Theaters = require('../models/Theater');
+const Roles = require('../models/Roles')
 const path = require("path");
 dotenv.config();
 
@@ -252,8 +253,9 @@ const loginUser = async (req, res) => {
                 });
                 theaterIds = theaters.map(theater => theater.id);
             }
+            const role_name = await Roles.findByPk(user.role_id);
             const token = jwt.sign(
-                { id: user.id, email: user.email, role_id: user.role_id, theater_id: theaterIds },
+                { id: user.id, email: user.email, role: role_name, theater_id: theaterIds },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );

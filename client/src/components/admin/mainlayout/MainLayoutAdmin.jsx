@@ -4,9 +4,9 @@ import Header from '../header/Header'
 const MainLayoutAdmin = () => {
   return (
     <>
-        <Header />
-        
-        <Footer />
+      <Sidebar />
+      <Header />
+      <main>{children}</main>
     </>
   )
 }
