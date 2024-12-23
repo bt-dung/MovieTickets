@@ -231,6 +231,7 @@ const verified = (req, res) => {
 const loginUser = async (req, res) => {
     try {
         let { email, password } = await req.body;
+        console.log("EMAIL:", email);
         email = email.trim();
         password = password.trim();
 

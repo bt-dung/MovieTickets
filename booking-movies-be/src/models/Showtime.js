@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../database/db');
 
 const Showtime = sequelize.define('showtimes', {
@@ -46,8 +46,31 @@ const Showtime = sequelize.define('showtimes', {
 
 Showtime.insertShowtime = async (showtimeData) => {
     try {
-        const newShowtime = await Showtime.create(showtimeData);
-        return newShowtime;
+        const existingShowtimes = await Showtime.findAll({
+            where: {
+                screen_id: showtimeData.screen_id,
+                [Op.or]: [
+                    {
+                        start_time: {
+                            [Op.lt]: showtimeData.end_time
+                        },
+                        end_time: {
+                            [Op.gt]: showtimeData.start_time
+                        }
+                    }
+                ]
+            }
+        });
+        console.log("existingShowtimes:", existingShowtimes.length === 0);
+
+        if (existingShowtimes.length === 0) {
+            const newShowtime = await Showtime.create(showtimeData);
+            return newShowtime;
+        }
+        else {
+            console.log(`Showtime alredy exists at:${showtimeData.start_time}`);
+            throw new Error(`Showtime alredy exists at:${showtimeData.start_time}`);
+        }
     } catch (error) {
         throw error;
     }

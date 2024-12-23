@@ -7,3 +7,4 @@ router.get("/users", getAllUser)
     .get("/user/:id", getUser)
     .patch("/user/:id/update", updateUser)
     .delete("/user/delete", deleteUser);
+module.exports = router;
