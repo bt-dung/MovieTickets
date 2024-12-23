@@ -11,7 +11,6 @@ const verification = require("./routes/verify.route");
 const app = express();
 dotenv.config();
 app.use(cookieParser());
-<<<<<<< HEAD
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -20,13 +19,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-=======
-app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["POST,GET,PUT,DELETE,PATCH"],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
->>>>>>> 30a112be1a51a62a3955a42a77f1da87b1ed5cf3
 app.use(express.json());
 const PORT = process.env.PORT || 5001;
 
