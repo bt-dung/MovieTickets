@@ -5,8 +5,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./pages/login/Login";
-import { PrivateRoute } from "./routes/PrivateRoute";
-import { RoleRoute } from "./routes/RoleRoute";
+import PrivateRoute from "./routes/PrivateRoute";
+import RoleRoute from "./routes/RoleRoute";
 import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
@@ -19,10 +19,8 @@ function App() {
       </Router>
     </UserProvider>
   );
-
 }
 function AppRoutes() {
-
   const { userRole } = useUser();
 
   const availableRoutes = getRoutesByRole(userRole, userRoutes, adminRoutes);
