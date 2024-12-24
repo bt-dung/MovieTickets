@@ -14,46 +14,44 @@ import { getRoutesByRole } from "./utils/routeHelper";
 function App() {
   return (
     <UserProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <AppRoutes />
     </UserProvider>
   );
+
 }
 function AppRoutes() {
+
   const { userRole } = useUser();
 
   const availableRoutes = getRoutesByRole(userRole, userRoutes, adminRoutes);
   return (
     <>
-      <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            {availableRoutes.map((route, index) => {
-              const Page = route.component;
-              let Layout = route.layout || MainLayout;
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          {availableRoutes.map((route, index) => {
+            const Page = route.component;
+            let Layout = route.layout;
 
-              return (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={
-                    <PrivateRoute>
-                      <RoleRoute allowedRoles={route.allowedRoles}>
-                        <Layout>
-                          <Page />
-                        </Layout>
-                      </RoleRoute>
-                    </PrivateRoute>
-                  }
-                />
-              );
-            })}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </div>
-      </Router>
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <PrivateRoute>
+                    <RoleRoute allowedRoles={route.allowedRoles}>
+                      <Layout>
+                        <Page />
+                      </Layout>
+                    </RoleRoute>
+                  </PrivateRoute>
+                }
+              />
+            );
+          })}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </div>
     </>
   );
 }

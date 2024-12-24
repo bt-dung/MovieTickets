@@ -10,7 +10,7 @@ const RoleRoute = ({ children, allowedRoles }) => {
     useEffect(() => {
         const fetchUserRole = async () => {
             const user = await TokenService();
-            setRole(user.role_name);
+            setRole(user.role);
         };
         fetchUserRole();
     }, []);

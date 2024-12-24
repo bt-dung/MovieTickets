@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { postData } from "../../api/api";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import TokenService from "../../service/TokenService";
 
 
 const Login = () => {
-  const [user, setUser] = useState({
+  const [account, setAccount] = useState({
     email: "",
     password: "",
   });
@@ -16,18 +16,26 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState(null);
+  const Navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      Navigate('/home');
+    }
+  });
   const validate = () => {
     let isValid = true;
     const newErrors = { email: "", password: "" };
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!user.email) {
+    if (!account.email) {
       newErrors.email = "Email is required.";
       isValid = false;
-    } else if (!emailRegex.test(user.email)) {
+    } else if (!emailRegex.test(account.email)) {
       newErrors.email = "Invalid email format.";
       isValid = false;
     }
-    if (!user.password) {
+    if (!account.password) {
       newErrors.password = "Password is required.";
       isValid = false;
     }
@@ -42,15 +50,18 @@ const Login = () => {
       return;
     }
     try {
-      const res = await postData("/api/v1/login", user);
-      localStorage.setItem("token", res.data.token);
+      const res = await postData("/api/v1/login", account);
+      localStorage.removeItem("token");
+      localStorage.setItem("token", res.token);
 
-      const user = TokenService();
-      setRole(user.role_id)
+      const user = await TokenService();
+      setRole(user.role);
+      console.log("ROlE:", role);
       if (role === "user_role") {
-        history.push("/home");
+        console.log("true!!");
+        Navigate("/home");
       } else if (role === "admin_role" || role === "manager_role") {
-        history.push("/admin");
+        Navigate("/admin");
       }
     } catch (error) {
       console.log("Error:", error);
@@ -77,9 +88,9 @@ const Login = () => {
                     Email<span>*</span>
                   </label>
                   <input
-                    value={user.email}
+                    value={account.email}
                     onChange={(e) =>
-                      setUser({ ...user, email: e.target.value })
+                      setAccount({ ...account, email: e.target.value })
                     }
                     type="text"
                     placeholder="Enter Your Email"
@@ -97,8 +108,8 @@ const Login = () => {
                   </label>
                   <div className="d-flex flex-row">
                     <input
-                      value={user.password}
-                      onChange={(e) => setUser({ ...user, password: e.target.value })}
+                      value={account.password}
+                      onChange={(e) => setAccount({ ...account, password: e.target.value })}
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       id="pass3"

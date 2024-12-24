@@ -5,13 +5,13 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
 
-    useEffect(() => {
-        const user = TokenService();
-        setUserRole(user.role_name);
+    useEffect(async () => {
+        const user = await TokenService();
+        setUserRole(user.role);
     }, []);
 
     return (
-        <UserContext.Provider value={{ userRole, setUserRole }}>
+        <UserContext.Provider value={{ userRole }}>
             {children}
         </UserContext.Provider>
     );
