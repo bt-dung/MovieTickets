@@ -1,12 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import TokenService from "../service/TokenService";
-import { useNavigate } from "react-router-dom";
+
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+
     const checkUserLogin = () => {
         const token = TokenService.getToken();
         console.log("TokenService.isTokenValid:", TokenService.isTokenValid());
@@ -14,18 +15,16 @@ export const UserProvider = ({ children }) => {
             const userData = TokenService.decodeToken();
             setUser(userData);
             setIsLoggedIn(true);
-        } else {
-            setIsLoggedIn(false);
-            navigate("/login");
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
         checkUserLogin();
-    }, [navigate]);
+    }, []);
 
     return (
-        <UserContext.Provider value={{ user, isLoggedIn, checkUserLogin }}>
+        <UserContext.Provider value={{ user, isLoggedIn, isLoading, checkUserLogin }}>
             {children}
         </UserContext.Provider>
     );

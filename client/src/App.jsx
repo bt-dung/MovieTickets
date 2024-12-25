@@ -22,13 +22,11 @@ function App() {
   );
 }
 function AppRoutes() {
-
-  const { user } = useUser();
-  console.log(user);
-
+  const { user, isLoading } = useUser();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   const availableRoutes = getRoutesByRole(user, userRoutes, adminRoutes);
-  console.log('availableRoutes', availableRoutes);
-
   return (
     <>
       <div className="App">
@@ -37,6 +35,7 @@ function AppRoutes() {
           {availableRoutes.map((route, index) => {
             const Page = route.component;
             const allowedRoles = route.allowedRoles || ["user_role", "manager_role", "admin_role"];
+            const Layout = route.layout || Fragment;
             return (
               <Route
                 key={index}
@@ -44,9 +43,9 @@ function AppRoutes() {
                 element={
                   <PrivateRoute>
                     <RoleRoute allowedRoles={allowedRoles}>
-                      {/* <Layout> */}
-                      <Page />
-                      {/* </Layout> */}
+                      <Layout>
+                        <Page />
+                      </Layout>
                     </RoleRoute>
                   </PrivateRoute>
                 }

@@ -6,5 +6,5 @@ export const userRoutes = [
 ];
 
 export const adminRoutes = [
-    { path: '/admin', component: Admin, layout: MainLayoutAdmin }
+    { path: '/admin', component: Admin, layout: MainLayoutAdmin, allowedRoles: ["admin_role", "manager_role"] }
 ];
