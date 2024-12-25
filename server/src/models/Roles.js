@@ -7,7 +7,7 @@ const Roles = sequelize.define('roles', {
         primaryKey: true,
         autoIncrement: true,
     },
-    name: {
+    role_name: {
         type: DataTypes.STRING(100),
         allowNull: false,
     },

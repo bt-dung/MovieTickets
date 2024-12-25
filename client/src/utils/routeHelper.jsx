@@ -1,8 +1,9 @@
-export const getRoutesByRole = (role, userRoutes, adminRoutes) => {
-    if (role === "user_role") {
+export const getRoutesByRole = (user, userRoutes, adminRoutes) => {
+    if (user?.role === "user_role") {
         return userRoutes;
-    } else if (role === "manager_role" || role === "admin_role") {
+    } else if (user?.role === "manager_role" || user?.role === "admin_role") {
         return adminRoutes;
+    } else {
+        return [];
     }
-    return [];
 };

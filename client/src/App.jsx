@@ -1,3 +1,4 @@
+import React, { Fragment } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,18 +11,24 @@ import RoleRoute from "./routes/RoleRoute";
 import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
+import Admin from "./pages/admin/Admin";
 
 function App() {
   return (
-    <UserProvider>
-      <AppRoutes />
-    </UserProvider>
+    <Router>
+      <UserProvider>
+        <AppRoutes />
+      </UserProvider>
+    </Router>
   );
 }
 function AppRoutes() {
-  const { userRole } = useUser();
+  const { user } = useUser();
+  console.log(user);
 
-  const availableRoutes = getRoutesByRole(userRole, userRoutes, adminRoutes);
+  const availableRoutes = getRoutesByRole(user, userRoutes, adminRoutes);
+  console.log("availableRoutes", availableRoutes);
+
   return (
     <>
       <div className="App">
@@ -29,7 +36,7 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
           {availableRoutes.map((route, index) => {
             const Page = route.component;
-            let Layout = route.layout || MainLayout;
+            let Layout = route.layout || <Fragment />;
 
             return (
               <Route

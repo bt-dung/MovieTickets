@@ -253,9 +253,9 @@ const loginUser = async (req, res) => {
                 });
                 theaterIds = theaters.map(theater => theater.id);
             }
-            const role_name = await Roles.findByPk(user.role_id);
+            const role = await Roles.findByPk(user.role_id);
             const token = jwt.sign(
-                { id: user.id, email: user.email, role: role_name, theater_id: theaterIds },
+                { id: user.id, email: user.email, role: role.role_name, theater_id: theaterIds },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
