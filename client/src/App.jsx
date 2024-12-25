@@ -51,7 +51,7 @@ function AppRoutes() {
                   </PrivateRoute>
                 }
               />
-            )
+            );
           })}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
