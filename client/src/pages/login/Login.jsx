@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { postData } from "../../api/api";
 import { useNavigate } from 'react-router-dom';
 import TokenService from "../../service/TokenService";
-
+import { useUser } from "../../context/UserContext";
 
 const Login = () => {
+  const { checkUserLogin } = useUser();
   const [account, setAccount] = useState({
     email: "",
     password: "",
@@ -15,15 +16,9 @@ const Login = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState(null);
   const Navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      Navigate('/home');
-    }
-  });
+
   const validate = () => {
     let isValid = true;
     const newErrors = { email: "", password: "" };
@@ -51,16 +46,22 @@ const Login = () => {
     }
     try {
       const res = await postData("/api/v1/login", account);
-      localStorage.removeItem("token");
-      localStorage.setItem("token", res.token);
-
-      const user = await TokenService();
-      setRole(user.role);
-      console.log("ROlE:", role);
-      if (role === "user_role") {
+      TokenService.setToken(res.token);
+      checkUserLogin();
+      let user;
+      try {
+        user = TokenService.decodeToken();
+      } catch (error) {
+        console.error("Lỗi khi giải mã token:", error);
+        return;
+      }
+      console.log("ROlE:", user.role);
+      if (user.role === "user_role") {
         console.log("true!!");
         Navigate("/home");
-      } else if (role === "admin_role" || role === "manager_role") {
+        console.log("Navigating Home");
+      } else if (user.role === "admin_role" || user.role === "manager_role") {
+        console.log("tfalse!!");
         Navigate("/admin");
       }
     } catch (error) {

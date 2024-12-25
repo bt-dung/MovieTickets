@@ -1,3 +1,4 @@
+import React, { Fragment } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,17 +14,21 @@ import { getRoutesByRole } from "./utils/routeHelper";
 
 function App() {
   return (
-    <UserProvider>
-      <AppRoutes />
-    </UserProvider>
+    <Router>
+      <UserProvider>
+        <AppRoutes />
+      </UserProvider>
+    </Router>
   );
-
 }
 function AppRoutes() {
 
-  const { userRole } = useUser();
+  const { user } = useUser();
+  console.log(user);
 
-  const availableRoutes = getRoutesByRole(userRole, userRoutes, adminRoutes);
+  const availableRoutes = getRoutesByRole(user, userRoutes, adminRoutes);
+  console.log('availableRoutes', availableRoutes);
+
   return (
     <>
       <div className="App">
@@ -31,23 +36,22 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
           {availableRoutes.map((route, index) => {
             const Page = route.component;
-            let Layout = route.layout;
-
+            const allowedRoles = route.allowedRoles || ["user_role", "manager_role", "admin_role"];
             return (
               <Route
                 key={index}
                 path={route.path}
                 element={
                   <PrivateRoute>
-                    <RoleRoute allowedRoles={route.allowedRoles}>
-                      <Layout>
-                        <Page />
-                      </Layout>
+                    <RoleRoute allowedRoles={allowedRoles}>
+                      {/* <Layout> */}
+                      <Page />
+                      {/* </Layout> */}
                     </RoleRoute>
                   </PrivateRoute>
                 }
               />
-            );
+            )
           })}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
