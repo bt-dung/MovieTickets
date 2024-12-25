@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { postData } from "../../api/api";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TokenService from "../../service/TokenService";
 
 
 const Login = () => {
+  const navigate = useNavigate()
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -43,14 +45,14 @@ const Login = () => {
     }
     try {
       const res = await postData("/api/v1/login", user);
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.token);
 
       const user = TokenService();
       setRole(user.role_id)
       if (role === "user_role") {
-        history.push("/home");
+        navigate.push("/home");
       } else if (role === "admin_role" || role === "manager_role") {
-        history.push("/admin");
+        navigate.push("/admin");
       }
     } catch (error) {
       console.log("Error:", error);
