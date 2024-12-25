@@ -4,12 +4,12 @@ import Swal from 'sweetalert2';
 import { useUser } from '../context/UserContext';
 
 const RoleRoute = ({ children, allowedRoles }) => {
-    const { userRole } = useUser();
+    const { user } = useUser();
     const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
-        if (userRole) {
-            const authorized = allowedRoles.includes(userRole);
+        if (user) {
+            const authorized = allowedRoles.includes(user.role);
             setIsAuthorized(authorized);
             if (!authorized) {
                 Swal.fire({
@@ -20,7 +20,7 @@ const RoleRoute = ({ children, allowedRoles }) => {
                 });
             }
         }
-    }, [userRole, allowedRoles]);
+    }, [user.role, allowedRoles]);
     if (isAuthorized === null) return null;
     return isAuthorized ? children : <Navigate to="/admin" replace />;
 };

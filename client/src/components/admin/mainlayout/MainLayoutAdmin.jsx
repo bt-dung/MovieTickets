@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../header/Header'
 
-const MainLayoutAdmin = ({children}) => {
+const MainLayoutAdmin = ({ children }) => {
   return (
     <>
       <Sidebar />
