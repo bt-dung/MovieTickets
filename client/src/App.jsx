@@ -11,7 +11,6 @@ import RoleRoute from "./routes/RoleRoute";
 import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
-import Admin from "./pages/admin/Admin";
 
 function App() {
   return (
@@ -36,15 +35,15 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
           {availableRoutes.map((route, index) => {
             const Page = route.component;
-            let Layout = route.layout || <Fragment />;
-
+            const allowedRoles = route.allowedRoles || ["user_role", "manager_role", "admin_role"];
+            const Layout = route.layout || Fragment;
             return (
               <Route
                 key={index}
                 path={route.path}
                 element={
                   <PrivateRoute>
-                    <RoleRoute allowedRoles={route.allowedRoles}>
+                    <RoleRoute allowedRoles={allowedRoles}>
                       <Layout>
                         <Page />
                       </Layout>

@@ -3,13 +3,12 @@ import TokenService from "../service/TokenService";
 import { useNavigate } from "react-router-dom";
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+export const UserProvider = (props) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
     const checkUserLogin = () => {
-        const token = TokenService.getToken();
-        console.log("TokenService.isTokenValid:", TokenService.isTokenValid());
+        const token = localStorage.getItem("token");
         if (token && TokenService.isTokenValid()) {
             const userData = TokenService.decodeToken();
             setUser(userData);
@@ -19,14 +18,13 @@ export const UserProvider = ({ children }) => {
             navigate("/login");
         }
     };
-
     useEffect(() => {
         checkUserLogin();
     }, [navigate]);
 
     return (
         <UserContext.Provider value={{ user, isLoggedIn, checkUserLogin }}>
-            {children}
+            {props.children}
         </UserContext.Provider>
     );
 };
