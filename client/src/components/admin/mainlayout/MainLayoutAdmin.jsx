@@ -7,11 +7,10 @@ const MainLayoutAdmin = ({ children }) => {
     <>
       <div class="wrapper">
         <Sidebar />
-
         <div class="content-page">
           <div class="content">
             <Header />
-            <div class="container-fluid">
+            <div class="container-fluid mt-3">
               <main>{children}</main>
             </div>
           </div>

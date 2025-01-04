@@ -22,16 +22,14 @@ const User = () => {
 
   return (
     <>
-      <div className="container mt-3 ">
-        <h1 className="display-6 text-muted mb-3" >USERS</h1>
-      </div>
+      <h1 className="display-6 text-muted mb-3" >USERS</h1>
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
               <div className="row mb-2">
                 <div className="col-sm-4">
-                  <a href="add-user.html" className="btn btn-danger mb-2">
+                  <a href="/admin/add-user" className="btn btn-danger mb-2">
                     <Icon path={mdiPlusCircleOutline} size={1} /> Add User
                   </a>
                 </div>

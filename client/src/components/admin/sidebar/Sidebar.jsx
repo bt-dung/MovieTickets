@@ -3,10 +3,10 @@ import { mdiViewDashboard, mdiChevronRight } from '@mdi/js';
 const SideBar = () => {
   return (
     <>
-      <div class="left-side-menu">
-        <a href="/dashboard" class="logo text-center logo-light">
+      <div class="left-side-menu d-flex flex-column vh-100">
+        <a href="/admin/dashboard" class="logo text-center mb-3">
           <span class="logo-lg">
-            <img src="assets/images/logo/logo1.png" alt="" height="16" />
+            <img src="../../../../assets/images/logo/logo1.png" alt="" height="80" width="auto" />
           </span>
         </a>
         <div class="h-100" id="left-side-menu-container" data-simplebar>

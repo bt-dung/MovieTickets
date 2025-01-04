@@ -34,7 +34,7 @@ transporter.verify((error, success) => {
 })
 
 const registerUser = async (req, res) => {
-    let { name, email, numberphone, date_of_birth, address, password } = req.body;
+    let { name, email, numberphone, date_of_birth, address, password, role } = req.body;
     name = name.trim();
     email = email.trim();
     numberphone = numberphone.trim();
@@ -80,7 +80,7 @@ const registerUser = async (req, res) => {
         date_of_birth,
         address,
         password: hashedPassword,
-        role_id: 1,
+        role_id: role || 1,
         verified: false
     };
     try {
