@@ -31,8 +31,8 @@ app.get("/", (req, res) => {
 app.use("/user", verification);
 app.use("/api/v1", authRoute);
 app.use("/admin", Showtime);
-app.use("/admin", Movies)
-app.use("/admin", User)
+app.use("/admin", Movies);
+app.use("/admin", User);
 
 
 createTableDB();

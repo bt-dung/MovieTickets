@@ -1,7 +1,10 @@
 import { useUser } from "../../context/UserContext";
-
+import { useLocation } from "react-router-dom";
 const Home = () => {
   const { user, isLoggedIn } = useUser();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const name = queryParams.get("name");
   return (
     <div>
       {isLoggedIn ? (

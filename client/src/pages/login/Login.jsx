@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import TokenService from "../../service/TokenService";
 import { useUser } from "../../context/UserContext";
 
+const env = await import.meta.env;
+const BASE_URL_WEB = (env.VITE_BASE_URL_WEB);
+const BASE_URL_ADMIN = (env.VITE_BASE_URL_ADMIN);
 const Login = () => {
   const { checkUserLogin } = useUser();
   const [account, setAccount] = useState({
@@ -56,9 +59,9 @@ const Login = () => {
         return;
       }
       if (user.role === "user_role") {
-        Navigate("/home");
+        Navigate(`${BASE_URL_WEB}/home`);
       } else if (user.role === "admin_role" || user.role === "manager_role") {
-        Navigate("/admin");
+        Navigate(`${BASE_URL_ADMIN}/dashboard`);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -112,17 +115,6 @@ const Login = () => {
                       id="pass3"
                       style={{ flex: 1 }}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="btn align-items-center justify-content-center"
-                      style={{ width: '40px', height: '40px', padding: 0 }}
-                    >
-                      <i
-                        className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
-                        aria-hidden="true"
-                      ></i>
-                    </button>
                   </div>
                   {errors.password && (
                     <small className="text-danger d-block mt-1">
