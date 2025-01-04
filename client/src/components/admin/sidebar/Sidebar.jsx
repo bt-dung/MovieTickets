@@ -10,7 +10,7 @@ const Sidebar = () => {
       <h5 className="text-black">Menu</h5>
       <ul className="nav flex-column">
         <li className="nav-item">
-          <Link to="/admin/users" className="nav-link text-dark">
+          <Link to="/admin/user" className="nav-link text-dark">
             User
           </Link>
         </li>

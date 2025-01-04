@@ -4,11 +4,9 @@ import Sidebar from "../../components/admin/sidebar/Sidebar";
 import User from "../admin/users/Users";
 
 const Admin = () => {
-  
+
   return (
-    <>
-      <User />
-    </>
+    <p>Hello Admin</p>
   );
 };
 

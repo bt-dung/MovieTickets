@@ -6,15 +6,15 @@ const MainLayoutAdmin = ({ children }) => {
   return (
     <>
       <div className="d-flex flex-column bg-white">
-      <Header />
-      <div className="d-flex">
-        <Sidebar />
+        <Header />
+        <div className="d-flex">
+          <Sidebar />
 
-        <div className="p-4" style={{ flex: 1 }}>
-          {children}
+          <div className="p-4" style={{ flex: 1 }}>
+            {children}
+          </div>
         </div>
       </div>
-    </div>
     </>
   )
 }
