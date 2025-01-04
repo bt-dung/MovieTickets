@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Icon from '@mdi/react';
-import { mdiSquareEditOutline, mdiDeleteOutline, mdiPlusCircleOutline } from '@mdi/js';
+import Icon from "@mdi/react";
+import {
+  mdiSquareEditOutline,
+  mdiDeleteOutline,
+  mdiPlusCircleOutline,
+} from "@mdi/js";
 
 const User = () => {
-  const [users, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/admin/users")
@@ -13,16 +17,13 @@ const User = () => {
         }
         return response.json();
       })
-      .then((data) => {
-        console.log("UUUUU:", data);
-        setUser(data)
-      })
+      .then((data) => setUsers(data))
       .catch((error) => console.error("Fetch error:", error));
   }, []);
 
   return (
     <>
-      <h1 className="display-6 text-muted mb-3" >USERS</h1>
+      <h1 className="text-muted mb-3">USERS</h1>
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -41,21 +42,7 @@ const User = () => {
                 >
                   <thead>
                     <tr>
-                      <th style={{ width: "20px" }}>
-                        <div className="custom-control custom-checkbox">
-                          <input
-                            type="checkbox"
-                            className="custom-control-input"
-                            id="customCheck1"
-                          />
-                          <label
-                            className="custom-control-label"
-                            htmlFor="customCheck1"
-                          >
-                            &nbsp;
-                          </label>
-                        </div>
-                      </th>
+                      <th style={{ width: "20px" }}></th>
                       <th>ID</th>
                       <th>User Name</th>
                       <th>Email</th>

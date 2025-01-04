@@ -58,7 +58,6 @@ const Login = () => {
         console.error("Lỗi khi giải mã token:", error);
         return;
       }
-      console.log("ROlE:", user.role);
       if (user.role === "user_role") {
         Navigate(`${BASE_URL_WEB}/home`);
       } else if (user.role === "admin_role" || user.role === "manager_role") {

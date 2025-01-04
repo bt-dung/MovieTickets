@@ -3,14 +3,13 @@ import TokenService from "../service/TokenService";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+export const UserProvider = (props) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const checkUserLogin = () => {
-        const token = TokenService.getToken();
-        console.log("TokenService.isTokenValid:", TokenService.isTokenValid());
+        const token = localStorage.getItem("token");
         if (token && TokenService.isTokenValid()) {
             const userData = TokenService.decodeToken();
             setUser(userData);
@@ -18,14 +17,13 @@ export const UserProvider = ({ children }) => {
         }
         setIsLoading(false);
     };
-
     useEffect(() => {
         checkUserLogin();
     }, []);
 
     return (
         <UserContext.Provider value={{ user, isLoggedIn, isLoading, checkUserLogin }}>
-            {children}
+            {props.children}
         </UserContext.Provider>
     );
 };
