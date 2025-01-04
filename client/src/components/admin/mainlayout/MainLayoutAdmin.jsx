@@ -5,13 +5,15 @@ import Sidebar from '../sidebar/Sidebar'
 const MainLayoutAdmin = ({ children }) => {
   return (
     <>
-      <div className="d-flex flex-column bg-white">
-        <Header />
-        <div className="d-flex">
-          <Sidebar />
+      <div class="wrapper">
+        <Sidebar />
 
-          <div className="p-4" style={{ flex: 1 }}>
-            {children}
+        <div class="content-page">
+          <div class="content">
+            <Header />
+            <div class="container-fluid">
+              <main>{children}</main>
+            </div>
           </div>
         </div>
       </div>

@@ -8,7 +8,8 @@ const { insertData, insertGenres } = require('./database/updateDB');
 const authRoute = require('./routes/auth.route')
 const verification = require('./routes/verify.route')
 const Showtime = require('./routes/showtime.route')
-const Movies = require("./routes/movie.route")
+const Movies = require("./routes/movie.route");
+const User = require("./routes/user.route");
 
 const app = express();
 dotenv.config();
@@ -30,7 +31,10 @@ app.get("/", (req, res) => {
 app.use("/user", verification);
 app.use("/api/v1", authRoute);
 app.use("/admin", Showtime);
-app.use("/admin", Movies)
+app.use("/admin", Movies);
+app.use("/admin", User);
+
+
 createTableDB();
 connectDB();
 insertGenres();

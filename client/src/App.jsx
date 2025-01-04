@@ -12,6 +12,11 @@ import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
 
+
+const env = import.meta.env;
+const BASE_URL_WEB = (env.VITE_BASE_URL_WEB);
+const BASE_URL_ADMIN = (env.VITE_BASE_URL_ADMIN);
+
 function App() {
   return (
     <Router>
@@ -26,6 +31,9 @@ function AppRoutes() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const BASE_URL = user?.role === "user_role" ? BASE_URL_WEB : BASE_URL_ADMIN;
+
   const availableRoutes = getRoutesByRole(user, userRoutes, adminRoutes);
   return (
     <>
@@ -39,7 +47,7 @@ function AppRoutes() {
             return (
               <Route
                 key={index}
-                path={route.path}
+                path={`${BASE_URL}${route.path}`}
                 element={
                   <PrivateRoute>
                     <RoleRoute allowedRoles={allowedRoles}>
