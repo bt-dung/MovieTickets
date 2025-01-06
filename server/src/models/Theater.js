@@ -48,32 +48,56 @@ const Theaters = sequelize.define('theaters', {
 
 Theaters.insertTheater = async (theaterData) => {
     try {
-        const existedTheater = await Theaters.findOne({ where: { name: theaterData.name } });
-
+        const existedTheater = await Theaters.findOne({ where: { name: theaterData.name, address: theaterData.address } });
+        console.log("manager:", theaterData.manager_id);
         if (!existedTheater) {
-            const newTheater = await Theaters.create(theaterData);
-            return newTheater;
+            const existingManager = await Theaters.findOne({ where: { manager_id: theaterData.manager_id } });
+            if (!existingManager) {
+                const newTheater = await Theaters.create(theaterData);
+                return newTheater;
+            } else {
+                throw new Error("The manager is currently managing another theater");
+            }
         } else {
             throw new Error(`Thearter already exists with name: ${theaterData.name}`);
         }
     } catch (error) {
-        console.error("Error inserting theater:", error.message);
         throw error;
     }
 };
 
-Theaters.update = async function (id, data) {
+Theaters.updateTheater = async function (id, data) {
     try {
-        const [updatedRowsCount, updatedRows] = await User.update(data, {
-            where: { id: id },
-            returning: true
-        });
-        if (updatedRowsCount === 0) {
-            throw new Error('Theater not found');
+        const existingManager = await Theaters.findOne({ where: { manager_id: data.manager_id } });
+        if (!existingManager) {
+            const [updatedRowsCount, updatedRows] = await Theaters.update(data, {
+                where: { id: id },
+                returning: true
+            });
+            if (updatedRowsCount === 0) {
+                throw new Error('Theater not found');
+            }
+            return updatedRows[0];
+        } else {
+            throw new Error("The manager is currently managing another theater");
         }
-        return updatedRows[0];
     } catch (error) {
         console.error('Error updating Theater:', error);
+        throw error;
+    }
+};
+
+Theaters.deleteTheater = async function (id) {
+    try {
+        const deletedRowsCount = await Theaters.destroy({
+            where: { id: id }
+        });
+        if (deletedRowsCount === 0) {
+            throw new Error('Theater  not found');
+        }
+        return deletedRowsCount;
+    } catch (error) {
+        console.error('Error deleting Theater:', error);
         throw error;
     }
 };

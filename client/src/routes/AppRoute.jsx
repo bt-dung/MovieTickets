@@ -8,6 +8,8 @@ import MainLayoutHome from "../components/home/mainLayout/MainLayoutHome";
 import AddUser from "../pages/admin/users/AddUser";
 import EditUser from "../pages/admin/users/EditUser/EditUser";
 import AddTheater from "../pages/admin/theaters/AddTheater";
+import EditTheater from "../pages/admin/theaters/EditTheater";
+import DetailTheater from "../pages/admin/detailTheater/DetailTheater";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome }
@@ -17,9 +19,10 @@ export const adminRoutes = [
     { path: '/dashboard', component: Admin, layout: MainLayoutAdmin },
     { path: '/users', component: User, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/add-user', component: AddUser, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
-    { path: '/edit-user', component: EditUser, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
+    { path: '/edit-user/:userId', component: EditUser, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/movie', component: Movie, layout: MainLayoutAdmin },
-    { path: '/theater', component: Theater, layout: MainLayoutAdmin },
-    { path: '/add-theater', component: AddTheater, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] }
-
+    { path: '/theaters', component: Theater, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
+    { path: '/detail-theater/:theaterId', component: DetailTheater, layout: MainLayoutAdmin },
+    { path: '/add-theater', component: AddTheater, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
+    { path: '/edit-theater/:theaterId', component: EditTheater, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
 ];

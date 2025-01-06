@@ -1,7 +1,11 @@
 import Icon from "@mdi/react";
 import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip } from "@mdi/js";
 import logoAdmin from "../../../../assets/images/logo/logo1.png";
+import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
+  const { user } = useUser();
+  const userRole = user?.role;
+  const theaterId = user.theater_id || null;
   return (
     <>
       <div className="left-side-menu">
@@ -34,7 +38,10 @@ const SideBar = () => {
             </li>
 
             <li className="side-nav-item">
-              <a href="theater" className="side-nav-link">
+              <a
+                href={userRole === "admin_role" ? "theaters" : `/admin/detail-theater/${theaterId}`}
+                className="side-nav-link"
+              >
                 <Icon path={mdiTheater} size={1} />
                 <span> Theater </span>
               </a>

@@ -1,6 +1,6 @@
 const Theaters = require("../models/Theater");
 
-const getTheater = async (req, res) => {
+const getAllTheater = async (req, res) => {
     try {
         const theaters = await Theaters.findAll();
         return res.json({
@@ -17,37 +17,71 @@ const getTheater = async (req, res) => {
     }
 }
 
-const createTheater = async (req, res) => {
-    const { name, address, area_id, total_screens, total_seats, manager_id } = req.body;
-
-    if (!name || !address || !area_id || !total_screens || !total_seats || !manager_id) {
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-
+const getTheater = async (req, res) => {
+    const { id } = req.params;
     try {
-        const existingTheater = await Theaters.findOne({ where: { name, address } });
-        if (existingTheater) {
-            return res.status(400).json({ message: `Theater with name '${name}' already exists.` });
-        }
-
-        const newTheater = await Theaters.create({
-            name,
-            address,
-            area_id,
-            total_screens,
-            total_seats,
-            manager_id
+        const theater = await Theaters.findByPk(id);
+        return res.json(theater);
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            message: "Cant find Theater",
+            success: "FAILED",
         });
+    }
+}
 
+const updateTheater = async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    try {
+        const updatedTheater = await Theaters.updateTheater(id, data);
+        return res.status(200).json({
+            status: "SUCCESS",
+            message: 'User updated successfully',
+            user: updatedTheater
+        });
+    } catch (error) {
+        console.error('Error updating theater:', error);
+        return res.status(500).json({
+            status: "FAILED",
+            message: 'An error occurred while updating the theater.',
+            error: error.message
+        });
+    }
+}
+
+const createTheater = async (req, res) => {
+    try {
+        const newTheater = await Theaters.insertTheater(req.body);
         return res.status(201).json({
             status: "SUCCESS",
             message: 'Theater created successfully',
-            data: newTheater
+            data: newTheater,
         });
     } catch (error) {
         console.error("Error creating theater:", error.message);
-        return res.status(500).json({ message: 'Failed to create theater. Please try again.' });
+        return res.status(400).json({ status: "FAILED", message: error.message });
     }
 };
 
-module.exports = { getTheater, createTheater };
+const deleteTheater = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedCount = await Theaters.deleteTheater(id);
+        return res.status(200).json({
+            status: "SUCCESS",
+            message: 'Theater  deleted successfully',
+            deletedCount: deletedCount
+        });
+    } catch (error) {
+        console.error('Error deleting theater:', error);
+        return res.status(500).json({
+            status: "FAILED",
+            message: 'An error occurred while deleting the theater',
+            error: error.message
+        });
+    }
+};
+
+module.exports = { getAllTheater, getTheater, createTheater, updateTheater, deleteTheater };

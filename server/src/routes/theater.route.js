@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getTheater, createTheater } = require("../controllers/Theaters")
+const { getAllTheater, getTheater, createTheater, updateTheater, deleteTheater } = require("../controllers/Theaters")
 
-router.get("/theaters", getTheater)
-    .post("/create-theater", createTheater);
+router.get("/theaters", getAllTheater)
+    .get("/theaters/:id", getTheater)
+    .patch("/theaters/:id/update", updateTheater)
+    .post("/create-theater", createTheater)
+    .delete("/theaters/:id/delete", deleteTheater);
 
 module.exports = router;

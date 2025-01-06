@@ -107,7 +107,7 @@ const User = () => {
                       <th>Address</th>
                       <th>Score</th>
                       <th>Verified</th>
-                      <th style={{ width: "75px" }}>Action</th>
+                      <th className="row" style={{ width: "50px" }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -150,7 +150,7 @@ const User = () => {
                             )}
                           </td>
                           <td>
-                            <a href={`/admin/edit-user?userID=${user.id}`} className="action-icon">
+                            <a href={`/admin/edit-user/${user.id}`} className="action-icon">
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
                             <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteUser(user.id)}>

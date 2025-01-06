@@ -3,12 +3,17 @@ import Icon from '@mdi/react';
 import {
   mdiTheater, mdiPlusCircleOutline, mdiSquareEditOutline, mdiDeleteOutline
 } from '@mdi/js';
-import { fetchData } from '../../../api/api';
+import Swal from 'sweetalert2';
+import { fetchData, deleteData } from '../../../api/api';
+import { useUser } from '../../../context/UserContext';
 
 const env = import.meta.env;
 const BASE_URL_ADMIN = (env.VITE_BASE_URL_ADMIN);
+
 const Theater = () => {
   const [theaters, setTheaters] = useState([]);
+  const userCurrent = useUser();
+  const roleCurrent = userCurrent.user?.role;
 
   useEffect(() => {
     const fetchTheaters = async () => {
@@ -20,9 +25,48 @@ const Theater = () => {
         console.error('Error fetching theater data:', error);
       }
     };
-
     fetchTheaters();
   }, []);
+
+  const handleDeleteTheater = async (id) => {
+    if (roleCurrent !== 'admin_role') {
+      Swal.fire({
+        title: 'Error!',
+        text: 'You cannot perform this operation!!',
+        icon: 'error',
+      });
+      return;
+    }
+    const { isConfirmed } = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this theater?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (isConfirmed) {
+      try {
+        await deleteData(`/api/v1/theaters/${id}/delete`);
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Theater deleted successfully.',
+          icon: 'success',
+        });
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting Theater:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to delete Theater.',
+          icon: 'error',
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -52,18 +96,18 @@ const Theater = () => {
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
                             <a
-                              href={`/theater/${theater.id}`}
+                              href={`/admin/detail-theater/${theater.id}`}
                               className="btn btn-primary"
                               role="button"
                               aria-label={`Learn more about ${theater.name}`}>
-                              Chi tiết
+                              Detail more
                             </a>
                           </div>
                           <div class="d-flex gap-2">
-                            <a href="" className="action-icon">
+                            <a href={`/admin/edit-theater/${theater.id}`} className="action-icon">
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
-                            <a href="javascript:void(0);" className="action-icon">
+                            <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteTheater(theater.id)}>
                               <Icon path={mdiDeleteOutline} size={1} />
                             </a>
                           </div>

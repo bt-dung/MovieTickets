@@ -22,7 +22,7 @@ const RoleRoute = ({ children, allowedRoles }) => {
         }
     }, [user.role, allowedRoles]);
     if (isAuthorized === null) return null;
-    return isAuthorized ? children : <Navigate to="/admin" replace />;
+    return isAuthorized ? children : <Navigate to="/admin/dashboard" replace />;
 };
 
 export default RoleRoute;

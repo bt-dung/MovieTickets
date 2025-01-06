@@ -1,41 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
-import { postData, fetchData } from '../../../api/api';
+import { useNavigate, useParams } from 'react-router-dom';
+import { postData, fetchData, updateData } from '../../../api/api';
 import Icon from '@mdi/react';
 import { mdiArrowLeft } from '@mdi/js';
 
-const AddTheater = () => {
+const EditTheater = () => {
     const navigate = useNavigate();
+    const { theaterId } = useParams();
+    console.log(theaterId);
 
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
-    const [areaId, setAreaId] = useState('');
-    const [totalScreens, setTotalScreens] = useState(0);
-    const [totalSeats, setTotalSeats] = useState(0);
-    const [managerId, setManagerId] = useState('');
+    const [area_id, setAreaId] = useState('');
+    const [total_screens, setTotalScreens] = useState(0);
+    const [total_seats, setTotalSeats] = useState(0);
+    const [manager_id, setManagerId] = useState('');
     const [areas, setAreas] = useState([]);
     const [managers, setManagers] = useState([]);
 
     useEffect(() => {
-        const getData = async () => {
+        const fetchTheaterData = async () => {
             try {
+                const theaterResponse = await fetchData(`/api/v1/theaters/${theaterId}`);
+                setName(theaterResponse.name);
+                setAddress(theaterResponse.address);
+                setAreaId(theaterResponse.area_id);
+                setTotalScreens(theaterResponse.total_screens);
+                setTotalSeats(theaterResponse.total_seats);
+                setManagerId(theaterResponse.manager_id);
+
                 const areasResponse = await fetchData('/api/v1/areas');
-                console.log(areasResponse);
                 setAreas(areasResponse.data);
 
                 const managersResponse = await fetchData('/admin/managers');
                 setManagers(managersResponse);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error('Error fetching theater data:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to fetch theater data.',
+                    icon: 'error',
+                    confirmButtonText: 'Okay',
+                });
             }
         };
 
-        getData();
-    }, []);
+        fetchTheaterData();
+    }, [theaterId]);
 
     const validateInput = () => {
-        if (!name || !address || !areaId || !totalScreens || !totalSeats || !managerId) {
+        if (!name || !address || !area_id || !total_screens || !total_seats || !manager_id) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields are required.',
@@ -44,51 +59,54 @@ const AddTheater = () => {
             });
             return false;
         }
-
         return true;
     };
 
-    const handleAdd = async (e) => {
+    const handleEdit = async (e) => {
         e.preventDefault();
 
         if (!validateInput()) {
             return;
         }
+        const { isConfirmed } = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to update this theater?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'Cancel',
+        });
+        if (isConfirmed) {
+            try {
+                const response = await updateData(`/api/v1/theaters/${theaterId}/update`, {
+                    name,
+                    address,
+                    area_id,
+                    total_screens,
+                    total_seats,
+                    manager_id,
+                });
 
-        try {
-            const response = await postData('/api/v1/create-theater', {
-                name,
-                address,
-                area_id: areaId,
-                total_screens: totalScreens,
-                total_seats: totalSeats,
-                manager_id: managerId,
-            });
-
-            console.log("theater-added:", response);
-
-            if (response.status === "SUCCESS") {
+                if (response.status === 'SUCCESS') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'Okay',
+                    });
+                    navigate(-1);
+                }
+            } catch (error) {
+                console.error('Error updating theater:', error);
                 Swal.fire({
-                    title: 'Success!',
-                    text: response.message,
-                    icon: 'success',
+                    title: 'Error!',
+                    text: error.response?.data?.message,
+                    icon: 'error',
                     confirmButtonText: 'Okay',
                 });
-                setName('');
-                setAddress('');
-                setAreaId('');
-                setTotalScreens(0);
-                setTotalSeats(0);
-                setManagerId('');
             }
-        } catch (error) {
-            console.error('Error adding theater:', error);
-            Swal.fire({
-                title: 'Error!',
-                text: error.response?.data?.message,
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
         }
     };
 
@@ -102,14 +120,14 @@ const AddTheater = () => {
                 >
                     <Icon path={mdiArrowLeft} size={2} />
                 </div>
-                <h1 className="text-muted mb-3">Add Theater</h1>
+                <h1 className="text-muted mb-3">Edit Theater</h1>
             </div>
 
             <div className="row">
                 <div className="col-lg-6">
                     <div className="card border-0">
                         <div className="card-body">
-                            <form onSubmit={handleAdd}>
+                            <form onSubmit={handleEdit}>
                                 <div className="form-group mb-3">
                                     <label htmlFor="name">Name</label>
                                     <input
@@ -139,7 +157,7 @@ const AddTheater = () => {
                                     <select
                                         id="area_id"
                                         className="form-control"
-                                        value={areaId}
+                                        value={area_id}
                                         onChange={(e) => setAreaId(e.target.value)}
                                         required
                                     >
@@ -158,7 +176,7 @@ const AddTheater = () => {
                                         type="number"
                                         id="total_screens"
                                         className="form-control"
-                                        value={totalScreens}
+                                        value={total_screens}
                                         onChange={(e) => setTotalScreens(e.target.value)}
                                         required
                                     />
@@ -170,7 +188,7 @@ const AddTheater = () => {
                                         type="number"
                                         id="total_seats"
                                         className="form-control"
-                                        value={totalSeats}
+                                        value={total_seats}
                                         onChange={(e) => setTotalSeats(e.target.value)}
                                         required
                                     />
@@ -181,7 +199,7 @@ const AddTheater = () => {
                                     <select
                                         id="manager_id"
                                         className="form-control"
-                                        value={managerId}
+                                        value={manager_id}
                                         onChange={(e) => setManagerId(e.target.value)}
                                         required
                                     >
@@ -195,7 +213,7 @@ const AddTheater = () => {
                                 </div>
 
                                 <button type="submit" className="btn btn-info float-right">
-                                    Save
+                                    Save Changes
                                 </button>
                             </form>
                         </div>
@@ -206,4 +224,4 @@ const AddTheater = () => {
     );
 };
 
-export default AddTheater;
+export default EditTheater;

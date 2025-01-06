@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData, updateData } from '../../../../api/api';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiArrowLeft } from '@mdi/js';
 import "./EditUser.css"
 
 const EditUser = () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const userId = searchParams.get('userID');
+    // const searchParams = new URLSearchParams(window.location.search);
+    // const userId = searchParams.get('userID');
+    const { userId } = useParams();
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
