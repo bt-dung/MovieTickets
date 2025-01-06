@@ -112,8 +112,20 @@ User.login = async function (email, password) {
         throw error;
     }
 }
+User.updateUser = async function (id, data) {
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        await user.update(data);
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
 
-User.destroy = async function (id) {
+User.deleteUser = async function (id) {
     try {
         const deletedRowsCount = await User.destroy({
             where: { id: id }

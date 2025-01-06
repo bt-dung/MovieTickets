@@ -5,22 +5,78 @@ import {
   mdiDeleteOutline,
   mdiPlusCircleOutline,
 } from "@mdi/js";
+import Swal from 'sweetalert2';
+import { useUser } from "../../../context/UserContext";
+import { deleteData, fetchData } from "../../../api/api";
 
 const User = () => {
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const userCurrent = useUser();
+  const roleCurrent = userCurrent.user?.role;
 
   useEffect(() => {
-    fetch("http://localhost:5000/admin/users")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((error) => console.error("Fetch error:", error));
-  }, []);
+    const fetchUsers = async (page = 0) => {
+      try {
+        const response = await fetchData(`/admin/users?pageNumber=${page}&limit=5`);
+        console.log(response);
+        setUsers(response.content);
+        setTotalPages(response.totalPages);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
+    fetchUsers(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleDeleteUser = async (id) => {
+    if (roleCurrent !== 'admin_role') {
+      Swal.fire({
+        title: 'Error!',
+        text: 'You cannot perform this operation!!',
+        icon: 'error',
+      });
+      return;
+    }
+    const { isConfirmed } = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (isConfirmed) {
+      try {
+        await deleteData(`/admin/user/${id}/delete`);
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'User deleted successfully.',
+          icon: 'success',
+        });
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to delete user.',
+          icon: 'error',
+        });
+      }
+    }
+  };
   return (
     <>
       <h1 className="text-muted mb-3">USERS</h1>
@@ -35,6 +91,7 @@ const User = () => {
                   </a>
                 </div>
               </div>
+
               <div className="table-responsive">
                 <table
                   className="table table-centered table-striped dt-responsive nowrap w-100"
@@ -93,10 +150,10 @@ const User = () => {
                             )}
                           </td>
                           <td>
-                            <a href="" className="action-icon">
+                            <a href={`/admin/edit-user?userID=${user.id}`} className="action-icon">
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
-                            <a href="" className="action-icon">
+                            <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteUser(user.id)}>
                               <Icon path={mdiDeleteOutline} size={1} />
                             </a>
                           </td>
@@ -112,6 +169,54 @@ const User = () => {
                   </tbody>
                 </table>
               </div>
+
+              <nav className="d-flex justify-content-center">
+                <ul className="pagination">
+                  <li
+                    className={`page-item ${currentPage === 0 ? 'disabled' : ''
+                      }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="javascript:void(0);"
+                      aria-label="Previous"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      <span aria-hidden="true">&laquo;</span>
+                      <span className="sr-only">Previous</span>
+                    </a>
+                  </li>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <li
+                      key={index}
+                      className={`page-item ${currentPage === index ? 'active' : ''
+                        }`}
+                    >
+                      <a
+                        className="page-link"
+                        href="javascript:void(0);"
+                        onClick={() => handlePageChange(index)}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''
+                      }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="javascript:void(0);"
+                      aria-label="Next"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      <span aria-hidden="true">&raquo;</span>
+                      <span className="sr-only">Next</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>

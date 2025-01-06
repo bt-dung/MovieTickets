@@ -17,9 +17,17 @@ const getUser = async (req, res) => {
 };
 
 const getAllUser = async (req, res) => {
+
+    const page = parseInt(req.query.pageNumber) || 0;
+    const limit = parseInt(req.query.limit) || 10;
     try {
-        const data = await User.findAll();
-        return res.json(data);
+        const totalUsers = await User.count();
+        const totalPages = Math.ceil(totalUsers / limit);
+        const data = await User.findAll({
+            offset: page * limit,
+            limit: limit,
+        });
+        return res.json({ content: data, totalPages, });
     } catch (error) {
         console.log("Error:", error);
         return res.status(500).json({
@@ -29,14 +37,28 @@ const getAllUser = async (req, res) => {
     };
 };
 
+const getManagers = async (req, res) => {
+    try {
+        const managers = await User.findAll({
+            where: {
+                role_id: 2
+            }
+        });
+        return res.status(200).json(managers);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error while fetching managers data!!!' });
+    }
+};
+
 const updateUser = async (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     const data = req.body;
     try {
-        const updatedUser = await User.update(id, data);
-
+        const updatedUser = await User.updateUser(id, data);
         return res.status(200).json({
-            message: 'User  updated successfully',
+            status: "SUCCESS",
+            message: 'User updated successfully',
             user: updatedUser
         });
     } catch (error) {
@@ -49,16 +71,18 @@ const updateUser = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-    const userId = req.params.id;
+    const { id } = req.params;
     try {
-        const deletedCount = await User.destroy(userId);
+        const deletedCount = await User.deleteUser(id);
         return res.status(200).json({
+            status: "SUCCESS",
             message: 'User  deleted successfully',
             deletedCount: deletedCount
         });
     } catch (error) {
         console.error('Error deleting user:', error);
         return res.status(500).json({
+            status: "FAILED",
             message: 'An error occurred while deleting the user',
             error: error.message
         });
@@ -66,4 +90,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { getUser, updateUser, deleteUser, getAllUser }
+module.exports = { getUser, updateUser, deleteUser, getAllUser, getManagers }

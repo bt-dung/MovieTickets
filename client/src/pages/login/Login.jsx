@@ -79,7 +79,7 @@ const Login = () => {
           <div className="padding-top padding-bottom">
             <div className="account-area">
               <div className="section-header-3">
-                <span className="cate">Start Movies</span>
+                <span className="cate">Stars Cinema</span>
                 <h2 className="title">welcome back</h2>
               </div>
               <form className="account-form" onSubmit={handleLogin}>

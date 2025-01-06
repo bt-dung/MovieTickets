@@ -5,22 +5,32 @@ import {
   mdiDeleteOutline,
   mdiPlusCircleOutline,
 } from "@mdi/js";
+import { fetchData } from "../../../api/api";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:5000/admin/movies")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => setMovies(data))
-      .catch((error) => console.error("Fetch error:", error));
-  }, []);
-  console.log(movies);
+    const fetchUsers = async (page = 0) => {
+      try {
+        const response = await fetchData(`/admin/movies?pageNumber=${page}&limit=3`);
+        setMovies(response.content);
+        setTotalPages(response.totalPages);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <>
@@ -36,6 +46,7 @@ const Movies = () => {
                   </a>
                 </div>
               </div>
+
               <div className="table-responsive">
                 <table
                   className="table table-centered table-striped dt-responsive nowrap w-100"
@@ -44,10 +55,10 @@ const Movies = () => {
                   <thead>
                     <tr>
                       <th style={{ width: "20px" }}></th>
-                      <th>ID</th>
-                      <th style={{ width: "30px" }}>Movie Name</th>
+                      <th style={{ width: "100px" }}>ID</th>
+                      <th >Movie Name</th>
                       <th>Release Date</th>
-                      <th>Vote</th>
+                      <th>*Rate</th>
                       <th>Poster</th>
                       <th style={{ width: "75px" }}>Action</th>
                     </tr>
@@ -103,6 +114,54 @@ const Movies = () => {
                   </tbody>
                 </table>
               </div>
+
+              <nav className="d-flex justify-content-center">
+                <ul className="pagination">
+                  <li
+                    className={`page-item ${currentPage === 0 ? 'disabled' : ''
+                      }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="javascript:void(0);"
+                      aria-label="Previous"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      <span aria-hidden="true">&laquo;</span>
+                      <span className="sr-only">Previous</span>
+                    </a>
+                  </li>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <li
+                      key={index}
+                      className={`page-item ${currentPage === index ? 'active' : ''
+                        }`}
+                    >
+                      <a
+                        className="page-link"
+                        href="javascript:void(0);"
+                        onClick={() => handlePageChange(index)}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''
+                      }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="javascript:void(0);"
+                      aria-label="Next"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      <span aria-hidden="true">&raquo;</span>
+                      <span className="sr-only">Next</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>

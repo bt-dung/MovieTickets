@@ -1,0 +1,9 @@
+#verified [value="true"] {
+    color: green;
+    /* Màu xanh cho "Verified" */
+}
+
+#verified [value="false"] {
+    color: red;
+    /* Màu đỏ cho "Not Verified" */
+}

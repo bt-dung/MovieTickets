@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getUser, updateUser, deleteUser, getAllUser } = require("../controllers/User")
+const { getUser, updateUser, deleteUser, getAllUser, getManagers } = require("../controllers/User")
 
 
 router.get("/users", getAllUser)
     .get("/user/:id", getUser)
+    .get("/managers", getManagers)
     .patch("/user/:id/update", updateUser)
-    .delete("/user/delete", deleteUser);
+    .delete("/user/:id/delete", deleteUser);
 module.exports = router;
