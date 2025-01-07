@@ -26,6 +26,7 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5001;
 
 app.get("/", (req, res) => {

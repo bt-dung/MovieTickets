@@ -251,7 +251,7 @@ const loginUser = async (req, res) => {
                     },
                     attributes: ['id']
                 });
-                theaterIds = theaters;
+                theaterIds = theaters[0].dataValues.id;
             }
             const role = await Roles.findByPk(user.role_id);
             const token = jwt.sign(

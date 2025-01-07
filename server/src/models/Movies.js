@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../database/db')
+const { sequelize } = require('../database/db');
+const { Op } = require('sequelize');
 
 const Movies = sequelize.define('movies', {
     id: {
@@ -115,7 +116,7 @@ Movies.getMoviesByIds = async function (movieIds) {
     try {
         const movies = await Movies.findAll({
             where: {
-                id: movieIds,
+                id: { [Op.in]: movieIds }
             },
         });
         return movies;

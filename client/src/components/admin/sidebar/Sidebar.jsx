@@ -5,7 +5,7 @@ import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
   const { user } = useUser();
   const userRole = user?.role;
-  const theaterId = user.theater_id || null;
+  const theaterId = user.theater_id;
   return (
     <>
       <div className="left-side-menu">
@@ -24,14 +24,14 @@ const SideBar = () => {
             </li>
 
             <li className="side-nav-item">
-              <a href="users" className="side-nav-link">
+              <a href="/admin/users" className="side-nav-link">
                 <Icon path={mdiAccount} size={1} />
                 <span> Users </span>
               </a>
             </li>
 
             <li className="side-nav-item">
-              <a href="movie" className="side-nav-link">
+              <a href="/admin/movie" className="side-nav-link">
                 <Icon path={mdiFilmstrip} size={1} />
                 <span> Movies </span>
               </a>
@@ -39,7 +39,7 @@ const SideBar = () => {
 
             <li className="side-nav-item">
               <a
-                href={userRole === "admin_role" ? "theaters" : `/admin/detail-theater/${theaterId}`}
+                href={userRole === "admin_role" ? "/admin/theaters" : `/admin/detail-theater/${theaterId}`}
                 className="side-nav-link"
               >
                 <Icon path={mdiTheater} size={1} />
