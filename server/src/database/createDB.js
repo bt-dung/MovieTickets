@@ -62,10 +62,11 @@ const create_table_movies = [
     );`,
 
     `CREATE TABLE IF NOT EXISTS movie_theater (
-        theater_id INT PRIMARY KEY,
-        movie_id INT,
-        FOREIGN KEY (theater_id) REFERENCES theaters(id),
-        FOREIGN KEY (movie_id) REFERENCES movies(id)        
+        theater_id INT NOT NULL,
+        movie_id INT NOT NULL,
+        PRIMARY KEY (theater_id, movie_id),
+        FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE,
+        FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
     );`,
 
     `CREATE TABLE IF NOT EXISTS genres (

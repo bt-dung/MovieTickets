@@ -110,4 +110,18 @@ Movies.deleteMovie = async (movieId) => {
         throw error;
     }
 };
+
+Movies.getMoviesByIds = async function (movieIds) {
+    try {
+        const movies = await Movies.findAll({
+            where: {
+                id: movieIds,
+            },
+        });
+        return movies;
+    } catch (error) {
+        console.error("Error while fetching movies by IDs:", error);
+        throw error;
+    }
+};
 module.exports = Movies;
