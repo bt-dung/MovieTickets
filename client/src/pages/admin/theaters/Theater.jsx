@@ -75,7 +75,7 @@ const Theater = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <div className="row mb-2">
+              <div className="mb-2">
                 <div className="col-sm-4">
                   <a href={`${BASE_URL_ADMIN}/add-theater`} className="btn btn-danger mb-2">
                     <Icon path={mdiPlusCircleOutline} size={1} /> Add Theater

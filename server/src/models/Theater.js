@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db')
+const Screens = require('./Screens');
+
 
 const Theaters = sequelize.define('theaters', {
     id: {
@@ -45,6 +47,9 @@ const Theaters = sequelize.define('theaters', {
     tableName: 'theaters',
     timestamps: false,
 });
+
+Theaters.hasMany(Screens, { foreignKey: 'theater_id' });
+Screens.belongsTo(Theaters);
 
 Theaters.insertTheater = async (theaterData) => {
     try {

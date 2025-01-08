@@ -13,6 +13,7 @@ const User = require("./routes/user.route");
 const Theater = require("./routes/theater.route")
 const Area = require("./routes/area.route");
 const movieTheater = require("./routes/movieTheater.route");
+const Screen = require("./routes/screen.route");
 
 const app = express();
 dotenv.config();
@@ -39,7 +40,8 @@ app.use("/admin", Movies);
 app.use("/admin", User);
 app.use("/api/v1", Theater);
 app.use("/api/v1/", Area);
-app.use("/api/v1", movieTheater)
+app.use("/api/v1", movieTheater);
+app.use("/api/v1", Screen);
 
 
 createTableDB();
