@@ -13,8 +13,6 @@ const EditTheater = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [area_id, setAreaId] = useState('');
-    const [total_screens, setTotalScreens] = useState(0);
-    const [total_seats, setTotalSeats] = useState(0);
     const [manager_id, setManagerId] = useState('');
     const [areas, setAreas] = useState([]);
     const [managers, setManagers] = useState([]);
@@ -26,8 +24,6 @@ const EditTheater = () => {
                 setName(theaterResponse.name);
                 setAddress(theaterResponse.address);
                 setAreaId(theaterResponse.area_id);
-                setTotalScreens(theaterResponse.total_screens);
-                setTotalSeats(theaterResponse.total_seats);
                 setManagerId(theaterResponse.manager_id);
 
                 const areasResponse = await fetchData('/api/v1/areas');
@@ -50,7 +46,7 @@ const EditTheater = () => {
     }, [theaterId]);
 
     const validateInput = () => {
-        if (!name || !address || !area_id || !total_screens || !total_seats || !manager_id) {
+        if (!name || !address || !area_id || !manager_id) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields are required.',
@@ -84,8 +80,6 @@ const EditTheater = () => {
                     name,
                     address,
                     area_id,
-                    total_screens,
-                    total_seats,
                     manager_id,
                 });
 
