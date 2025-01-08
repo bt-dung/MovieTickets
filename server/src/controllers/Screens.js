@@ -3,12 +3,13 @@ const Screens = require("../models/Screens");
 const ScreenController = {
     createScreen: async (req, res) => {
         const screenData = req.body;
+        console.log(screenData);
         try {
             const newScreen = await Screens.insertScreen(screenData);
-            res.status(201).json({ status: "SUCCESS", message: 'Screen created successfully', data: newScreen });
+            return res.status(201).json({ status: "SUCCESS", message: 'Screen created successfully', data: newScreen });
         } catch (error) {
             console.error('Error inserting screen:', error);
-            res.status(400).json({ status: "FAILED", message: error.message });
+            return res.status(400).json({ status: "FAILED", message: error.message });
         }
     },
 
@@ -16,9 +17,9 @@ const ScreenController = {
         const { theaterId } = req.params;
         try {
             const screens = await Screens.getScreensByTheaterId(theaterId);
-            res.status(200).json({ status: "SUCCESS", data: screens });
+            return res.status(200).json({ status: "SUCCESS", data: screens });
         } catch (error) {
-            res.status(404).json({ status: "FAILED", message: error.message });
+            return res.status(404).json({ status: "FAILED", message: error.message });
         }
     },
 
@@ -27,9 +28,9 @@ const ScreenController = {
         const updatedData = req.body;
         try {
             const updatedScreen = await Screens.updateScreen(id, updatedData);
-            res.status(200).json({ status: "SUCCESS", message: 'Screen updated successfully', data: updatedScreen });
+            return res.status(200).json({ status: "SUCCESS", message: 'Screen updated successfully', data: updatedScreen });
         } catch (error) {
-            res.status(400).json({ status: "FAILED", message: error.message });
+            return res.status(400).json({ status: "FAILED", message: error.message });
         }
     },
 
@@ -37,9 +38,10 @@ const ScreenController = {
         const { id } = req.params;
         try {
             await Screens.deleteScreen(id);
-            res.status(200).json({ status: "SUCCESS", message: 'Screen deleted successfully' });
+            return res.status(200).json({ status: "SUCCESS", message: 'Screen deleted successfully' });
         } catch (error) {
-            res.status(400).json({ status: "SUCCESS", message: error.message });
+            console.error("Error while delete Screen: ", error);
+            return res.status(400).json({ status: "SUCCESS", message: error.message });
         }
     }
 };

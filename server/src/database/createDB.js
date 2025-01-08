@@ -86,6 +86,8 @@ const create_table_movies = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100),
         theater_id INT,
+        total_row INT DEFAULT 0,
+        total_column INT DEFAULT 0,
         FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 

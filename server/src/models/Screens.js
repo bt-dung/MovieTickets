@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db')
-const Theaters = require("./Theater")
+
 const Screens = sequelize.define('screens', {
     id: {
         type: DataTypes.INTEGER,
@@ -20,8 +20,16 @@ const Screens = sequelize.define('screens', {
         },
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
+    }, total_row: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
     },
-
+    total_column: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+    },
 }, {
     tableName: 'screens',
     timestamps: false,
@@ -29,7 +37,7 @@ const Screens = sequelize.define('screens', {
 
 Screens.insertScreen = async (screenData) => {
     try {
-        const existingScreen = await Screens.findOne({ where: { name: screenData.name } });
+        const existingScreen = await Screens.findOne({ where: { name: screenData.name, theater_id: screenData.theater_id } });
         if (!existingScreen) {
             const newScreen = await Screens.create(screenData);
             return newScreen;
@@ -43,15 +51,11 @@ Screens.insertScreen = async (screenData) => {
     }
 };
 
-Screens.getScreensByTheaterId = async (theaterId) => {
+Screens.getScreensByTheaterId = async (theater_id) => {
     try {
         const screens = await Screens.findAll({
-            where: { theater_id: theaterId }
+            where: { theater_id: theater_id }
         });
-        console.log(screens);
-        if (!screens || screens.length === 0) {
-            throw new Error(`No screens found for TheaterId: ${theaterId}`);
-        }
         return screens;
     } catch (error) {
         console.error("Error fetching screens by TheaterId:", error);
@@ -66,6 +70,7 @@ Screens.updateScreen = async (id, updateData) => {
             throw new Error(`Screen not found with id: ${id}`);
         }
         await screen.update(updateData);
+        await Screens.runHooks("afterUpdate", screen);
         return screen;
     } catch (error) {
         console.error("Error updating screen:", error);
@@ -75,13 +80,15 @@ Screens.updateScreen = async (id, updateData) => {
 
 Screens.deleteScreen = async (id) => {
     try {
+        const screen = await Screens.findByPk(id);
+        if (!screen) {
+            throw new Error('Screen not found');
+        }
+
         const deletedRowsCount = await Screens.destroy({
             where: { id: id }
         });
-
-        if (deletedRowsCount === 0) {
-            throw new Error('Screen  not found');
-        }
+        await Screens.runHooks('afterDestroy', screen);
 
         return deletedRowsCount;
     } catch (error) {
@@ -91,18 +98,49 @@ Screens.deleteScreen = async (id) => {
 };
 
 Screens.afterCreate(async (screen, options) => {
-    const theater = await Theaters.findByPk(screen.theater_id);
-    if (theater) {
-        theater.total_screens = theater.total_screens + 1;
-        await theater.save();
+    const Theaters = sequelize.models.theaters;
+    console.log(Theaters)
+    try {
+        const theater = await Theaters.findByPk(screen.theater_id);
+        if (theater) {
+            theater.total_screens += 1;
+            const totalSeats = screen.total_row * screen.total_column;
+            theater.total_seats = (theater.total_seats || 0) + totalSeats;
+            await theater.save();
+        }
+    } catch (error) {
+        console.error('Error updating theater after screen creation:', error);
+    }
+});
+
+Screens.afterUpdate(async (screen, options) => {
+    const Theaters = sequelize.models.theaters;
+    try {
+        const theater = await Theaters.findByPk(screen.theater_id);
+        if (theater) {
+            const screens = await Screens.findAll({ where: { theater_id: screen.theater_id } });
+            const totalSeats = screens.reduce((sum, s) => sum + (s.total_row * s.total_column), 0);
+
+            theater.total_seats = totalSeats;
+            await theater.save();
+        }
+    } catch (error) {
+        console.error('Error updating theater after screen update:', error);
     }
 });
 
 Screens.afterDestroy(async (screen, options) => {
-    const theater = await Theaters.findByPk(screen.theater_id);
-    if (theater) {
-        theater.total_screens = theater.total_screens - 1;
-        await theater.save();
+    const Theaters = sequelize.models.theaters;
+    try {
+        const theater = await Theaters.findByPk(screen.theater_id);
+        if (theater) {
+            theater.total_screens -= 1;
+            const totalSeats = screen.total_row * screen.total_column;
+            theater.total_seats = (theater.total_seats || 0) - totalSeats;
+            await theater.save();
+        }
+    } catch (error) {
+        console.error('Error updating theater after screen deletion:', error);
     }
 });
 
