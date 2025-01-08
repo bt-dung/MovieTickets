@@ -5,8 +5,7 @@ import {
 } from '@mdi/js';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { fetchData, postData } from '../../../../api/api';
-import { useUser } from "../../../../context/UserContext";
+import { fetchData, postData, deleteData } from '../../../../api/api';
 
 const env = import.meta.env;
 const BASE_URL_ADMIN = env.VITE_BASE_URL_ADMIN;
@@ -15,8 +14,6 @@ const DetailScreen = () => {
     const { theaterId } = useParams();
     const navigate = useNavigate();
     const [screens, setScreens] = useState([]);
-    const userCurrent = useUser();
-    const roleCurrent = userCurrent.user?.role;
 
     useEffect(() => {
         const fetchScreens = async () => {
@@ -29,17 +26,9 @@ const DetailScreen = () => {
             }
         };
         fetchScreens();
-    }, []);
+    }, [theaterId]);
 
     const handleDeleteScreen = async (id) => {
-        if (roleCurrent !== 'admin_role') {
-            Swal.fire({
-                title: 'Error!',
-                text: 'You cannot perform this operation!!',
-                icon: 'error',
-            });
-            return;
-        }
         const { isConfirmed } = await Swal.fire({
             title: 'Are you sure?',
             text: 'Do you really want to delete this screen?',
@@ -53,7 +42,7 @@ const DetailScreen = () => {
 
         if (isConfirmed) {
             try {
-                await deleteData(`/api/v1/screens/${id}/delete`);
+                await deleteData(`/api/v1/screen/${id}/delete`);
                 Swal.fire({
                     title: 'Deleted!',
                     text: 'Screen deleted successfully.',
@@ -76,7 +65,7 @@ const DetailScreen = () => {
             <div className="d-flex w-100 ">
                 <div type="button"
                     className="btn mr-3 "
-                    onClick={() => navigate(-1)}
+                    onClick={() => { navigate(-1) }}
                 >
                     <Icon path={mdiArrowLeft} size={2} />
                 </div>
@@ -89,45 +78,53 @@ const DetailScreen = () => {
                         <div className="card-body">
                             <div className="mb-2">
                                 <div className="col-sm-4">
-                                    <a href={`${BASE_URL_ADMIN}/add-screen`} className="btn btn-danger mb-2">
+                                    <a href={`${BASE_URL_ADMIN}/add-screen/${theaterId}`} className="btn btn-danger mb-2">
                                         <Icon path={mdiPlusCircleOutline} size={1} /> Add Screen
                                     </a>
                                 </div>
                             </div>
 
                             <div className="row">
-                                {screens.map((screen, index) => (
-                                    <div className="col-md-3 mb-4" key={index}>
-                                        <div className="card">
-                                            <div className="card-img-top d-flex justify-content-center align-items-center bg-light" style={{ height: '150px' }}>
-                                                <Icon path={mdiTelevision} size={4} />
-                                            </div>
-                                            <div className="card-body">
-                                                <h5 className="card-title text-primary">{screen.name}</h5>
-                                                <p className="card-text">Total Seats: {screen.total_seats}</p>
-                                                <div className="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <a
-                                                            href={`/admin/detail-screen/${screen.id}`}
-                                                            className="btn btn-primary"
-                                                            role="button"
-                                                            aria-label={`Learn more about ${screen.name}`}>
-                                                            View Details
-                                                        </a>
-                                                    </div>
-                                                    <div className="d-flex gap-2">
-                                                        <a href={`/admin/edit-screen/${screen.id}`} className="action-icon">
-                                                            <Icon path={mdiSquareEditOutline} size={1} />
-                                                        </a>
-                                                        <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteScreen(screen.id)}>
-                                                            <Icon path={mdiDeleteOutline} size={1} />
-                                                        </a>
+                                {screens.length > 0 ? (
+                                    screens.map((screen, index) => (
+                                        <div className="col-md-3 mb-4" key={index}>
+                                            <div className="card">
+                                                <div className="card-img-top d-flex justify-content-center align-items-center bg-light" style={{ height: '150px' }}>
+                                                    <Icon path={mdiTelevision} size={4} />
+                                                </div>
+                                                <div className="card-body">
+                                                    <h5 className="card-title text-primary">{screen.name}</h5>
+                                                    <p className="card-text">Total Seat Row: {screen.total_row}</p>
+                                                    <p className="card-text">Total Seat Column: {screen.total_column}</p>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <a
+                                                                href={`/admin/detail-screen/${screen.id}`}
+                                                                className="btn btn-primary"
+                                                                role="button"
+                                                                aria-label={`Learn more about ${screen.name}`}>
+                                                                View Details
+                                                            </a>
+                                                        </div>
+                                                        <div className="d-flex gap-2">
+                                                            <a href={`/admin/edit-screen/${screen.id}`} className="action-icon">
+                                                                <Icon path={mdiSquareEditOutline} size={1} />
+                                                            </a>
+                                                            <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteScreen(screen.id)}>
+                                                                <Icon path={mdiDeleteOutline} size={1} />
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))) : (
+                                    <tr>
+                                        <td colSpan="6" className="text-center">
+                                            No screens found.
+                                        </td>
+                                    </tr>
+                                )}
                             </div>
                         </div>
                     </div>

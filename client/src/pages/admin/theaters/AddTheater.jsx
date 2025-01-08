@@ -11,8 +11,6 @@ const AddTheater = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [areaId, setAreaId] = useState('');
-    const [totalScreens, setTotalScreens] = useState(0);
-    const [totalSeats, setTotalSeats] = useState(0);
     const [managerId, setManagerId] = useState('');
     const [areas, setAreas] = useState([]);
     const [managers, setManagers] = useState([]);
@@ -35,7 +33,7 @@ const AddTheater = () => {
     }, []);
 
     const validateInput = () => {
-        if (!name || !address || !areaId || !totalScreens || !totalSeats || !managerId) {
+        if (!name || !address || !areaId || !managerId) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields are required.',
@@ -60,8 +58,6 @@ const AddTheater = () => {
                 name,
                 address,
                 area_id: areaId,
-                total_screens: totalScreens,
-                total_seats: totalSeats,
                 manager_id: managerId,
             });
 
@@ -77,8 +73,6 @@ const AddTheater = () => {
                 setName('');
                 setAddress('');
                 setAreaId('');
-                setTotalScreens(0);
-                setTotalSeats(0);
                 setManagerId('');
             }
         } catch (error) {
@@ -150,30 +144,6 @@ const AddTheater = () => {
                                             </option>
                                         ))}
                                     </select>
-                                </div>
-
-                                <div className="form-group mb-3">
-                                    <label htmlFor="total_screens">Total Screens</label>
-                                    <input
-                                        type="number"
-                                        id="total_screens"
-                                        className="form-control"
-                                        value={totalScreens}
-                                        onChange={(e) => setTotalScreens(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group mb-3">
-                                    <label htmlFor="total_seats">Total Seats</label>
-                                    <input
-                                        type="number"
-                                        id="total_seats"
-                                        className="form-control"
-                                        value={totalSeats}
-                                        onChange={(e) => setTotalSeats(e.target.value)}
-                                        required
-                                    />
                                 </div>
 
                                 <div className="form-group mb-3">
