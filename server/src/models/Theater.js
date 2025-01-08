@@ -29,10 +29,12 @@ const Theaters = sequelize.define('theaters', {
     },
     total_screens: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         defaultValue: 0,
     },
     total_seats: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         defaultValue: 0,
     },
     manager_id: {
@@ -49,7 +51,7 @@ const Theaters = sequelize.define('theaters', {
 });
 
 Theaters.hasMany(Screens, { foreignKey: 'theater_id' });
-Screens.belongsTo(Theaters);
+Screens.belongsTo(Theaters, { foreignKey: 'theater_id' });
 
 Theaters.insertTheater = async (theaterData) => {
     try {
