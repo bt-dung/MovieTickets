@@ -1,11 +1,19 @@
 import Icon from "@mdi/react";
-import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip } from "@mdi/js";
+import {
+  mdiViewDashboard,
+  mdiTheater,
+  mdiAccount,
+  mdiFilmstrip,
+  mdiTicket,
+  mdiHeadphones,
+  mdiCalendarMonthOutline,
+} from "@mdi/js";
 import logoAdmin from "../../../../assets/images/logo/logo1.png";
 const SideBar = () => {
   return (
     <>
       <div className="left-side-menu">
-        <a href="/dashboard" className="logo text-center">
+        <a href="dashboard" className="logo text-center">
           <span className="logo-lg">
             <img src={logoAdmin} alt="" height="80" />
           </span>
@@ -41,37 +49,23 @@ const SideBar = () => {
             </li>
 
             <li className="side-nav-item">
-              <a href="branches" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
+              <a href="schedule" className="side-nav-link">
+                <Icon path={mdiCalendarMonthOutline} size={1} />
                 <span> Schedule </span>
               </a>
             </li>
 
             <li className="side-nav-item">
-              <a href="rooms" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Rooms </span>
+              <a href="ticket" className="side-nav-link">
+                <Icon path={mdiTicket} size={1} />
+                <span> Ticket </span>
               </a>
             </li>
 
             <li className="side-nav-item">
-              <a href="tenants" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Tenants </span>
-              </a>
-            </li>
-
-            <li className="side-nav-item">
-              <a href="invoices" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Invoices </span>
-              </a>
-            </li>
-
-            <li className="side-nav-item">
-              <a href="reports" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Reports </span>
+              <a href="service" className="side-nav-link">
+                <Icon path={mdiHeadphones} size={1} />
+                <span> Service </span>
               </a>
             </li>
           </ul>

@@ -4,8 +4,9 @@ import {
   mdiSquareEditOutline,
   mdiDeleteOutline,
   mdiPlusCircleOutline,
+  mdiMagnify,
 } from "@mdi/js";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useUser } from "../../../context/UserContext";
 import { deleteData, fetchData } from "../../../api/api";
 
@@ -13,6 +14,7 @@ const User = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [inputTxt, setInputTxt] = useState("");
 
   const userCurrent = useUser();
   const roleCurrent = userCurrent.user?.role;
@@ -20,12 +22,14 @@ const User = () => {
   useEffect(() => {
     const fetchUsers = async (page = 0) => {
       try {
-        const response = await fetchData(`/admin/users?pageNumber=${page}&limit=5`);
+        const response = await fetchData(
+          `/admin/users?pageNumber=${page}&limit=5`
+        );
         console.log(response);
         setUsers(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -39,44 +43,54 @@ const User = () => {
   };
 
   const handleDeleteUser = async (id) => {
-    if (roleCurrent !== 'admin_role') {
+    if (roleCurrent !== "admin_role") {
       Swal.fire({
-        title: 'Error!',
-        text: 'You cannot perform this operation!!',
-        icon: 'error',
+        title: "Error!",
+        text: "You cannot perform this operation!!",
+        icon: "error",
       });
       return;
     }
     const { isConfirmed } = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you really want to delete this user?',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "Do you really want to delete this user?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
     });
 
     if (isConfirmed) {
       try {
         await deleteData(`/admin/user/${id}/delete`);
         Swal.fire({
-          title: 'Deleted!',
-          text: 'User deleted successfully.',
-          icon: 'success',
+          title: "Deleted!",
+          text: "User deleted successfully.",
+          icon: "success",
         });
         window.location.reload();
       } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting user:", error);
         Swal.fire({
-          title: 'Error!',
-          text: 'Failed to delete user.',
-          icon: 'error',
+          title: "Error!",
+          text: "Failed to delete user.",
+          icon: "error",
         });
       }
     }
   };
+
+  const handleSearch = () => {
+    if(inputTxt !== ""){
+      const searchInput = users.filter((user) => {
+        return user.name.toLowerCase().includes(inputTxt.toLowerCase());
+      });
+      setUsers(searchInput);
+    }
+  };
+
   return (
     <>
       <h1 className="text-muted mb-3">USERS</h1>
@@ -85,10 +99,19 @@ const User = () => {
           <div className="card">
             <div className="card-body">
               <div className="row mb-2">
-                <div className="col-sm-4">
+                <div className="col-sm-8">
                   <a href="/admin/add-user" className="btn btn-danger mb-2">
                     <Icon path={mdiPlusCircleOutline} size={1} /> Add User
                   </a>
+                </div>
+                <div className="input-group col-sm-4 d-flex">
+                  <input
+                    type="text"
+                    placeholder="Search user"
+                    value={inputTxt}
+                    onChange={(e) => setInputTxt(e.target.value)}
+                    onSubmit={handleSearch}
+                  />
                 </div>
               </div>
 
@@ -150,10 +173,17 @@ const User = () => {
                             )}
                           </td>
                           <td>
-                            <a href={`/admin/edit-user?userID=${user.id}`} className="action-icon">
+                            <a
+                              href={`/admin/edit-user?userID=${user.id}`}
+                              className="action-icon"
+                            >
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
-                            <a href="javascript:void(0);" className="action-icon" onClick={() => handleDeleteUser(user.id)}>
+                            <a
+                              href="javascript:void(0);"
+                              className="action-icon"
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
                               <Icon path={mdiDeleteOutline} size={1} />
                             </a>
                           </td>
@@ -173,8 +203,9 @@ const User = () => {
               <nav className="d-flex justify-content-center">
                 <ul className="pagination">
                   <li
-                    className={`page-item ${currentPage === 0 ? 'disabled' : ''
-                      }`}
+                    className={`page-item ${
+                      currentPage === 0 ? "disabled" : ""
+                    }`}
                   >
                     <a
                       className="page-link"
@@ -189,8 +220,9 @@ const User = () => {
                   {Array.from({ length: totalPages }, (_, index) => (
                     <li
                       key={index}
-                      className={`page-item ${currentPage === index ? 'active' : ''
-                        }`}
+                      className={`page-item ${
+                        currentPage === index ? "active" : ""
+                      }`}
                     >
                       <a
                         className="page-link"
@@ -202,8 +234,9 @@ const User = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''
-                      }`}
+                    className={`page-item ${
+                      currentPage === totalPages - 1 ? "disabled" : ""
+                    }`}
                   >
                     <a
                       className="page-link"
