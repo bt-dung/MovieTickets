@@ -1,5 +1,5 @@
 import Icon from "@mdi/react";
-import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip } from "@mdi/js";
+import {  mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip, mdiCalendarEditOutline, mdiVideoVintage } from "@mdi/js";
 import logoAdmin from "../../../../assets/images/logo/logo1.png";
 import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
@@ -9,7 +9,7 @@ const SideBar = () => {
   return (
     <>
       <div className="left-side-menu">
-        <a href="dashboard" className="logo text-center">
+        <a href="/dashboard" className="logo text-center">
           <span className="logo-lg">
             <img src={logoAdmin} alt="" height="80" />
           </span>
@@ -39,7 +39,7 @@ const SideBar = () => {
 
             <li className="side-nav-item">
               <a
-                href={userRole === "admin_role" ? "/admin/theaters" : `/admin/detail-theater/${theaterId}`}
+                href={userRole === "admin_role" ? "/admin/theater" : `/admin/detail-theater/${theaterId}`}
                 className="side-nav-link d-flex align-items-center py-2"
               >
                 <Icon path={mdiTheater} size={1.5} className="me-3" />
@@ -48,37 +48,22 @@ const SideBar = () => {
             </li>
 
             <li className="side-nav-item">
-              <a href="branches" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Schedule </span>
+              <a
+                href={userRole === "admin_role" ? "/admin/schedules" : `/admin/detail-schedule/${theaterId}`}
+                className="side-nav-link d-flex align-items-center py-2"
+              >
+                <Icon path={mdiCalendarEditOutline} size={1.5} className="me-3" />
+                <span>Schedule</span>
               </a>
             </li>
 
             <li className="side-nav-item">
-              <a href="rooms" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Rooms </span>
-              </a>
-            </li>
-
-            <li className="side-nav-item">
-              <a href="tenants" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Tenants </span>
-              </a>
-            </li>
-
-            <li className="side-nav-item">
-              <a href="invoices" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Invoices </span>
-              </a>
-            </li>
-
-            <li className="side-nav-item">
-              <a href="reports" className="side-nav-link">
-                <i className="dripicons-chevron-right"></i>
-                <span> Reports </span>
+              <a
+                href={userRole === "admin_role" ? "/admin/screens" : `/admin/detail-screen/${theaterId}`}
+                className="side-nav-link d-flex align-items-center py-2"
+              >
+                <Icon path={mdiVideoVintage} size={1.5} className="me-3" />
+                <span>Screens</span>
               </a>
             </li>
           </ul>
