@@ -12,6 +12,8 @@ const Movies = require("./routes/movie.route");
 const User = require("./routes/user.route");
 const Theater = require("./routes/theater.route")
 const Area = require("./routes/area.route");
+const movieTheater = require("./routes/movieTheater.route");
+const Screen = require("./routes/screen.route");
 
 const app = express();
 dotenv.config();
@@ -25,6 +27,7 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5001;
 
 app.get("/", (req, res) => {
@@ -36,7 +39,9 @@ app.use("/admin", Showtime);
 app.use("/admin", Movies);
 app.use("/admin", User);
 app.use("/api/v1", Theater);
-app.use("/api/v1/", Area)
+app.use("/api/v1/", Area);
+app.use("/api/v1", movieTheater);
+app.use("/api/v1", Screen);
 
 
 createTableDB();

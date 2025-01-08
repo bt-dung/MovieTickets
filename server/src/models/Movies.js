@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../database/db')
+const { sequelize } = require('../database/db');
+const { Op } = require('sequelize');
 
 const Movies = sequelize.define('movies', {
     id: {
@@ -107,6 +108,20 @@ Movies.deleteMovie = async (movieId) => {
         return result;
     } catch (error) {
         console.error("Error deleting movie:", error);
+        throw error;
+    }
+};
+
+Movies.getMoviesByIds = async function (movieIds) {
+    try {
+        const movies = await Movies.findAll({
+            where: {
+                id: { [Op.in]: movieIds }
+            },
+        });
+        return movies;
+    } catch (error) {
+        console.error("Error while fetching movies by IDs:", error);
         throw error;
     }
 };

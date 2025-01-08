@@ -56,11 +56,11 @@ const Movies = () => {
                     <tr>
                       <th style={{ width: "20px" }}></th>
                       <th style={{ width: "100px" }}>ID</th>
-                      <th >Movie Name</th>
+                      <th style={{ width: "400px" }}>Movie Name</th>
                       <th>Release Date</th>
                       <th>*Rate</th>
                       <th>Poster</th>
-                      <th style={{ width: "75px" }}>Action</th>
+                      <th style={{ width: "20px" }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
