@@ -15,6 +15,7 @@ import Schedule from "../pages/admin/schedule/detailSchedule/Schedule";
 import Screens from "../pages/admin/screens/Screens";
 import DetailScreen from "../pages/admin/screens/detailScreen/DetailScreen";
 import AddScreen from "../pages/admin/screens/AddScreen";
+import EditScreen from "../pages/admin/screens/EditScreen";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome }
@@ -35,4 +36,5 @@ export const adminRoutes = [
     { path: '/screens', component: Screens, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/detail-screen/:theaterId', component: DetailScreen, layout: MainLayoutAdmin },
     { path: '/add-screen/:theaterId', component: AddScreen, layout: MainLayoutAdmin },
+    { path: '/edit-screen/:screenId', component: EditScreen, layout: MainLayoutAdmin },
 ];
