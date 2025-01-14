@@ -35,7 +35,7 @@ export const adminRoutes = [
     { path: '/detail-schedule/:theaterId', component: Schedule, layout: MainLayoutAdmin },
     { path: '/screens', component: Screens, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/detail-screen/:theaterId', component: DetailScreen, layout: MainLayoutAdmin },
-    { path: '/detail-screen/:theaterId/seats', component: Seats, layout: MainLayoutAdmin },
-    { path: '/add-screen', component: AddScreen, layout: MainLayoutAdmin },
+    { path: '/detail-screen/:screenId/seats', component: Seats, layout: MainLayoutAdmin },
+    { path: '/add-screen/:theaterId', component: AddScreen, layout: MainLayoutAdmin },
     
 ];

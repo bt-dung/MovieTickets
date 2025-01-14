@@ -95,6 +95,7 @@ const Login = () => {
                     type="text"
                     placeholder="Enter Your Email"
                     id="email2"
+                    style={{background: "white", padding: "5px", borderRadius: "5px"}}
                   />
                   {errors.email && (
                     <small className="text-danger d-block mt-1">
@@ -113,7 +114,7 @@ const Login = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       id="pass3"
-                      style={{ flex: 1 }}
+                      style={{ background: "white", padding: "5px", borderRadius: "5px"}}
                     />
                   </div>
                   {errors.password && (

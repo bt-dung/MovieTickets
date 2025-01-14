@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "@mdi/react";
 import { mdiArrowLeft, mdiSofaSingleOutline } from "@mdi/js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchData } from "../../../api/api";
 
 const Seats = () => {
   const navigate = useNavigate();
-  [...Array(5).keys()].map((i) => console.log(i));
+  const [screen, setScreen] = useState();
+  const { screenId } = useParams();
+
+  useEffect(() => {
+    console.log("run")
+    const fetchScreens = async () => {
+      try {
+        const res = await fetchData(`/api/v1/screens/${screenId}`);
+        setScreen(res.data);
+      } catch (error) {
+        console.error("Error fetching screen data:", error);
+      }
+    };
+    fetchScreens();
+  }, [screenId]);
+  console.log("screen: ", screen);
 
   return (
     <>
@@ -66,7 +82,7 @@ const Seats = () => {
                     </div>
 
                     {/* Iterate rows */}
-                    {[...Array(10).keys()].map((rowIndex) => (
+                    {[...Array(screen.total_row).keys()].map((rowIndex) => (
                       <div className="row mb-2" key={rowIndex}>
                         {/* Display row label */}
                         <div className="col-1 d-flex align-items-center font-weight-bold">
@@ -75,18 +91,20 @@ const Seats = () => {
                         </div>
 
                         {/* Seats in the row */}
-                        {[...Array(7).keys()].map((colIndex) => (
-                          <div
-                            className="col d-flex justify-content-center"
-                            key={colIndex}
-                          >
-                            <Icon
-                              path={mdiSofaSingleOutline}
-                              size={1.5}
-                              style={{ color: "green" }}
-                            />
-                          </div>
-                        ))}
+                        {[...Array(screen.total_column).keys()].map(
+                          (colIndex) => (
+                            <div
+                              className="col d-flex justify-content-center"
+                              key={colIndex}
+                            >
+                              <Icon
+                                path={mdiSofaSingleOutline}
+                                size={1.5}
+                                style={{ color: "green" }}
+                              />
+                            </div>
+                          )
+                        )}
                       </div>
                     ))}
                   </div>

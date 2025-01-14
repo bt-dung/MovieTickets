@@ -17,7 +17,6 @@ const TokenService = {
         }
         try {
             const decodedToken = jwtDecode(token);
-            console.log("user:", decodedToken);
             return decodedToken;
         } catch (error) {
             console.error('Lỗi khi giải mã token:', error);

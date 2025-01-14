@@ -41,7 +41,18 @@ const ScreenController = {
             return res.status(200).json({ status: "SUCCESS", message: 'Screen deleted successfully' });
         } catch (error) {
             console.error("Error while delete Screen: ", error);
-            return res.status(400).json({ status: "SUCCESS", message: error.message });
+            return res.status(400).json({ status: "FAILED", message: error.message });
+        }
+    },
+
+    getScreenById: async (req, res) => {
+        const {id} = req.params;
+        try {
+            const screen = await Screens.findOne({where: {id: id}});
+            return screen
+        } catch (error) {
+            console.error("Error while delete Screen: ", error);
+            return res.status(400).json({ status: "FAILED", message: error.message });
         }
     }
 };

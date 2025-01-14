@@ -22,7 +22,6 @@ const DetailScreen = () => {
         const fetchScreens = async () => {
             try {
                 const res = await fetchData(`/api/v1/screens/${theaterId}`);
-                console.log(res);
                 setScreens(res.data);
             } catch (error) {
                 console.error('Error fetching screen data:', error);
@@ -89,7 +88,7 @@ const DetailScreen = () => {
                         <div className="card-body">
                             <div className="mb-2">
                                 <div className="col-sm-4">
-                                    <a href={`${BASE_URL_ADMIN}/add-screen`} className="btn btn-danger mb-2">
+                                    <a href={`${BASE_URL_ADMIN}/add-screen/${theaterId}`} className="btn btn-danger mb-2">
                                         <Icon path={mdiPlusCircleOutline} size={1} /> Add Screen
                                     </a>
                                 </div>
@@ -104,11 +103,12 @@ const DetailScreen = () => {
                                             </div>
                                             <div className="card-body">
                                                 <h5 className="card-title text-primary">{screen.name}</h5>
-                                                <p className="card-text">Total Seats: {screen.total_seats}</p>
+                                                <p className="card-text">Total Seat Row: {screen.total_row}</p>
+                                                <p className="card-text">Total Seat Column: {screen.total_column}</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <a
-                                                            href={`/admin/detail-screen/${screen.id}`}
+                                                            href={`/admin/detail-screen/${screen.id}/seats`}
                                                             className="btn btn-primary"
                                                             role="button"
                                                             aria-label={`Learn more about ${screen.name}`}>
