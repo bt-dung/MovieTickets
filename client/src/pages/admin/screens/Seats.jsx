@@ -13,7 +13,7 @@ const Seats = () => {
     console.log("run")
     const fetchScreens = async () => {
       try {
-        const res = await fetchData(`/api/v1/screens/${screenId}`);
+        const res = await fetchData(`/api/v1/screen/${screenId}`);
         setScreen(res.data);
       } catch (error) {
         console.error("Error fetching screen data:", error);

@@ -5,7 +5,7 @@ import {
 } from '@mdi/js';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { fetchData, postData } from '../../../../api/api';
+import { fetchData, postData, deleteData } from '../../../../api/api';
 import { useUser } from "../../../../context/UserContext";
 
 const env = import.meta.env;
@@ -52,7 +52,7 @@ const DetailScreen = () => {
 
         if (isConfirmed) {
             try {
-                await deleteData(`/api/v1/screens/${id}/delete`);
+                await deleteData(`/api/v1/screen/${id}/delete`);
                 Swal.fire({
                     title: 'Deleted!',
                     text: 'Screen deleted successfully.',
