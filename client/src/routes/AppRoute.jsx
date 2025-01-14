@@ -15,7 +15,6 @@ import Schedule from "../pages/admin/schedule/detailSchedule/Schedule";
 import Screens from "../pages/admin/screens/Screens";
 import DetailScreen from "../pages/admin/screens/detailScreen/DetailScreen";
 import AddScreen from "../pages/admin/screens/AddScreen";
-import Seats from "../pages/admin/screens/Seats";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome }
@@ -37,5 +36,4 @@ export const adminRoutes = [
     { path: '/detail-screen/:theaterId', component: DetailScreen, layout: MainLayoutAdmin },
     { path: '/detail-screen/:screenId/seats', component: Seats, layout: MainLayoutAdmin },
     { path: '/add-screen/:theaterId', component: AddScreen, layout: MainLayoutAdmin },
-    
 ];

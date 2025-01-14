@@ -99,8 +99,7 @@ const create_table_movies = [
 
     `CREATE TABLE IF NOT EXISTS seats (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        Row VARCHAR(10) NOT NULL,
-        seat_number VARCHAR(50) NOT NULL,
+        seat_name VARCHAR(50) NOT NULL,
         screen_id INT,
         seat_type_id INT,
         FOREIGN KEY (seat_type_id) REFERENCES seat_type(id) ON DELETE CASCADE ON UPDATE CASCADE,

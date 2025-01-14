@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { postData } from '../../../api/api';
+import { postData, fetchData, updateData } from '../../../api/api';
 import Icon from '@mdi/react';
 import { mdiArrowLeft } from '@mdi/js';
 
-const AddScreen = () => {
+const EditScreen = () => {
     const navigate = useNavigate();
-    const { theaterId } = useParams();
+    const { screenId } = useParams();
 
     const [name, setName] = useState('');
     const [total_row, setRows] = useState('');
     const [total_column, setColumns] = useState('');
+
+    useEffect(() => {
+        const fetchScreenData = async () => {
+            try {
+                const response = await fetchData(`/api/v1/screen/${screenId}`);
+                console.log(response);
+                setName(response.name);
+                setRows(response.total_row);
+                setColumns(response.total_column);
+            } catch (error) {
+                console.error('Error fetching screen data:', error);
+            }
+        };
+        fetchScreenData();
+    }, [screenId]);
 
     const validateInput = () => {
         if (!name || !total_row || !total_column) {
@@ -44,64 +59,51 @@ const AddScreen = () => {
             return false;
         }
 
-        if (total_row > 10) {
-            Swal.fire({
-                title: 'Validation Error',
-                text: 'Rows must not exceed 10.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
-            return false;
-        }
-
-        if (total_column > 10) {
-            Swal.fire({
-                title: 'Validation Error',
-                text: 'Columns must not exceed 10.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
-            return false;
-        }
-
         return true;
     };
 
-    const handleAdd = async (e) => {
+    const handleEdit = async (e) => {
         e.preventDefault();
 
         if (!validateInput()) {
             return;
         }
+        const { isConfirmed } = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to update this screen?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'Cancel',
+        });
+        if (isConfirmed) {
+            try {
+                const response = await updateData(`/api/v1/screen/${screenId}/update`, {
+                    name,
+                    total_row,
+                    total_column
+                });
 
-        try {
-            const response = await postData('/api/v1/create-screen', {
-                name,
-                theater_id: theaterId,
-                total_row: total_row,
-                total_column: total_column,
-            });
-
-            console.log("screen-added:", response);
-            if (response.status === "SUCCESS") {
+                if (response.status === 'SUCCESS') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'Okay',
+                    });
+                    navigate(-1);
+                }
+            } catch (error) {
+                console.error('Error updating screen:', error);
                 Swal.fire({
-                    title: 'Success!',
-                    text: response.message,
-                    icon: 'success',
+                    title: 'Error!',
+                    text: error.response?.data?.message,
+                    icon: 'error',
                     confirmButtonText: 'Okay',
                 });
-                setName('');
-                setRows('');
-                setColumns('');
             }
-        } catch (error) {
-            console.error('Error adding screen:', error);
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to add screen. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
         }
     };
 
@@ -115,13 +117,13 @@ const AddScreen = () => {
                 >
                     <Icon path={mdiArrowLeft} size={2} />
                 </div>
-                <h1 className="text-muted mb-3">Add Screen</h1>
+                <h1 className="text-muted mb-3">Edit Screen</h1>
             </div>
             <div className="row">
                 <div className="col-lg-6">
                     <div className="card border-0">
                         <div className="card-body">
-                            <form onSubmit={handleAdd}>
+                            <form onSubmit={handleEdit}>
                                 <div className="form-group mb-3">
                                     <label htmlFor="name">Screen Name</label>
                                     <input
@@ -159,7 +161,7 @@ const AddScreen = () => {
                                 </div>
 
                                 <button type="submit" className="btn btn-info float-right">
-                                    Save
+                                    Save Edit
                                 </button>
                             </form>
                         </div>
@@ -170,4 +172,4 @@ const AddScreen = () => {
     );
 };
 
-export default AddScreen;
+export default EditScreen;
