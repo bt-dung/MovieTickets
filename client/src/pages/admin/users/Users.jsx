@@ -4,7 +4,6 @@ import {
   mdiSquareEditOutline,
   mdiDeleteOutline,
   mdiPlusCircleOutline,
-  mdiMagnify,
 } from "@mdi/js";
 import Swal from "sweetalert2";
 import { useUser } from "../../../context/UserContext";
@@ -83,7 +82,7 @@ const User = () => {
   };
 
   const handleSearch = () => {
-    if(inputTxt !== ""){
+    if (inputTxt !== "") {
       const searchInput = users.filter((user) => {
         return user.name.toLowerCase().includes(inputTxt.toLowerCase());
       });
@@ -200,9 +199,8 @@ const User = () => {
               <nav className="d-flex justify-content-center">
                 <ul className="pagination">
                   <li
-                    className={`page-item ${
-                      currentPage === 0 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${currentPage === 0 ? "disabled" : ""
+                      }`}
                   >
                     <a
                       className="page-link"
@@ -217,9 +215,8 @@ const User = () => {
                   {Array.from({ length: totalPages }, (_, index) => (
                     <li
                       key={index}
-                      className={`page-item ${
-                        currentPage === index ? "active" : ""
-                      }`}
+                      className={`page-item ${currentPage === index ? "active" : ""
+                        }`}
                     >
                       <a
                         className="page-link"
@@ -231,9 +228,8 @@ const User = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      currentPage === totalPages - 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                      }`}
                   >
                     <a
                       className="page-link"
