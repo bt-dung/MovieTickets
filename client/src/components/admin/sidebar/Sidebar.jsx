@@ -11,7 +11,7 @@ const SideBar = () => {
       <div className="left-side-menu">
         <a href="/dashboard" className="logo text-center">
           <span className="logo-lg">
-            <img src={logoAdmin} alt="" height="80" />
+            <img src={logoAdmin} alt="" height="80" className="rounded-circle" />
           </span>
         </a>
         <div className="h-100" id="left-side-menu-container" data-simplebar>

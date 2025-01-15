@@ -7,6 +7,8 @@ import { fetchData } from "../../../api/api";
 const Seats = () => {
   const navigate = useNavigate();
   const [screen, setScreen] = useState();
+  const [totalRow, setTotalRow] = useState()
+  const [totalColumn, setTotalColumn] = useState()
   const { screenId } = useParams();
 
   useEffect(() => {
@@ -14,7 +16,8 @@ const Seats = () => {
     const fetchScreens = async () => {
       try {
         const res = await fetchData(`/api/v1/screen/${screenId}`);
-        setScreen(res.data);
+        setTotalRow(res.total_row)
+        setTotalColumn(res.total_column)
       } catch (error) {
         console.error("Error fetching screen data:", error);
       }
@@ -36,7 +39,6 @@ const Seats = () => {
           <div className="card">
             <div className="card-body">
               <div className="row">
-                {/* Left column for seat legend */}
                 <div className="col-2 bg-warning-subtle">
                   <div className="row mb-2">
                     <div className="col-2">
@@ -64,34 +66,31 @@ const Seats = () => {
                   </div>
                 </div>
 
-                {/* Right column for 5x5 seat layout */}
                 <div className="col-10 d-flex justify-content-center align-items-center">
                   <div>
-                    {/* Display column numbers */}
                     <div className="row mb-2">
                       <div className="col-1"></div>{" "}
-                      {/* Empty cell for row labels */}
                       {[...Array(7).keys()].map((colIndex) => (
                         <div
                           className="col d-flex justify-content-center font-weight-bold"
                           key={colIndex}
                         >
-                          {colIndex + 1} {/* Column numbers */}
+                          {colIndex + 1} 
                         </div>
                       ))}
                     </div>
 
-                    {/* Iterate rows */}
-                    {[...Array(screen.total_row).keys()].map((rowIndex) => (
+                  
+                    {[...Array(totalRow).keys()].map((rowIndex) => (
                       <div className="row mb-2" key={rowIndex}>
-                        {/* Display row label */}
+                     
                         <div className="col-1 d-flex align-items-center font-weight-bold">
                           {String.fromCharCode(65 + rowIndex)}{" "}
                           {/* Row letters (A, B, C, ...) */}
                         </div>
 
                         {/* Seats in the row */}
-                        {[...Array(screen.total_column).keys()].map(
+                        {[...Array(totalColumn).keys()].map(
                           (colIndex) => (
                             <div
                               className="col d-flex justify-content-center"
