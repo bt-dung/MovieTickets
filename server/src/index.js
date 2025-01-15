@@ -14,6 +14,7 @@ const Theater = require("./routes/theater.route")
 const Area = require("./routes/area.route");
 const movieTheater = require("./routes/movieTheater.route");
 const Screen = require("./routes/screen.route");
+const SeatShowtime = require("./routes/seatShowtime.route")
 
 const app = express();
 dotenv.config();
@@ -42,6 +43,7 @@ app.use("/api/v1", Theater);
 app.use("/api/v1/", Area);
 app.use("/api/v1", movieTheater);
 app.use("/api/v1", Screen);
+app.use("/api/v1", SeatShowtime)
 
 
 createTableDB();
