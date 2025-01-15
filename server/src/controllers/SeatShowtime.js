@@ -9,4 +9,4 @@ const insertSeatShowtime = async (req, res) => {
     }
 }
 
-module.exports = insertSeatShowtime
+module.exports = {insertSeatShowtime}
