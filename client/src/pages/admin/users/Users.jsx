@@ -22,9 +22,8 @@ const User = () => {
     const fetchUsers = async (page = 0) => {
       try {
         const response = await fetchData(
-          `/admin/users?pageNumber=${page}&limit=5`
+          `/admin/users?pageNumber=${page}&limit=8`
         );
-        console.log(response);
         setUsers(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {
