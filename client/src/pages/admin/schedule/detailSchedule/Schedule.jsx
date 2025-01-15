@@ -14,14 +14,25 @@ import { deleteData, fetchData } from "../../../../api/api";
 
 const Schedule = () => {
     const [showtimes, setShowtime] = useState([]);
-    const [movieName, setMovieName] = useState('');
-    const [screenName, setScreenName] = useState('');
     const { theaterId } = useParams();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    useEffect(() => {
+        const fetchShowtime = async (page = 0) => {
+            try {
+                const showtimes = await fetchData(`/api/v1/showtimes/${theaterId}/${selectedDate}?pageNumber=${page}&limit=8`);
+                console.log(showtimes);
+                setShowtime(showtimes.data);
+                setTotalPages(showtimes.totalPages);
+            } catch (error) {
+                console.log("Error fetching showtimes:", error);
+            }
+        };
+        fetchShowtime(currentPage);
+    }, [currentPage, theaterId, selectedDate]);
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
             setCurrentPage(page);
@@ -60,6 +71,13 @@ const Schedule = () => {
         }
     };
 
+    const formatTime = (time) => {
+        const date = new Date(time);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
     return (
         <>
             <h1 className="text-muted mb-3">Schedule</h1>
@@ -69,15 +87,14 @@ const Schedule = () => {
                         <div className="card-body">
                             <div className="row mb-2">
                                 <div className="col d-flex justify-content-between align-items-center">
-                                    <a href="/admin/add-user" className="btn btn-danger mr-2">
+                                    <a href={`/admin/add-schedule/${theaterId}`} className="btn btn-danger mr-2">
                                         <Icon path={mdiPlusCircleOutline} size={1} /> Add Schedule
                                     </a>
-
                                     <div className="form-group mb-0">
                                         <div className="input-group rounded">
                                             <DatePicker
                                                 selected={selectedDate}
-                                                onChange={(date) => setSelectedDate(date)}
+                                                onChange={(date) => { setSelectedDate(date) }}
                                                 className="form-control"
                                                 dateFormat="yyyy/MM/dd"
                                             />
@@ -137,11 +154,10 @@ const Schedule = () => {
                                                             {showtime.id}
                                                         </a>
                                                     </td>
-                                                    <td>{showtime.name}</td>
-                                                    <td>{movieName}</td>
-                                                    <td>{screenName}</td>
-                                                    <td>{showtime.start_time}</td>
-                                                    <td>{showtime.endtime}</td>
+                                                    <td>{showtime.movie?.title}</td>
+                                                    <td>{showtime.screen?.name}</td>
+                                                    <td>{formatTime(showtime.start_time)}</td>
+                                                    <td>{formatTime(showtime.end_time)}</td>
                                                     <td>
                                                         <a href={`/admin/edit-showtime?showtimeId=${showtime.id}`} className="action-icon">
                                                             <Icon path={mdiSquareEditOutline} size={1} />
