@@ -34,7 +34,7 @@ const DetailTheater = () => {
                 setTotalScreens(res.total_screens);
                 setTotalSeats(res.total_seats);
 
-                const movieTheater = await fetchData(`api/v1/movies-theater/${theaterId}?pageNumber=${page}&limit=8`);
+                const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}?pageNumber=${page}&limit=8`);
                 setTotalPages(movieTheater.totalPages);
                 setMovies(movieTheater.data);
             } catch (error) {

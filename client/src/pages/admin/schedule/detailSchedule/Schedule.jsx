@@ -70,12 +70,11 @@ const Schedule = () => {
             }
         }
     };
-
-    const formatTime = (time) => {
-        const date = new Date(time);
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
+    const formatTime = (timeString) => {
+        const date = new Date(timeString);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     };
 
     return (
@@ -87,7 +86,7 @@ const Schedule = () => {
                         <div className="card-body">
                             <div className="row mb-2">
                                 <div className="col d-flex justify-content-between align-items-center">
-                                    <a href={`/admin/add-schedule/${theaterId}`} className="btn btn-danger mr-2">
+                                    <a href={`/admin/add-schedule/${theaterId}?dateTime=${selectedDate}`} className="btn btn-danger mr-2">
                                         <Icon path={mdiPlusCircleOutline} size={1} /> Add Schedule
                                     </a>
                                     <div className="form-group mb-0">

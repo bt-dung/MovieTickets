@@ -29,7 +29,7 @@ const Showtime = sequelize.define('showtimes', {
         onUpdate: 'CASCADE',
     },
     date_time: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING(20),
         allowNull: false,
     },
     start_time: {
@@ -47,6 +47,8 @@ const Showtime = sequelize.define('showtimes', {
 
 Showtime.belongsTo(Movies, { foreignKey: 'movie_id' })
 Showtime.belongsTo(Screens, { foreignKey: 'screen_id' })
+
+
 Showtime.insertShowtime = async (showtimeData) => {
     try {
         const existingShowtimes = await Showtime.findAll({
@@ -70,8 +72,8 @@ Showtime.insertShowtime = async (showtimeData) => {
             return newShowtime;
         }
         else {
-            console.log(`Showtime alredy exists at:${showtimeData.start_time}`);
-            throw new Error(`Showtime alredy exists at:${showtimeData.start_time}`);
+            console.log(`Showtime alredy exists at: ${showtimeData.start_time}`);
+            throw new Error(`Showtime alredy exists at: ${showtimeData.start_time}`);
         }
     } catch (error) {
         throw error;
@@ -82,7 +84,6 @@ Showtime.getShowtimebyTheater = async (theater_id, dateTime, page, limit) => {
     try {
         const screen = await Screens.findAll({ where: { theater_id: theater_id }, attributes: ['id'] });
         const screenIds = screen.map(screen => screen.id);
-
         const totalShowtimes = await Showtime.count({
             where: {
                 screen_id: { [Op.in]: screenIds },

@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db');
-
+const Movies = require("./Movies");
 const MovieTheater = sequelize.define('movie_theater', {
     theater_id: {
         type: DataTypes.INTEGER,
@@ -29,6 +29,7 @@ const MovieTheater = sequelize.define('movie_theater', {
 });
 
 module.exports = MovieTheater;
+MovieTheater.belongsTo(Movies, { foreignKey: 'movie_id' });
 
 MovieTheater.insertData = async function (theater_id, movie_id) {
     try {

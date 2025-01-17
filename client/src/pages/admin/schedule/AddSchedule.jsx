@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { postData } from '../../../api/api';
+import { fetchData, postData } from '../../../api/api';
 import Icon from '@mdi/react';
 import { mdiArrowLeft } from '@mdi/js';
 
 const AddSchedule = () => {
     const navigate = useNavigate();
     const { theaterId } = useParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    const date = new Date(urlParams.get('dateTime'));
+    console.log("date1:", date.toISOString());
+    const formatDate = (date) => {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    };
+    console.log("Date-time:", formatDate(date));
+    const [movies, setMovies] = useState([]);
+    const [screens, setScreens] = useState([]);
+    const [movie_id, setMovieId] = useState('');
+    const [screen_id, setScreenId] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const movieResponse = await fetchData(`/api/v1/movies-theater/${theaterId}`);
+                const screenResponse = await fetchData(`/api/v1/screens/${theaterId}`);
+                setMovies(movieResponse.data);
+                setScreens(screenResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to load movies or screens.',
+                    icon: 'error',
+                    confirmButtonText: 'Okay',
+                });
+            }
+        };
+        getData();
+    }, [theaterId]);
 
     const validateInput = () => {
-        if (!name || !total_row || !total_column) {
+        if (!movie_id || !screen_id || !startTime || !endTime) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields are required.',
@@ -19,41 +55,12 @@ const AddSchedule = () => {
             });
             return false;
         }
-
-        if (isNaN(total_row) || total_row <= 0) {
+        console.log(new Date(startTime));
+        console.log(new Date(endTime));
+        if (new Date(startTime) > new Date(endTime)) {
             Swal.fire({
                 title: 'Validation Error',
-                text: 'Rows must be a positive number.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
-            return false;
-        }
-
-        if (isNaN(total_column) || total_column <= 0) {
-            Swal.fire({
-                title: 'Validation Error',
-                text: 'Columns must be a positive number.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
-            return false;
-        }
-
-        if (total_row > 10) {
-            Swal.fire({
-                title: 'Validation Error',
-                text: 'Rows must not exceed 10.',
-                icon: 'error',
-                confirmButtonText: 'Okay',
-            });
-            return false;
-        }
-
-        if (total_column > 10) {
-            Swal.fire({
-                title: 'Validation Error',
-                text: 'Columns must not exceed 10.',
+                text: 'Start time must be before end time.',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
@@ -71,39 +78,43 @@ const AddSchedule = () => {
         }
 
         try {
-            const response = await postData('/api/v1/create-screen', {
-                name,
-                theater_id: theaterId,
-                total_row: total_row,
-                total_column: total_column,
+            const response = await postData('/api/v1/insertShowtime', {
+                movie_id: movie_id,
+                screen_id: screen_id,
+                date_time: formatDate(date),
+                start_time: startTime,
+                end_time: endTime,
             });
-
-            console.log("screen-added:", response);
-            if (response.status === "SUCCESS") {
+            if (response.status === 'SUCCESS') {
                 Swal.fire({
                     title: 'Success!',
                     text: response.message,
                     icon: 'success',
                     confirmButtonText: 'Okay',
+                }).then(() => {
+                    navigate(-1);
                 });
-                setName('');
-                setRows('');
-                setColumns('');
+            } else if (response.data.status === 'FAILED') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: response.message || 'Failed to add schedule. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'Okay',
+                });
             }
         } catch (error) {
-            console.error('Error adding screen:', error);
+            console.error('Error adding schedule:', error);
             Swal.fire({
                 title: 'Error!',
-                text: 'Failed to add screen. Please try again.',
+                text: error.response.data.message,
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
         }
     };
-
     return (
         <>
-            <div className="d-flex w-100 ">
+            <div className="d-flex w-100">
                 <div
                     type="button"
                     className="btn mr-3"
@@ -111,7 +122,7 @@ const AddSchedule = () => {
                 >
                     <Icon path={mdiArrowLeft} size={2} />
                 </div>
-                <h1 className="text-muted mb-3">Add Screen</h1>
+                <h1 className="text-muted mb-3">Add Schedule</h1>
             </div>
             <div className="row">
                 <div className="col-lg-6">
@@ -119,37 +130,72 @@ const AddSchedule = () => {
                         <div className="card-body">
                             <form onSubmit={handleAdd}>
                                 <div className="form-group mb-3">
-                                    <label htmlFor="name">Screen Name</label>
+                                    <label htmlFor="date">Date</label>
                                     <input
                                         type="text"
-                                        id="name"
+                                        id="date"
                                         className="form-control"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        value={formatDate(date)}
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label htmlFor="movie">Select Movie</label>
+                                    <select
+                                        id="movie"
+                                        className="form-control"
+                                        value={movie_id}
+                                        onChange={(e) => setMovieId(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">-- Select Movie --</option>
+                                        {movies.map((movie) => (
+                                            <option key={movie.id} value={movie.id}>
+                                                {movie.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label htmlFor="screen">Select Screen</label>
+                                    <select
+                                        id="screen"
+                                        className="form-control"
+                                        value={screen_id}
+                                        onChange={(e) => setScreenId(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">-- Select Screen --</option>
+                                        {screens.map((screen) => (
+                                            <option key={screen.id} value={screen.id}>
+                                                {screen.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label htmlFor="start_time">Start Time</label>
+                                    <input
+                                        type="datetime-local"
+                                        id="start_time"
+                                        className="form-control"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
                                         required
                                     />
                                 </div>
 
                                 <div className="form-group mb-3">
-                                    <label htmlFor="rows">Number of Rows</label>
+                                    <label htmlFor="end_time">End Time</label>
                                     <input
-                                        type="number"
-                                        id="rows"
+                                        type="datetime-local"
+                                        id="end_time"
                                         className="form-control"
-                                        value={total_row}
-                                        onChange={(e) => setRows(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group mb-3">
-                                    <label htmlFor="columns">Number of Columns</label>
-                                    <input
-                                        type="number"
-                                        id="columns"
-                                        className="form-control"
-                                        value={total_column}
-                                        onChange={(e) => setColumns(e.target.value)}
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
                                         required
                                     />
                                 </div>
