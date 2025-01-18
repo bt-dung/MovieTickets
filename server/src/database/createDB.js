@@ -117,29 +117,24 @@ const create_table_movies = [
         FOREIGN KEY (screen_id) REFERENCES screens(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
-    `CREATE TABLE IF NOT EXISTS seatShowtime (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        showtime_id INT,
-        seat_id INT,
-        status ENUM('Available', 'Booked', 'Pending') DEFAULT 'Available',
-        FOREIGN KEY (showtime_id) REFERENCES showtimes(id) ON DELETE SET NULL ON UPDATE CASCADE,
-        FOREIGN KEY (seat_id) REFERENCES seats(id) ON DELETE CASCADE ON UPDATE CASCADE
-    );`,
-
     `CREATE TABLE IF NOT EXISTS invoices (
         id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
         purchase_date DATETIME DEFAULT CURRENT_TIMESTAMP,
         TotalAmount DECIMAL(10,2) NOT NULL DEFAULT 0,
         PaymentStatus ENUM('Paid', 'Pending', 'Cancelled') DEFAULT 'Pending',
+        theater_id INT NOT NULL,
+        FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
     `CREATE TABLE IF NOT EXISTS tickets (
         id INT PRIMARY KEY AUTO_INCREMENT,
         invoice_id INT,
-        seatShowtime_id INT,
-        FOREIGN KEY (seatShowtime_id) REFERENCES seatShowtime(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        showtime_id INT,
+        seat_id INT,
+        FOREIGN KEY (showtime_id) REFERENCES showtimes(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (seat_id) REFERENCES seats(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
