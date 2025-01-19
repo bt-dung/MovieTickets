@@ -112,13 +112,16 @@ Showtime.getShowtimebyTheater = async (theater_id, dateTime, page, limit) => {
     }
 };
 
-Showtime.updateShowtime = async (id, updatedData) => {
+Showtime.updateShowtime = async (id, updateData) => {
     try {
-        const [updatedRows] = await Showtime.update(updatedData, {
-            where: { id },
-        });
-        return updatedRows;
+        const showtime = await Showtime.findByPk(id);
+        if (!showtime) {
+            throw new Error(`Screen not found with id: ${id}`);
+        }
+        await showtime.update(updateData);
+        return showtime;
     } catch (error) {
+        console.error("Error updating screen:", error);
         throw error;
     }
 };

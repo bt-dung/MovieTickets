@@ -53,13 +53,17 @@ const Schedule = () => {
 
         if (isConfirmed) {
             try {
-                await deleteData(`/admin/showtime/${id}/delete`);
+                await deleteData(`/api/v1/showtime/${id}/delete`);
                 Swal.fire({
                     title: "Deleted!",
                     text: "Showtime deleted successfully.",
                     icon: "success",
                 });
-                window.location.reload();
+                const showtimes = await fetchData(
+                    `/api/v1/showtimes/${theaterId}/${selectedDate}?pageNumber=${currentPage}&limit=8`
+                );
+                setShowtime(showtimes.data);
+                setTotalPages(showtimes.totalPages);
             } catch (error) {
                 console.error("Error deleting Showtime:", error);
                 Swal.fire({
@@ -158,7 +162,7 @@ const Schedule = () => {
                                                     <td>{formatTime(showtime.start_time)}</td>
                                                     <td>{formatTime(showtime.end_time)}</td>
                                                     <td>
-                                                        <a href={`/admin/edit-showtime?showtimeId=${showtime.id}`} className="action-icon">
+                                                        <a href={`/admin/edit-showtime/${showtime.id}`} className="action-icon">
                                                             <Icon path={mdiSquareEditOutline} size={1} />
                                                         </a>
                                                         <a

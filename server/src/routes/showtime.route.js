@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { ScheduleShowtime, getShowtime } = require('../controllers/Showtime');
+const { ScheduleShowtime, getAllShowtimeofTheater, getShowtime, updateShowtime, deleteShowtime } = require('../controllers/Showtime');
 
 router.post("/insertShowtime", ScheduleShowtime)
-    .get("/showtimes/:theaterId/:dateTime", getShowtime);
+    .get("/showtimes/:theaterId/:dateTime", getAllShowtimeofTheater)
+    .get("/showtime/:id", getShowtime)
+    .patch("/showtime/:id/update", updateShowtime)
+    .delete("/showtime/:id/delete", deleteShowtime);
 module.exports = router;
