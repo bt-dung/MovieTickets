@@ -26,7 +26,7 @@ const getAllUser = async (req, res) => {
             offset: page * limit,
             limit: limit,
         });
-        return res.json({ content: data, totalPages, });
+        return res.json({ content: data, totalPages });
     } catch (error) {
         console.log("Error:", error);
         return res.status(500).json({

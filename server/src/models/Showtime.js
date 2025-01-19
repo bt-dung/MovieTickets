@@ -1,6 +1,7 @@
 const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../database/db');
-
+const Screens = require("./Screens");
+const Movies = require("./Movies");
 const Showtime = sequelize.define('showtimes', {
     id: {
         type: DataTypes.INTEGER,
@@ -44,6 +45,8 @@ const Showtime = sequelize.define('showtimes', {
     timestamps: false,
 });
 
+Showtime.belongsTo(Movies, { foreignKey: 'movie_id' })
+Showtime.belongsTo(Screens, { foreignKey: 'screen_id' })
 Showtime.insertShowtime = async (showtimeData) => {
     try {
         const existingShowtimes = await Showtime.findAll({
@@ -61,7 +64,6 @@ Showtime.insertShowtime = async (showtimeData) => {
                 ]
             }
         });
-        console.log("existingShowtimes:", existingShowtimes.length === 0);
 
         if (existingShowtimes.length === 0) {
             const newShowtime = await Showtime.create(showtimeData);
@@ -72,6 +74,39 @@ Showtime.insertShowtime = async (showtimeData) => {
             throw new Error(`Showtime alredy exists at:${showtimeData.start_time}`);
         }
     } catch (error) {
+        throw error;
+    }
+};
+
+Showtime.getShowtimebyTheater = async (theater_id, dateTime, page, limit) => {
+    try {
+        const screen = await Screens.findAll({ where: { theater_id: theater_id }, attributes: ['id'] });
+        const screenIds = screen.map(screen => screen.id);
+
+        const totalShowtimes = await Showtime.count({
+            where: {
+                screen_id: { [Op.in]: screenIds },
+                date_time: { [Op.startsWith]: dateTime }
+            }
+        });
+        const showtimes = await Showtime.findAll({
+            where: { screen_id: { [Op.in]: screenIds }, date_time: { [Op.startsWith]: dateTime } },
+            include: [
+                {
+                    model: Movies,
+                    attributes: ['title'],
+                },
+                {
+                    model: Screens,
+                    attributes: ['name'],
+                }
+            ],
+            offset: page * limit,
+            limit: limit,
+        });
+        return { showtimes, totalShowtimes };
+    } catch (error) {
+        console.error("Error fetching showtime by TheaterId:", error);
         throw error;
     }
 };

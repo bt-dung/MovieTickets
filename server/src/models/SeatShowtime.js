@@ -31,7 +31,7 @@ const SeatShowtime = sequelize.define('seatShowtime', {
 
 SeatShowtime.insertSeatShowtime = async (data) => {
     try {
-        const existingSeatShowtime = await SeatShowtime.findByPk(data.id);
+        const existingSeatShowtime = await SeatShowtime.findAll(data.id, data.seat_id, data.showtime_id);
         if (!existingSeatShowtime) {
             const newSeatShowtime = await SeatShowtime.create(data);
             console.log('SeatShowtime created:', newSeatShowtime.title);
