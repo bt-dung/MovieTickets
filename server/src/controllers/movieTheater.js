@@ -22,8 +22,9 @@ const insertMovie = async (req, res) => {
 
 const getMoviesInTheater = async (req, res) => {
     const { theaterId } = req.params;
-    const page = parseInt(req.query.pageNumber);
-    const limit = parseInt(req.query.limit);
+    const page = req.query.pageNumber ? parseInt(req.query.pageNumber) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+
     try {
         const movieIds = await MovieTheater.findAll({
             where: { theater_id: theaterId },
@@ -33,19 +34,42 @@ const getMoviesInTheater = async (req, res) => {
         const movieIdList = movieIds.map(movie => movie.movie_id);
 
         if (movieIdList.length === 0) {
-            return res.json({ status: "SUCCESS", message: "No movies found in the specified theater.", data: [], totalPages: 0 });
+            return res.json({
+                status: "SUCCESS",
+                message: "No movies found in the specified theater.",
+                data: [],
+                totalPages: 0,
+            });
         }
 
+        if (page === null || limit === null) {
+            const movies = await Movies.getMoviesByIds(movieIdList);
+            return res.json({
+                status: "SUCCESS",
+                message: "Fetch all movies in theater successful!!",
+                data: movies,
+            });
+        }
         const totalMovies = movieIdList.length;
         const totalPages = Math.ceil(totalMovies / limit);
 
         const paginatedMovieIds = movieIdList.slice(page * limit, (page + 1) * limit);
-        console.log(paginatedMovieIds);
         const movies = await Movies.getMoviesByIds(paginatedMovieIds);
-        return res.json({ status: "SUCCESS", message: "Fetch movies in theater successful!!", data: movies, totalPages, });
+
+        return res.json({
+            status: "SUCCESS",
+            message: "Fetch movies in theater successful!!",
+            data: movies,
+            totalPages,
+        });
     } catch (error) {
         console.error("Error while fetching movies in theater:", error);
-        return res.json({ status: "FAILED", message: "Error while fetching movies in theater", error: error.message, data: null });
+        return res.json({
+            status: "FAILED",
+            message: "Error while fetching movies in theater",
+            error: error.message,
+            data: null,
+        });
     }
 };
 

@@ -1,33 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchData, postData } from '../../../api/api';
+import { fetchData, updateData } from '../../../api/api';
 import Icon from '@mdi/react';
 import { mdiArrowLeft } from '@mdi/js';
 
-const AddSchedule = () => {
+const EditSchedule = () => {
     const navigate = useNavigate();
-    const { theaterId } = useParams();
-    const urlParams = new URLSearchParams(window.location.search);
-    const date = new Date(urlParams.get('dateTime'));
-    console.log("date1:", date.toISOString());
-    const formatDate = (date) => {
-        const year = date.getUTCFullYear();
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        return `${year}/${month}/${day}`;
-    };
-    console.log("Date-time:", formatDate(date));
+    const { scheduleId } = useParams();
+    const [theaterId, setTheaterId] = useState(null);
     const [movies, setMovies] = useState([]);
     const [screens, setScreens] = useState([]);
     const [movie_id, setMovieId] = useState('');
     const [screen_id, setScreenId] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [date, setDate] = useState('');
+    const [start_time, setStartTime] = useState('');
+    const [end_time, setEndTime] = useState('');
+
+    const formatDateTime = (dateTime) => {
+        const date = new Date(dateTime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
 
     useEffect(() => {
         const getData = async () => {
             try {
+                const scheduleResponse = await fetchData(`/api/v1/showtime/${scheduleId}`);
+                console.log(scheduleResponse);
+                setMovieId(scheduleResponse.movie_id);
+                setScreenId(scheduleResponse.screen_id);
+                setDate(scheduleResponse.date_time);
+                setStartTime(formatDateTime(scheduleResponse.start_time));
+                setEndTime(formatDateTime(scheduleResponse.end_time));
+                setTheaterId(scheduleResponse.screen.theater_id);
+
                 const movieResponse = await fetchData(`/api/v1/movies-theater/${theaterId}`);
                 const screenResponse = await fetchData(`/api/v1/screens/${theaterId}`);
                 setMovies(movieResponse.data);
@@ -36,17 +47,17 @@ const AddSchedule = () => {
                 console.error('Error fetching data:', error);
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Failed to load movies or screens.',
+                    text: 'Failed to load data. Please try again.',
                     icon: 'error',
                     confirmButtonText: 'Okay',
                 });
             }
         };
         getData();
-    }, [theaterId]);
+    }, [theaterId, scheduleId]);
 
     const validateInput = () => {
-        if (!movie_id || !screen_id || !startTime || !endTime) {
+        if (!movie_id || !screen_id || !start_time || !end_time) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields are required.',
@@ -55,9 +66,7 @@ const AddSchedule = () => {
             });
             return false;
         }
-        console.log(new Date(startTime));
-        console.log(new Date(endTime));
-        if (new Date(startTime) > new Date(endTime)) {
+        if (new Date(start_time) > new Date(end_time)) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'Start time must be before end time.',
@@ -70,7 +79,7 @@ const AddSchedule = () => {
         return true;
     };
 
-    const handleAdd = async (e) => {
+    const handleEdit = async (e) => {
         e.preventDefault();
 
         if (!validateInput()) {
@@ -78,13 +87,14 @@ const AddSchedule = () => {
         }
 
         try {
-            const response = await postData('/api/v1/insertShowtime', {
-                movie_id: movie_id,
-                screen_id: screen_id,
-                date_time: formatDate(date),
-                start_time: startTime,
-                end_time: endTime,
+            const response = await updateData(`/api/v1/showtime/${scheduleId}/update`, {
+                movie_id,
+                screen_id,
+                date_time: date,
+                start_time: start_time,
+                end_time: end_time,
             });
+
             if (response.status === 'SUCCESS') {
                 Swal.fire({
                     title: 'Success!',
@@ -97,21 +107,22 @@ const AddSchedule = () => {
             } else if (response.data.status === 'FAILED') {
                 Swal.fire({
                     title: 'Error!',
-                    text: response.message || 'Failed to add schedule. Please try again.',
+                    text: response.message || 'Failed to update schedule. Please try again.',
                     icon: 'error',
                     confirmButtonText: 'Okay',
                 });
             }
         } catch (error) {
-            console.error('Error adding schedule:', error);
+            console.error('Error updating schedule:', error);
             Swal.fire({
                 title: 'Error!',
-                text: error.response.data.message,
+                text: error.response?.data?.message || 'Failed to update schedule. Please try again.',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
         }
     };
+
     return (
         <>
             <div className="d-flex w-100">
@@ -122,20 +133,20 @@ const AddSchedule = () => {
                 >
                     <Icon path={mdiArrowLeft} size={2} />
                 </div>
-                <h1 className="text-muted mb-3">Add Schedule</h1>
+                <h1 className="text-muted mb-3">Edit Schedule</h1>
             </div>
             <div className="row">
                 <div className="col-lg-6">
                     <div className="card border-0">
                         <div className="card-body">
-                            <form onSubmit={handleAdd}>
+                            <form onSubmit={handleEdit}>
                                 <div className="form-group mb-3">
                                     <label htmlFor="date">Date</label>
                                     <input
                                         type="text"
                                         id="date"
                                         className="form-control"
-                                        value={formatDate(date)}
+                                        value={date}
                                         disabled
                                     />
                                 </div>
@@ -182,7 +193,7 @@ const AddSchedule = () => {
                                         type="datetime-local"
                                         id="start_time"
                                         className="form-control"
-                                        value={startTime}
+                                        value={start_time}
                                         onChange={(e) => setStartTime(e.target.value)}
                                         required
                                     />
@@ -194,14 +205,14 @@ const AddSchedule = () => {
                                         type="datetime-local"
                                         id="end_time"
                                         className="form-control"
-                                        value={endTime}
+                                        value={end_time}
                                         onChange={(e) => setEndTime(e.target.value)}
                                         required
                                     />
                                 </div>
 
                                 <button type="submit" className="btn btn-info float-right">
-                                    Save
+                                    Save Changes
                                 </button>
                             </form>
                         </div>
@@ -212,4 +223,4 @@ const AddSchedule = () => {
     );
 };
 
-export default AddSchedule;
+export default EditSchedule;
