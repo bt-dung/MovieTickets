@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db');
 const Invoices = require("./Invoices");
+const Seats = require("./Seat");
+const SeatType = require("./SeatType");
 const Tickets = sequelize.define('tickets', {
     id: {
         type: DataTypes.INTEGER,
@@ -41,6 +43,8 @@ const Tickets = sequelize.define('tickets', {
     tableName: 'tickets',
     timestamps: false,
 });
+Invoices.hasMany(Tickets, { foreignKey: 'invoice_id' });
+Tickets.belongsTo(Invoices, { foreignKey: 'invoice_id' });
 
 Tickets.getTicketsByTheater = async (theaterId) => {
     try {
@@ -63,6 +67,10 @@ Tickets.getTicketsByTheater = async (theaterId) => {
  */
 Tickets.createTicket = async (ticketData) => {
     try {
+        const existingTicket = Tickets.findOne({ where: { showtime_id: ticketData.showtime_id, seat_id: ticketData.seat_id } });
+        if (existingTicket.lenght === 0) {
+            throw new Error(`Seat ${ticketData.seat_id} booked!!`);
+        }
         const newTicket = await Tickets.create(ticketData);
         return newTicket;
     } catch (error) {
@@ -108,5 +116,25 @@ Tickets.deleteTicket = async (id) => {
     }
 };
 
+Tickets.afterCreate(async (ticket, options) => {
+    try {
+        const invoice = await Invoices.findByPk(ticket.invoice_id);
+        if (!invoice) return;
+
+        const seat = await Seats.findOne({
+            where: { id: ticket.seat_id },
+            include: { model: SeatType, attributes: ["price"] },
+        });
+
+        if (!seat) return;
+
+        await Invoices.increment("TotalAmount", {
+            by: parseFloat(seat.seat_type.price) || 0,
+            where: { id: invoice.id },
+        });
+    } catch (error) {
+        console.error('Error prepare the invoice :', error);
+    }
+});
 
 module.exports = Tickets;

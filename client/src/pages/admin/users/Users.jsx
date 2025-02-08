@@ -171,7 +171,7 @@ const User = () => {
                             )}
                           </td>
                           <td>
-                            <a href={`/admin/edit-user?userID=${user.id}`} className="action-icon">
+                            <a href={`/admin/edit-user/${user.id}`} className="action-icon">
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
                             <a

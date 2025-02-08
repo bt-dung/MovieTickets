@@ -1,6 +1,6 @@
 const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../database/db');
-
+const SeatType = require("./SeatType");
 const Seat = sequelize.define('seats', {
     id: {
         type: DataTypes.INTEGER,
@@ -35,6 +35,8 @@ const Seat = sequelize.define('seats', {
     tableName: 'seats',
     timestamps: false,
 });
+Seat.belongsTo(SeatType, { foreignKey: "seat_type_id" });
+SeatType.hasMany(Seat, { foreignKey: "seat_type_id" });
 
 Seat.insertSeat = async (seatData) => {
     try {

@@ -1,5 +1,5 @@
 import Icon from "@mdi/react";
-import {  mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip, mdiCalendarEditOutline, mdiVideoVintage } from "@mdi/js";
+import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip, mdiCalendarEditOutline, mdiVideoVintage, mdiInvoiceListOutline, mdiFoodForkDrink } from "@mdi/js";
 import logoAdmin from "../../../../assets/images/logo/logo1.png";
 import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
@@ -64,6 +64,26 @@ const SideBar = () => {
               >
                 <Icon path={mdiVideoVintage} size={1.5} className="me-3" />
                 <span>Screens</span>
+              </a>
+            </li>
+
+            <li className="side-nav-item">
+              <a
+                href={userRole === "admin_role" ? "/admin/invoices" : `/admin/detail-invoice/${theaterId}`}
+                className="side-nav-link d-flex align-items-center py-2"
+              >
+                <Icon path={mdiInvoiceListOutline} size={1.5} className="me-3" />
+                <span>Invoices</span>
+              </a>
+            </li>
+
+            <li className="side-nav-item">
+              <a
+                href="/admin/services"
+                className="side-nav-link d-flex align-items-center py-2"
+              >
+                <Icon path={mdiFoodForkDrink} size={1.5} className="me-3" />
+                <span>Services</span>
               </a>
             </li>
           </ul>

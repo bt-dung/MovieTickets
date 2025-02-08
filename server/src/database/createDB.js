@@ -151,6 +151,7 @@ const create_table_movies = [
     `CREATE TABLE IF NOT EXISTS services (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(50),
+        img VARCHAR(255),
         inventory INT,
         price DECIMAl(10,2) NOT NULL,
         description TEXT DEFAULT NULL

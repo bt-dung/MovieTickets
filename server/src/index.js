@@ -15,6 +15,10 @@ const Area = require("./routes/area.route");
 const movieTheater = require("./routes/movieTheater.route");
 const Screen = require("./routes/screen.route");
 const Seat = require("./routes/seat.route");
+const Invoice = require("./routes/invoice.route");
+const Ticket = require("./routes/ticket.route");
+const BookingTicket = require("./routes/bookTicket.route");
+const Service = require("./routes/service.route");
 
 const app = express();
 dotenv.config();
@@ -44,8 +48,10 @@ app.use("/api/v1/", Area);
 app.use("/api/v1", movieTheater);
 app.use("/api/v1", Screen);
 app.use("/api/v1", Seat);
-
-
+app.use("/api/v1", Invoice);
+app.use("/api/v1", Ticket);
+app.use("/api/v1", BookingTicket);
+app.use("/api/v1", Service);
 
 createTableDB();
 connectDB();

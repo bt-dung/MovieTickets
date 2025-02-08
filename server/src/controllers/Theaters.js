@@ -39,7 +39,7 @@ const updateTheater = async (req, res) => {
         return res.status(200).json({
             status: "SUCCESS",
             message: 'User updated successfully',
-            user: updatedTheater
+            theater: updatedTheater
         });
     } catch (error) {
         console.error('Error updating theater:', error);

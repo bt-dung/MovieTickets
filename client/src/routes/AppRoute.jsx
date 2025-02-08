@@ -19,6 +19,11 @@ import Seats from "../pages/admin/screens/Seats";
 import EditScreen from "../pages/admin/screens/EditScreen"
 import AddSchedule from "../pages/admin/schedule/AddSchedule";
 import EditSchedule from "../pages/admin/schedule/EditSchedule";
+import InvoiceMain from "../pages/admin/invoice/InvoiceMain";
+import Invoices from "../pages/admin/invoice/Invoices";
+import Service from "../pages/admin/service/Service";
+import AddService from "../pages/admin/service/AddService";
+import EditService from "../pages/admin/service/EditService";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome }
@@ -43,4 +48,9 @@ export const adminRoutes = [
     { path: '/detail-screen/:screenId/seats', component: Seats, layout: MainLayoutAdmin },
     { path: '/add-screen/:theaterId', component: AddScreen, layout: MainLayoutAdmin },
     { path: '/edit-screen/:screenId', component: EditScreen, layout: MainLayoutAdmin },
+    { path: '/invoices', component: InvoiceMain, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
+    { path: '/detail-invoice/:theaterId', component: Invoices, layout: MainLayoutAdmin },
+    { path: '/services', component: Service, layout: MainLayoutAdmin },
+    { path: '/add-service', component: AddService, layout: MainLayoutAdmin },
+    { path: '/edit-service/:serviceId', component: EditService, layout: MainLayoutAdmin },
 ];
