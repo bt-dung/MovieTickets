@@ -4,6 +4,7 @@ import {
   mdiSquareEditOutline,
   mdiDeleteOutline,
   mdiPlusCircleOutline,
+  mdiMagnify,
 } from "@mdi/js";
 import Swal from "sweetalert2";
 import { useUser } from "../../../context/UserContext";
@@ -13,7 +14,8 @@ const User = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [inputTxt, setInputTxt] = useState("");
+  const [inputSearch, setInputSearch] = useState("");
+  const [userFilter, setUserFilter] = useState([]);
 
   const userCurrent = useUser();
   const roleCurrent = userCurrent.user?.role;
@@ -33,6 +35,12 @@ const User = () => {
 
     fetchUsers(currentPage);
   }, [currentPage]);
+
+  useEffect(() => {
+    if (inputSearch.trim() === "") {
+      setUserFilter(users);
+    }
+  }, [inputSearch, users]);
 
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
@@ -81,12 +89,10 @@ const User = () => {
   };
 
   const handleSearch = () => {
-    if (inputTxt !== "") {
-      const searchInput = users.filter((user) => {
-        return user.name.toLowerCase().includes(inputTxt.toLowerCase());
-      });
-      setUsers(searchInput);
-    }
+    const filterUser = users.filter((item) =>
+      item.name.toLowerCase().includes(inputSearch.toLowerCase())
+    );
+    setUserFilter(filterUser);
   };
 
   return (
@@ -96,20 +102,31 @@ const User = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <div className="row mb-2">
+              <div className="row mb-2" style={{ display: "flex", justifyContent: "space-between" }}>
                 <div className="col-sm-8">
                   <a href="/admin/add-user" className="btn btn-danger mb-2">
                     <Icon path={mdiPlusCircleOutline} size={1} /> Add User
                   </a>
                 </div>
-                <div className="input-group col-sm-4 d-flex">
+                <div className="input-group" style={{ maxWidth: "400px" }}>
                   <input
                     type="text"
-                    placeholder="Search user"
-                    value={inputTxt}
-                    onChange={(e) => setInputTxt(e.target.value)}
-                    onSubmit={handleSearch}
+                    className="form-control"
+                    placeholder="Enter user name..."
+                    aria-label="Search"
+                    style={{ height: "100%" }}
+                    aria-describedby="search-icon"
+                    value={inputSearch}
+                    onChange={(e) => setInputSearch(e.target.value)}
                   />
+                  <span
+                    className="input-group-text"
+                    id="search-icon"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleSearch}
+                  >
+                    <Icon path={mdiMagnify} size={1} />
+                  </span>
                 </div>
               </div>
 
@@ -128,12 +145,14 @@ const User = () => {
                       <th>Address</th>
                       <th>Score</th>
                       <th>Verified</th>
-                      <th className="row" style={{ width: "50px" }}>Action</th>
+                      <th className="row" style={{ width: "50px" }}>
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {users.length > 0 ? (
-                      users.map((user, index) => (
+                    {userFilter.length > 0 ? (
+                      userFilter.map((user, index) => (
                         <tr key={index}>
                           <td>
                             <div className="custom-control custom-checkbox">
