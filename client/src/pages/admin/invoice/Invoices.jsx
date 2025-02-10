@@ -24,6 +24,7 @@ const Invoices = () => {
     useEffect(() => {
         const fetchShowtime = async (page = 0) => {
             try {
+                console.log("date::", selectedDate);
                 const invoiceData = await fetchData(`/api/v1/invoices/${theaterId}/${selectedDate}?pageNumber=${page}&limit=8`);
                 console.log(invoiceData);
                 setInvoices(invoiceData.data);
@@ -75,12 +76,6 @@ const Invoices = () => {
             }
         }
     };
-    const formatTime = (timeString) => {
-        const date = new Date(timeString);
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-    };
 
     return (
         <>
@@ -129,10 +124,10 @@ const Invoices = () => {
                                         <tr>
                                             <th style={{ width: "20px" }}></th>
                                             <th>ID</th>
-                                            <th>Movie</th>
-                                            <th>Screen</th>
-                                            <th>Start time</th>
-                                            <th>End time</th>
+                                            <th>User ID</th>
+                                            <th>Purchase Date</th>
+                                            <th>Total Amount</th>
+                                            <th>Payment Status</th>
                                             <th className="row" style={{ width: "50px" }}>Action</th>
                                         </tr>
                                     </thead>
@@ -160,21 +155,27 @@ const Invoices = () => {
                                                             href="javascript:void(0);"
                                                             className="text-body font-weight-semibold"
                                                         >
-                                                            {showtime.id}
+                                                            {invoice.id}
                                                         </a>
                                                     </td>
-                                                    <td>{i.movie?.title}</td>
-                                                    <td>{showtime.screen?.name}</td>
-                                                    <td>{formatTime(showtime.start_time)}</td>
-                                                    <td>{formatTime(showtime.end_time)}</td>
+                                                    <td>{invoice.user_id}</td>
+                                                    <td>{invoice.purchase_date}</td>
+                                                    <td>{invoice.TotalAmount}</td>
+                                                    <td><span className={
+                                                        invoice.PaymentStatus === "Paid" ? "badge bg-success" :
+                                                            invoice.PaymentStatus === "Pending" ? "badge bg-warning text-dark" :
+                                                                invoice.PaymentStatus === "Cancelled" ? "badge bg-danger" : "badge bg-secondary"
+                                                    }>
+                                                        {invoice.PaymentStatus}
+                                                    </span></td>
                                                     <td>
-                                                        <a href={`/admin/edit-showtime/${showtime.id}`} className="action-icon">
+                                                        <a href={`/admin/edit-invoice/${invoice.id}`} className="action-icon">
                                                             <Icon path={mdiSquareEditOutline} size={1} />
                                                         </a>
                                                         <a
                                                             href="javascript:void(0);"
                                                             className="action-icon"
-                                                            onClick={() => handleDeleteShowtime(showtime.id)}
+                                                            onClick={() => handleDeleteInvoice(invoice.id)}
                                                         >
                                                             <Icon path={mdiDeleteOutline} size={1} />
                                                         </a>

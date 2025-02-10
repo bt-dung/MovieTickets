@@ -53,23 +53,23 @@ Invoices.hasMany(InvoiceService, { foreignKey: 'invoice_id' });
 
 Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
     try {
-        const formattedDate = moment(dateTime, "DD-MM-YYYY").startOf("day").toDate();
+        const startDate = moment(dateTime).startOf("day").toDate();
+        const endDate = moment(dateTime).endOf("day").toDate();
+
         const totalInvoice = await Invoices.findAll({
             where: {
                 theater_id: theaterId,
                 purchase_date: {
-                    [Op.gte]: formattedDate,
-                    [Op.lt]: moment(formattedDate).endOf("day").toDate(),
-                }
+                    [Op.between]: [startDate, endDate],
+                },
             }
         });
         const invoices = await Invoices.findAll({
             where: {
                 theater_id: theaterId,
                 purchase_date: {
-                    [Op.gte]: formattedDate,
-                    [Op.lt]: moment(formattedDate).endOf("day").toDate(),
-                }
+                    [Op.between]: [startDate, endDate],
+                },
             },
             include: [
                 {
@@ -79,6 +79,10 @@ Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
             ],
             offset: page * limit,
             limit: limit,
+            raw: true,
+        });
+        invoices.forEach((invoice) => {
+            invoice.purchase_date = moment(invoice.purchase_date).format("YYYY-MM-DD HH:mm:ss");
         });
         return { invoices, totalInvoice };
     } catch (error) {

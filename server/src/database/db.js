@@ -8,6 +8,7 @@ const sequelize = new Sequelize(process.env.DATABASE_NAME, 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false,
+    timezone: "+07:00",
 });
 sequelize.sync()
     .then(() => {
