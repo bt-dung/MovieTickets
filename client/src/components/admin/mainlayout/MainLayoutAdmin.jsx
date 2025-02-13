@@ -10,7 +10,7 @@ const MainLayoutAdmin = ({ children }) => {
         <div class="content-page">
           <div class="content">
             <Header />
-            <div class="container-fluid mt-3">
+            <div class="container-fluid mt-3 ">
               <main>{children}</main>
             </div>
           </div>
