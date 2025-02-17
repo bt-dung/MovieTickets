@@ -1296,21 +1296,21 @@ input[type="submit"] {
           align-items: center;
 }
 
-.header-wrapper .logo {
+.header-wrapper .logo1 {
   width: 170px;
 }
 
 @media (max-width: 1199px) and (min-width: 992px) {
-  .header-wrapper .logo {
+  .header-wrapper .logo1 {
     width: 140px;
   }
 }
 
-.header-wrapper .logo a {
+.header-wrapper .logo1 a {
   display: inline-block;
 }
 
-.header-wrapper .logo a img {
+.header-wrapper .logo1 a img {
   max-width: 100%;
 }
 
