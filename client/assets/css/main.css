@@ -1750,7 +1750,7 @@ input[type="submit"] {
   z-index: 99;
 }
 
-.header-section .header-active {
+.header-section.header-active {
   background: #0a1e5e;
   border: none;
   animation-name: fadeInDown !important;
@@ -1879,8 +1879,24 @@ input[type="submit"] {
   }
 }
 
+.banner-img {
+  width: 100%;
+  /* Ảnh sẽ tự động chiếm toàn bộ chiều rộng */
+  height: 100%;
+  /* Ảnh sẽ chiếm toàn bộ chiều cao */
+  object-fit: cover;
+  /* Giữ tỷ lệ ảnh, cắt bớt phần thừa để vừa vặn với container */
+  transition: opacity 1s ease-in-out;
+  /* Thêm hiệu ứng chuyển đổi mượt mà khi thay đổi ảnh */
+}
+
+.banner-images img {
+  opacity: 0;
+  animation: fadeIn 3s forwards;
+}
+
 .banner-section {
-  padding: 250px 0 316px;
+  padding: 150px 0 250px;
   position: relative;
 }
 
@@ -1928,6 +1944,8 @@ input[type="submit"] {
 .banner-section .banner-content p {
   margin-left: auto;
   margin-right: auto;
+  background-image: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);
+  color: white;
 }
 
 .banner-section .banner-content.event-content p {

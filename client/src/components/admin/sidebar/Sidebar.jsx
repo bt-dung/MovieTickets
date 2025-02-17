@@ -1,6 +1,6 @@
 import Icon from "@mdi/react";
 import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip, mdiCalendarEditOutline, mdiVideoVintage, mdiInvoiceListOutline, mdiFoodForkDrink } from "@mdi/js";
-import logoAdmin from "../../../../public/assets/images/logo/logo1.png";
+import logoAdmin from "../../../../assets/images/logo/logo1.png";
 import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
   const { user } = useUser();

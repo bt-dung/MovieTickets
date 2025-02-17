@@ -1,27 +1,55 @@
 import { useUser } from "../../context/UserContext";
-import { useLocation } from "react-router-dom";
+import { fetchData } from "../../api/api";
+import { useState, useEffect } from "react";
 
 const Home = () => {
   const { user, isLoggedIn } = useUser();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const name = queryParams.get("name");
+  const [movieNewRelease, setNewRelease] = useState([]);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  useEffect(() => {
+    const fetchNewRelease = async () => {
+      try {
+        const response = await fetchData("/admin/movies/newRelease");
+        console.log("release:", response);
+        setNewRelease(response);
+      } catch (error) {
+        console.error("Error fetching new release:", error);
+      }
+    };
+
+    fetchNewRelease();
+  }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBannerIndex((prevIndex) => (prevIndex + 1) % movieNewRelease.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [movieNewRelease]);
   return (
     <>
       {isLoggedIn ? (
         <>
           <section className="banner-section">
-            <div className="banner-bg bg_img bg-fixed" data-background="../../../public/assets/images/banner/banner01.jpg"></div>
+            <div className="banner-bg bg_img bg-fixed" data-background="../../../assets/images/banner/banner01.jpg"></div>
             <div className="container">
               <div className="banner-content">
-                <h1 className="title  cd-headline clip"><span className="d-block">book your</span> tickets for
-                  <span className="color-theme cd-words-wrapper p-0 m-0">
-                    <b className="is-visible">Movie</b>
-                    <b>Event</b>
-                    <b>Sport</b>
-                  </span>
-                </h1>
-                <p>Safe, secure, reliable ticketing.Your ticket to live entertainment!</p>
+                <div className="banner-images">
+                  {movieNewRelease.length > 0 ? (
+                    <div className="banner-item">
+                      <img
+                        src={movieNewRelease[currentBannerIndex].img_bg}
+                        alt="New Movie Release"
+                        className="banner-img"
+                      />
+                      <p>
+                        {movieNewRelease[currentBannerIndex].title}
+                      </p>
+                    </div>
+                  ) : (
+                    <p>Loading images...</p>
+                  )}
+                </div>
               </div>
             </div>
           </section>

@@ -21,6 +21,23 @@ const getAllMovies = async (req, res) => {
     }
 };
 
+const getFilmNewRelease = async (req, res) => {
+    try {
+        const films = await Movie.findAll({
+            order: [['release_date', 'DESC']],
+            limit: 5,
+            logging: console.log,
+        });
+        if (films.length === 0) {
+            return res.json({ status: "FAILED", message: "khong biet tai sao!!" });
+        }
+        return res.status(200).json(films);
+    } catch (error) {
+        console.log("Error:", error);
+        return res.status(500).json({ status: "FAILED", message: 'Error when fetching movie!!', error });
+    }
+};
+
 
 const getMovie = async (req, res) => {
     const { id } = req.params;
@@ -35,4 +52,4 @@ const getMovie = async (req, res) => {
     }
 }
 
-module.exports = { getMovie, getAllMovies }
+module.exports = { getMovie, getAllMovies, getFilmNewRelease }
