@@ -13,7 +13,7 @@ const Movies = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    const fetchUsers = async (page = 0) => {
+    const fetchMovies = async (page = 0) => {
       try {
         const response = await fetchData(`/admin/movies?pageNumber=${page}&limit=3`);
         setMovies(response.content);
@@ -23,7 +23,7 @@ const Movies = () => {
       }
     };
 
-    fetchUsers(currentPage);
+    fetchMovies(currentPage);
   }, [currentPage]);
 
   const handlePageChange = (page) => {

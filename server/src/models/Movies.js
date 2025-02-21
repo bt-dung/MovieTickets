@@ -125,4 +125,19 @@ Movies.getMoviesByIds = async function (movieIds) {
         throw error;
     }
 };
+Movies.getMovieSearched = async function (searchQuery) {
+    try {
+        const data = await Movies.findAll({
+            where: sequelize.where(
+                sequelize.fn('LOWER', sequelize.col('title')),
+                'LIKE',
+                `%${searchQuery.toLowerCase()}%`
+            )
+        });
+        return data;
+    } catch (error) {
+        console.error("Error:", error);
+        throw error;
+    }
+};
 module.exports = Movies;
