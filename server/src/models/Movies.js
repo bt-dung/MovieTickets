@@ -62,6 +62,32 @@ const Movies = sequelize.define('movies', {
  * @param {Object} movieData - Data to insert
  * @returns {Object} - The created movie object
  */
+
+Movies.fetchMovies = async function (page, limit) {
+    const Genre = sequelize.models.genres;
+    try {
+        const totalMovies = await Movies.count();
+        const movies = await Movies.findAll({
+            offset: (page - 1) * limit,
+            limit: limit,
+            order: [["release_date", "DESC"]],
+            include: [
+                {
+                    model: Genre,
+                    as: "genres",
+                    attributes: ["id", "name"],
+                    through: { attributes: [] },
+                },
+            ],
+        });
+        console.log(totalMovies);
+        const totalPages = Math.ceil(totalMovies / limit);
+        return { movies, totalPages };
+    } catch (error) {
+        console.error("Error fetching movie:", error);
+        throw error;
+    }
+}
 Movies.insertMovie = async (movieData) => {
     try {
         const existingMovie = await Movies.findByPk(movieData.id);

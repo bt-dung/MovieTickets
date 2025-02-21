@@ -1,8 +1,7 @@
 const Theaters = require("../models/Theater");
-
 const getAllTheater = async (req, res) => {
     try {
-        const theaters = await Theaters.findAll();
+        const theaters = await Theaters.getTheaters();
         return res.json({
             status: "SUCCESS",
             message: "FETCHED THEATERS DATA",
@@ -11,11 +10,11 @@ const getAllTheater = async (req, res) => {
     } catch (error) {
         console.log("Error:", error);
         return res.status(500).json({
-            message: 'An error occurred while gets all the theater!!',
+            message: "An error occurred while getting all theaters!!",
             error: error.message
         });
     }
-}
+};
 
 const getTheater = async (req, res) => {
     const { id } = req.params;

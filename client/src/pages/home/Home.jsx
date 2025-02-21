@@ -19,6 +19,7 @@ const Home = () => {
       try {
         const response = await fetchData("/admin/movies/newRelease");
         const resMovie = await fetchData(`/admin/movies?pageNumber=${page}&limit=8`);
+        console.log(resMovie);
         setNewRelease(response);
         setMovies(resMovie.content);
         setTotalPages(resMovie.totalPages);
