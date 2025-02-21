@@ -1,14 +1,12 @@
 const Movie = require("../models/Movies")
-
 const getAllMovies = async (req, res) => {
-
-    const page = parseInt(req.query.pageNumber) || 0;
+    const page = parseInt(req.query.pageNumber) || 1;
     const limit = parseInt(req.query.limit) || 10;
     try {
-        const totalUsers = await Movie.count();
-        const totalPages = Math.ceil(totalUsers / limit);
+        const totalMovies = await Movie.count();
+        const totalPages = Math.ceil(totalMovies / limit);
         const data = await Movie.findAll({
-            offset: page * limit,
+            offset: (page - 1) * limit,
             limit: limit,
         });
         return res.json({ content: data, totalPages, });
@@ -16,6 +14,24 @@ const getAllMovies = async (req, res) => {
         console.log("Error:", error);
         return res.status(500).json({
             message: 'An error occurred while gets all the movie',
+            error: error.message
+        });
+    }
+};
+
+const searchMovies = async (req, res) => {
+    const searchQuery = req.query.search || "";
+    console.log("searchQuery:", searchQuery);
+    try {
+        const data = await Movie.getMovieSearched(searchQuery);
+        if (data.length === 0) {
+            return res.status(404).json({ message: "No movies found" });
+        }
+        return res.json({ content: data });
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({
+            message: 'An error occurred while searching movies',
             error: error.message
         });
     }
@@ -52,4 +68,4 @@ const getMovie = async (req, res) => {
     }
 }
 
-module.exports = { getMovie, getAllMovies, getFilmNewRelease }
+module.exports = { getMovie, getAllMovies, getFilmNewRelease, searchMovies }
