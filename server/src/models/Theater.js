@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db')
 const Screens = require('./Screens');
+const Area = require('./Area');
 
 
 const Theaters = sequelize.define('theaters', {
@@ -52,7 +53,23 @@ const Theaters = sequelize.define('theaters', {
 
 Theaters.hasMany(Screens, { foreignKey: 'theater_id' });
 Screens.belongsTo(Theaters, { foreignKey: 'theater_id' });
+Theaters.belongsTo(Area, { foreignKey: "area_id" });
 
+Theaters.getTheaters = async function () {
+    try {
+        const theaters = await Theaters.findAll({
+            include: [
+                {
+                    model: Area,
+                    attributes: ["id", "name"]
+                }
+            ]
+        });
+        return theaters;
+    } catch (error) {
+        throw error;
+    }
+}
 Theaters.insertTheater = async (theaterData) => {
     try {
         const existedTheater = await Theaters.findOne({ where: { name: theaterData.name, address: theaterData.address } });
