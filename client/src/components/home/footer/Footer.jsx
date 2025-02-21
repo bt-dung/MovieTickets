@@ -1,6 +1,23 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { fetchData } from "../../../api/api";
+import { Link } from "react-router-dom";
 const Footer = () => {
+    const [theaters, setTheaters] = useState([]);
+
+    useEffect(() => {
+        const fetchTheaters = async () => {
+            try {
+                const response = await fetchData("/api/v1/theaters");
+                console.log(response);
+                setTheaters(response.data);
+            } catch (error) {
+                console.error("Error fetching theaters:", error);
+            }
+        };
+
+        fetchTheaters();
+    }, []);
+
     return (<>
         <div className="newslater-section padding-bottom">
         </div>
@@ -44,6 +61,17 @@ const Footer = () => {
                     <div className="left">
                         <h2 style={{ letterSpacing: "2px" }}>Theaters Complex</h2>
                         <div style={{ width: "300px", height: "5px", backgroundColor: "blue" }}></div>
+                        <div className="theater-list">
+                            {theaters.length > 0 ? (
+                                theaters.map((theater) => (
+                                    <Link key={theater.id} to={`/theater_detail/${theater.id}`} className="theater-item">
+                                        {`> ${theater.name} - ${theater.address} - City: ${theater.area.name}`}
+                                    </Link>
+                                ))
+                            ) : (
+                                <p>Loading theaters...</p>
+                            )}
+                        </div>
                     </div>
                     <ul className="links">
                         <li>
@@ -64,7 +92,7 @@ const Footer = () => {
                     </ul>
                 </div>
             </div>
-        </div ></>
+        </div></>
     );
 };
 

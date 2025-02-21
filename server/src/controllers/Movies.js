@@ -8,6 +8,7 @@ const getAllMovies = async (req, res) => {
         const data = await Movie.findAll({
             offset: (page - 1) * limit,
             limit: limit,
+            order: [['release_date', 'DESC']],
         });
         return res.json({ content: data, totalPages, });
     } catch (error) {
