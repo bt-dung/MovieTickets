@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from '../header/HeaderHome'
+import Footer from '../footer/Footer';
 import "../../../../styles.scss";
 const MainLayoutHome = ({ children }) => {
     return (
@@ -20,6 +21,9 @@ const MainLayoutHome = ({ children }) => {
                 <Header />
             </header>
             {children}
+            <footer className="footer-section">
+                <Footer />
+            </footer>
 
         </>
     )

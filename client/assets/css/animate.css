@@ -966,7 +966,7 @@ Copyright (c) 2013 Daniel Eden
 
 @-webkit-keyframes fadeIn {
   0% {
-    opacity: 0
+    opacity: 0.2
   }
 
   100% {
@@ -976,7 +976,7 @@ Copyright (c) 2013 Daniel Eden
 
 @keyframes fadeIn {
   0% {
-    opacity: 0
+    opacity: 0.2
   }
 
   100% {
@@ -3117,6 +3117,7 @@ Copyright (c) 2013 Daniel Eden
   -webkit-animation-name: zoomOutUp;
   animation-name: zoomOutUp
 }
+
 @media (max-width: 575px) {
   .animated {
     -webkit-animation: unset !important;
