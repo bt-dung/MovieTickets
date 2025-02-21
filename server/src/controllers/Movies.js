@@ -3,14 +3,8 @@ const getAllMovies = async (req, res) => {
     const page = parseInt(req.query.pageNumber) || 1;
     const limit = parseInt(req.query.limit) || 10;
     try {
-        const totalMovies = await Movie.count();
-        const totalPages = Math.ceil(totalMovies / limit);
-        const data = await Movie.findAll({
-            offset: (page - 1) * limit,
-            limit: limit,
-            order: [['release_date', 'DESC']],
-        });
-        return res.json({ content: data, totalPages, });
+        const { movies, totalPages } = await Movie.fetchMovies(page, limit);
+        return res.json({ content: movies, totalPages });
     } catch (error) {
         console.log("Error:", error);
         return res.status(500).json({
