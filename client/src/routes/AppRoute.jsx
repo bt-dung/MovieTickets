@@ -1,4 +1,6 @@
 import Home from "../pages/home/Home";
+import MoviePage from "../pages/movie/Movie"
+
 import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'
 import Movie from '../pages/admin/movies/Movies'
@@ -25,8 +27,11 @@ import Service from "../pages/admin/service/Service";
 import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
 
+
+
 export const userRoutes = [
-    { path: "/home", component: Home, layout: MainLayoutHome }
+    { path: "/home", component: Home, layout: MainLayoutHome },
+    { path: "/movies", component: MoviePage, layout: MainLayoutHome },
 ];
 
 export const adminRoutes = [
