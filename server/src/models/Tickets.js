@@ -3,6 +3,7 @@ const { sequelize } = require('../database/db');
 const Invoices = require("./Invoices");
 const Seats = require("./Seat");
 const SeatType = require("./SeatType");
+const Showtime = require("./Showtime");
 const Tickets = sequelize.define('tickets', {
     id: {
         type: DataTypes.INTEGER,
@@ -13,7 +14,7 @@ const Tickets = sequelize.define('tickets', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'invoices',
+            model: Invoices,
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -23,7 +24,7 @@ const Tickets = sequelize.define('tickets', {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'showtimes',
+            model: Showtime,
             key: 'id',
         },
         onDelete: 'SET NULL',
@@ -33,7 +34,7 @@ const Tickets = sequelize.define('tickets', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'seats',
+            model: Seats,
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -43,8 +44,10 @@ const Tickets = sequelize.define('tickets', {
     tableName: 'tickets',
     timestamps: false,
 });
+Showtime.hasMany(Tickets, { foreignKey: 'showtime_id' });
 Invoices.hasMany(Tickets, { foreignKey: 'invoice_id' });
 Tickets.belongsTo(Invoices, { foreignKey: 'invoice_id' });
+Tickets.belongsTo(Showtime, { foreignKey: 'showtime_id' });
 
 Tickets.getTicketsByTheater = async (theaterId) => {
     try {
@@ -67,12 +70,13 @@ Tickets.getTicketsByTheater = async (theaterId) => {
  */
 Tickets.createTicket = async (ticketData) => {
     try {
-        const existingTicket = Tickets.findOne({ where: { showtime_id: ticketData.showtime_id, seat_id: ticketData.seat_id } });
-        if (existingTicket.lenght === 0) {
+        const titleMovie = await Showtime.getMovieName(ticketData.showtime_id);
+        const existingTicket = await Tickets.findOne({ where: { showtime_id: ticketData.showtime_id, seat_id: ticketData.seat_id } });
+        if (existingTicket) {
             throw new Error(`Seat ${ticketData.seat_id} booked!!`);
         }
         const newTicket = await Tickets.create(ticketData);
-        return newTicket;
+        return newTicket, titleMovie;
     } catch (error) {
         console.error("Error creating ticket:", error);
         throw error;

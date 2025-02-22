@@ -1,4 +1,3 @@
-const { addTicks } = require("sequelize/lib/utils");
 const Invoices = require("../models/Invoices");
 const Tickets = require("../models/Tickets");
 const InvoiceController = {
@@ -77,10 +76,10 @@ const InvoiceController = {
     deleteInvoice: async (req, res) => {
         const { id } = req.params;
         try {
-            await Showtime.deleteShowtime(id);
-            return res.status(200).json({ status: "SUCCESS", message: 'Showtime deleted successfully' });
+            await Invoices.deleteInvoice(id);
+            return res.status(200).json({ status: "SUCCESS", message: 'Invoice deleted successfully' });
         } catch (error) {
-            console.error("Error while delete showtime: ", error);
+            console.error("Error while delete invoice: ", error);
             return res.status(400).json({ status: "FAILED", message: error.message });
         }
     }

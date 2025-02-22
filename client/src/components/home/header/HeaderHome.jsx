@@ -2,6 +2,7 @@ import React from "react";
 import { useUser } from "../../../context/UserContext";
 import Icon from '@mdi/react';
 import { mdiAccountArrowRight, mdiAccountBoxOutline, mdiLogout } from '@mdi/js';
+import { NavLink } from "react-router-dom";
 const HeaderHome = () => {
     const { user } = useUser();
     const handleLogout = (e) => {
@@ -24,22 +25,22 @@ const HeaderHome = () => {
                 </div>
                 <ul className="menu">
                     <li>
-                        <a href="/starcinema/home" className="active">Home</a>
+                        <NavLink to="/starcinema/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
                     </li>
                     <li>
-                        <a href="/starcinema/movies" >Movie</a>
+                        <NavLink to="/starcinema/movies" className={({ isActive }) => isActive ? 'active' : ''}>Movie</NavLink>
                     </li>
                     <li>
-                        <a href="/starcinema/tickets" >Ticket</a>
+                        <NavLink to="/starcinema/tickets" className={({ isActive }) => isActive ? 'active' : ''}>Ticket</NavLink>
                     </li>
                     <li>
-                        <a href="/starcinema/theaters" >Theater</a>
+                        <NavLink to="/starcinema/theater" className={({ isActive }) => isActive ? 'active' : ''}>Theater</NavLink>
                     </li>
                     <li>
-                        <a href="#0" >Events</a>
+                        <NavLink to="/starcinema/events" className={({ isActive }) => isActive ? 'active' : ''}>Events</NavLink>
                     </li>
                     <li>
-                        <a href="contact.html" >Contact</a>
+                        <NavLink to="/starcinema/contact" className={({ isActive }) => isActive ? 'active' : ''}>Contact</NavLink>
                     </li>
                     <li className="header-button pr-0">
                         <a href="#0">{user.name}</a>

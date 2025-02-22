@@ -1636,8 +1636,8 @@ input[type="submit"] {
     top: calc(100% + 30px);
     position: absolute;
     content: "";
-    -webkit-transform: scaleX(0);
-    transform: scaleX(0);
+    -webkit-transform: scaleX(0) !important;
+    transform: scaleX(0) !important;
     -webkit-transition: all ease 0.3s;
     transition: all ease 0.3s;
     -webkit-transform-origin: left;
@@ -1646,8 +1646,8 @@ input[type="submit"] {
 
   .header-wrapper .menu>li>a:hover::before,
   .header-wrapper .menu>li>a.active::before {
-    -webkit-transform: scaleX(1);
-    transform: scaleX(1);
+    -webkit-transform: scaleX(1) !important;
+    transform: scaleX(1) !important;
   }
 
   .header-wrapper .menu>li.header-button a::before {
@@ -4017,6 +4017,56 @@ input[type="submit"] {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.filter-container {
+  margin-top: 20px;
+  max-width: 300px;
+  position: relative;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-group .type {
+  font-weight: bold;
+  color: #31d7a9;
+  font-size: 16px;
+}
+
+.filter-group input,
+.filter-group select,
+.filter-group button {
+  height: 40px;
+  /* Đảm bảo chiều cao bằng nhau */
+  padding: 0 10px;
+  /* Khoảng cách nội dung bên trong */
+  border: 1px solid #ccc;
+  /* Đường viền nhẹ */
+  border-radius: 4px;
+  /* Bo góc */
+  box-sizing: border-box;
+  /* Đảm bảo padding không làm to phần tử */
+}
+
+.filter-group .select-bar {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  color: #007BFF;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #fff;
+  outline: none;
+}
+
+.filter-group .select-bar option {
+  color: #007BFF;
+  /* Màu chữ xanh cho các option */
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {

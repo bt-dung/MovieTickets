@@ -20,6 +20,7 @@ const Invoice = require("./routes/invoice.route");
 const Ticket = require("./routes/ticket.route");
 const BookingTicket = require("./routes/bookTicket.route");
 const Service = require("./routes/service.route");
+const GenreRoute = require("./routes/genre.route");
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use("/api/v1", Invoice);
 app.use("/api/v1", Ticket);
 app.use("/api/v1", BookingTicket);
 app.use("/api/v1", Service);
+app.use("/api/v1", GenreRoute);
 
 createTableDB();
 connectDB();
