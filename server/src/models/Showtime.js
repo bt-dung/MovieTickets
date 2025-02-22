@@ -44,11 +44,30 @@ const Showtime = sequelize.define('showtimes', {
     tableName: 'showtimes',
     timestamps: false,
 });
-
+Movies.hasMany(Showtime, { foreignKey: 'movie_id' });
 Showtime.belongsTo(Movies, { foreignKey: 'movie_id' })
 Showtime.belongsTo(Screens, { foreignKey: 'screen_id' })
 
+Showtime.getMovieName = async function (showtime_id) {
+    try {
+        const showtime = await Showtime.findOne({
+            where: { id: showtime_id },
+            include: {
+                model: Movies,
+                attributes: ['title'],
+            },
+        });
+        console.log(showtime);
+        if (!showtime || !showtime.movie) {
+            throw new Error('Showtime or Movie no exist!');
+        }
 
+        return showtime;
+    } catch (error) {
+        console.error("❌ Error when gets title Movie:", error.message);
+        throw error;
+    }
+};
 Showtime.insertShowtime = async (showtimeData) => {
     try {
         const existingShowtimes = await Showtime.findAll({

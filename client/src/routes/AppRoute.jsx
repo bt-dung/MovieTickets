@@ -24,9 +24,11 @@ import Invoices from "../pages/admin/invoice/Invoices";
 import Service from "../pages/admin/service/Service";
 import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
+import TheaterHome from "../pages/home/theater/Theater";
 
 export const userRoutes = [
-    { path: "/home", component: Home, layout: MainLayoutHome }
+    { path: "/home", component: Home, layout: MainLayoutHome },
+    { path: "/theater", component: TheaterHome, layout: MainLayoutHome },
 ];
 
 export const adminRoutes = [

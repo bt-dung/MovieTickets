@@ -65,7 +65,7 @@ const Invoices = () => {
                     `/api/v1/invoices/${theaterId}/${selectedDate}?pageNumber=${currentPage}&limit=8`
                 );
                 setInvoices(invoiceData.data);
-                setTotalPages(showtimes.totalPages);
+                setTotalPages(invoiceData.totalPages);
             } catch (error) {
                 console.error("Error deleting Invoice:", error);
                 Swal.fire({
