@@ -15,16 +15,17 @@ const MovieItemList = ({ movie }) => {
           </a>
         </div>
         <div class="movie-content bg-one">
-          <h5 class="title">
+          <h2 class="title">
             <a href="">{movie.title}</a>
-          </h5>
-          {/* <p class="duration">2hrs 50 min</p> */}
-          <div class="movie-tags">
-            <a href="#0">action</a>
-            <a href="#0">adventure</a>
-            <a href="#0">fantasy</a>
+          </h2>
+          <div class="movie-tags" >
+            {movie.genres.map((item) => (
+              <p style={{color: "tomato"}} href="#" key={item.id}>
+                {item.name}
+              </p>
+            ))}
           </div>
-          <div class="release">
+          <div class="release" style={{marginTop: "10px"}}>
             <span>Release Date : </span> {movie.release_date}
           </div>
           <ul class="movie-rating-percent">
@@ -52,14 +53,20 @@ const MovieItemList = ({ movie }) => {
               <div class="react-item">
                 <a href="#0">
                   <div class="thumb">
-                    <img src="../../../../assets/images/icons/heart.png" alt="icons" />
+                    <img
+                      src="../../../../assets/images/icons/heart.png"
+                      alt="icons"
+                    />
                   </div>
                 </a>
               </div>
               <div class="react-item mr-auto">
                 <a href="#0">
                   <div class="thumb">
-                    <img src="../../../../assets/images/icons/book.png" alt="icons" />
+                    <img
+                      src="../../../../assets/images/icons/book.png"
+                      alt="icons"
+                    />
                   </div>
                   <span>book ticket</span>
                 </a>

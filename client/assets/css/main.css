@@ -823,7 +823,7 @@ input,
 button,
 select {
   height: 50px;
-  color: #dbe2fb;
+  color: #000000;
 }
 
 label,
@@ -3439,6 +3439,7 @@ input[type="submit"] {
 .movie-list .movie-content {
   background: transparent;
   width: 100%;
+  position: relative;
 }
 
 .movie-list .movie-content .title {
@@ -3449,19 +3450,19 @@ input[type="submit"] {
   margin-bottom: 3px;
 }
 
-.movie-list .movie-content .movie-tags a {
+.movie-list .movie-content .movie-tags p {
   color: #dbe2fb;
   margin-bottom: 5px;
 }
 
-.movie-list .movie-content .movie-tags a::after {
+.movie-list .movie-content .movie-tags p::after {
   content: "|";
   font-size: 14px;
   color: #dbe2fb;
   margin: 0 15px;
 }
 
-.movie-list .movie-content .movie-tags a:last-child::after {
+.movie-list .movie-content .movie-tags p:last-child::after {
   display: none;
 }
 
@@ -3516,6 +3517,8 @@ input[type="submit"] {
   padding: 15px 0;
   border-top: 1px solid #1e3251;
   border-bottom: 1px solid #1e3251;
+  position: absolute;
+  bottom: 0;
 }
 
 .movie-list .movie-content .book-area .book-ticket {

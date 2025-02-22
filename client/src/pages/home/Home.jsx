@@ -1,8 +1,8 @@
 import { useUser } from "../../context/UserContext";
 import { fetchData } from "../../api/api";
 import { useState, useEffect } from "react";
-import SearchContent from "../../components/home/SearchContent";
-import MovieItem from "../../components/home/MovieItem";
+import SearchContent from "../../components/home/movie/SearchContent"
+import MovieItem from "../../components/home/movie/MovieItem";
 
 const Home = () => {
   const { user, isLoggedIn } = useUser();

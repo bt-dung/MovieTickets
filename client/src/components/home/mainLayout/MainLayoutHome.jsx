@@ -2,7 +2,6 @@ import React from 'react'
 import Header from '../header/HeaderHome'
 import Footer from "../footer/Footer"
 import "../../../../styles.scss";
-import MovieCard from "../movie/MovieCard";
 const MainLayoutHome = ({ children }) => {
     return (
         <>
