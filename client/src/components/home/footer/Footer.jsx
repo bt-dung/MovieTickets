@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchData } from "../../../api/api";
 import { Link } from "react-router-dom";
 const Footer = () => {
-    const [theaters, setTheaters] = useState([]);
+    const [theater, setTheaters] = useState([]);
 
     useEffect(() => {
         const fetchTheaters = async () => {
@@ -62,8 +62,8 @@ const Footer = () => {
                         <h2 style={{ letterSpacing: "2px" }}>Theaters Complex</h2>
                         <div style={{ width: "300px", height: "5px", backgroundColor: "blue" }}></div>
                         <div className="theater-list">
-                            {theaters.length > 0 ? (
-                                theaters.map((theater) => (
+                            {theater.length > 0 ? (
+                                theater.map((theater) => (
                                     <Link key={theater.id} to={`/theater_detail/${theater.id}`} className="theater-item">
                                         {`> ${theater.name} - ${theater.address} - City: ${theater.area.name}`}
                                     </Link>

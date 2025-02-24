@@ -1,6 +1,5 @@
 import Icon from "@mdi/react";
 import { mdiViewDashboard, mdiTheater, mdiAccount, mdiFilmstrip, mdiCalendarEditOutline, mdiVideoVintage, mdiInvoiceListOutline, mdiFoodForkDrink } from "@mdi/js";
-import logoAdmin from "../../../../assets/images/logo/logo1.png";
 import { useUser } from "../../../context/UserContext";
 const SideBar = () => {
   const { user } = useUser();
@@ -11,7 +10,7 @@ const SideBar = () => {
       <div className="left-side-menu">
         <a href="/dashboard" className="logo text-center">
           <span className="logo-lg">
-            <img src={logoAdmin} alt="" height="80" className="rounded-circle" />
+            <img src="/assets/images/logo/logo1.png" alt="" height="80" className="rounded-circle" />
           </span>
         </a>
         <div className="h-100" id="left-side-menu-container" data-simplebar>

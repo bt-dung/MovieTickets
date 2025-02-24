@@ -144,6 +144,7 @@ Movies.getMoviesByIds = async function (movieIds) {
             where: {
                 id: { [Op.in]: movieIds }
             },
+            order: [["release_date", "DESC"]],
         });
         return movies;
     } catch (error) {

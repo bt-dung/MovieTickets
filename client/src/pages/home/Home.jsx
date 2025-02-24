@@ -71,9 +71,9 @@ const Home = () => {
       {isLoggedIn ? (
         <>
           <section className="banner-section">
-            <div className="banner-bg bg_img bg-fixed" data-background="../../../assets/images/banner/banner01.jpg"></div>
+            <div className="banner-bg bg_img bg-fixed" style={{ backgroundImage: "url('/assets/images/banner/banner01.jpg')" }}></div>
             <div className="container">
-              <div className="search-tab bg_img" data-background="../../../assets/images/ticket/ticket-bg01.jpg">
+              <div className="search-tab bg_img" style={{ backgroundImage: "url('/assets/images/ticket/ticket-bg01.jpg')" }}>
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">
                     <div className="search-ticket-header">
