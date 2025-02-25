@@ -8,7 +8,6 @@ const Footer = () => {
         const fetchTheaters = async () => {
             try {
                 const response = await fetchData("/api/v1/theaters");
-                console.log(response);
                 setTheaters(response.data);
             } catch (error) {
                 console.error("Error fetching theaters:", error);

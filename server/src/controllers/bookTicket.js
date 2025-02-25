@@ -1,8 +1,11 @@
 const Invoices = require("../models/Invoices");
 const Tickets = require("../models/Tickets");
 const nodemailer = require('nodemailer');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+const QRCode = require('qrcode');
 const dotenv = require('dotenv');
+
+
 dotenv.config();
 
 let transporter = nodemailer.createTransport({
@@ -39,8 +42,7 @@ const BookTicket = async (req, res) => {
             user_id,
             theater_id,
         };
-        const newInvoice = await Invoices.createInvoice(InvoiceData);
-
+        const { user, newInvoice } = await Invoices.createInvoice(InvoiceData);
         if (!newInvoice || !newInvoice.id) {
             throw new Error("Failed to create invoice.");
         }
@@ -55,14 +57,27 @@ const BookTicket = async (req, res) => {
         });
 
         const createdTickets = await Promise.all(ticketPromises);
-
+        // const sentEmail = sendTicketEmail(user.email, createdTickets);
         if (!createdTickets || createdTickets.length !== seat_id.length) {
-            throw new Error("Failed to create one or more tickets.");
+
+            try {
+                await Invoices.update(
+                    { status: 'Cancelled' },
+                    { where: { id: newInvoice.id } }
+                );
+                throw new Error("Failed to create one or more tickets. Invoice has been cancelled.");
+            } catch (updateError) {
+                console.error("Error updating invoice status:", updateError);
+                throw updateError;
+            }
         }
+        // if (sentEmail) {
+        //     console.log("Email sending successful!!")
+        // }
         const invoice = await Invoices.findByPk(newInvoice.id);
         return res.status(201).json({
             status: "SUCCESS",
-            message: "Ticket booked successfully.",
+            message: "Tickets have been booked successfully! Check ticket sent email.",
             invoice: invoice,
             tickets: createdTickets,
         });
@@ -71,39 +86,61 @@ const BookTicket = async (req, res) => {
         return res.status(400).json({ status: "FAILED", message: error.message });
     }
 };
-const sendTicketEmail = async ({ id, email }, res) => {
+const generateOrderCode = (email, timestamp) => {
+    return crypto.createHash('md5')
+        .update(`${email}-${timestamp}`)
+        .digest('hex')
+        .slice(0, 10)
+};
+const sendTicketEmail = async ({ email, ticketInfo }) => {
     try {
-        console.log("Email user:", email);
-        const currentUrl = "http://localhost:5000/";
-        const uniqueString = uuidv4() + id;
-
-        const hashedUniqueString = await bcrypt.hash(uniqueString, 10);
-
-        const newVerification = new UserVerification({
-            user_id: id,
-            uniqueString: hashedUniqueString,
-            createAt: Date.now(),
-            expiresAt: Date.now() + 21600000,
-        });
-
-        await newVerification.save();
+        console.log("Gửi email đến:", email);
+        const timestamp = Date.now();
+        const orderCode = generateOrderCode(userId, timestamp);
+        const qrData = ticketInfo.map((ticket, index) => (
+            `Ticket ${index + 1}:\n` +
+            `Ticket Code: ${ticket.id}\n` +
+            `Movie: ${ticketInfo.titleMovie}\n` +
+            `Seat: ${ticketInfo.seat}\n` +
+            `Date: ${ticketInfo.showDate}\n` +
+            `Showtime: ${ticketInfo.showTime}\n`
+        )).join('\n');
+        const qrCodeImage = await QRCode.toDataURL(qrData);
 
         const mailOptions = {
             from: process.env.AUTH_EMAIL,
             to: email,
-            subject: "Verify Your Email",
+            subject: `🎟️ Vé Xem Phim - ${ticketInfo.movieName}`,
             html: `
-                <p>Verify your email address to complete the signup and login into your account.</p>
-                <p>This link <b>expires in 6 hours</b>.</p>
-                <p>Press <a href=${currentUrl + "user/verify/" + id + "/" + uniqueString}>here</a> to proceed.</p>.`,
+                <div style="max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:10px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
+                    <h2 style="text-align:center; color:#e50914;">🎬 Xác Nhận Đặt Vé</h2>
+                    <p style="font-size:16px;">Cảm ơn bạn đã đặt vé! Dưới đây là thông tin vé của bạn:</p>
+
+                    <div style="padding:15px; border:1px solid #ccc; border-radius:8px; background-color:#fff;">
+                        <p><strong>Mã Vé:</strong> ${ticketInfo.ticketCode}</p>
+                        <p><strong>Phim:</strong> ${ticketInfo.movieName}</p>
+                        <p><strong>Ngày Chiếu:</strong> ${ticketInfo.showDate}</p>
+                        <p><strong>Giờ Chiếu:</strong> ${ticketInfo.showTime}</p>
+                        <p><strong>Ghế:</strong> ${ticketInfo.seat}</p>
+                    </div>
+
+                    <p style="margin-top:20px;">Vui lòng xuất trình mã QR dưới đây khi vào rạp:</p>
+                    <div style="text-align:center; margin-top:10px;">
+                        <img src="${qrCodeImage}" alt="QR Code" width="200" style="border:1px solid #ccc; padding:5px; border-radius:8px;"/>
+                    </div>
+
+                    <p style="text-align:center; margin-top:20px; font-size:14px; color:#777;">🎞️ Chúc bạn có một buổi xem phim vui vẻ!</p>
+                </div>
+            `,
         };
 
         const sentEmail = await transporter.sendMail(mailOptions);
+        console.log("✅ Email xác nhận vé đã được gửi!");
         return sentEmail;
 
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("❌ Lỗi khi gửi email:", error.message);
         throw error;
     }
-};
+}
 module.exports = BookTicket;

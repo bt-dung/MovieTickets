@@ -1,6 +1,6 @@
 import React from "react";
 
-const MovieWidget = () => {
+const MovieWidget = ({ genres }) => {
   return (
     <>
       <div class="widget-1 widget-banner">
@@ -18,15 +18,13 @@ const MovieWidget = () => {
           <h6 class="subtitle">genre</h6>
           <div class="check-area">
             <div class="form-group">
-              {/* call api genres firm here */}
-              <input type="checkbox" name="genre" id="genre1" />
-              <label for="genre1">thriller</label>
+              {genres.map((item) => (
+                <div>
+                  <input type="checkbox" name={item.name} id={item.id} />
+                  <label for="genre1">{item.name}</label>
+                </div>
+              ))}
             </div>
-          </div>
-          <div class="add-check-area">
-            <a href="#0">
-              view more <i class="plus"></i>
-            </a>
           </div>
         </div>
       </div>

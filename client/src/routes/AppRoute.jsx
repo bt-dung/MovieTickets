@@ -1,5 +1,6 @@
 import Home from "../pages/home/Home";
 import MoviePage from "../pages/movie/Movie"
+import TheaterHome from "../pages/home/theater/Theater"
 
 import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'
@@ -27,11 +28,10 @@ import Service from "../pages/admin/service/Service";
 import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
 
-
-
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome },
-    { path: "/movies", component: MoviePage, layout: MainLayoutHome },
+    { path: "/movie", component: MoviePage, layout: MainLayoutHome },
+    { path: "/theater", component: TheaterHome, layout: MainLayoutHome },
 ];
 
 export const adminRoutes = [

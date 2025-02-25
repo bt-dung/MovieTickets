@@ -1,7 +1,6 @@
 import React from "react";
 
 const MovieItemList = ({ movie }) => {
-  console.log("movie: ", movie);
   return (
     <div className="movie-list">
       <div class="movie-list">

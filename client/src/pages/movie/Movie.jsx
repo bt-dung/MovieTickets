@@ -13,11 +13,13 @@ const Movie = () => {
   const [isList, setIsList] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState('');
 
   useEffect(() => {
     const fetchNewRelease = async (page = 1) => {
       try {
-        const response = await fetchData("/admin/movies/newRelease");
         const resMovie = await fetchData(
           `/admin/movies?pageNumber=${page}&limit=8`
         );
@@ -31,21 +33,61 @@ const Movie = () => {
     fetchNewRelease(currentPage);
   }, [currentPage]);
 
+  useEffect(() => {
+    const fetchGetAllGenres = async () => {
+      try {
+        const res = await fetchData("/api/v1/genres");
+        setGenres(res.data);
+      } catch (error) {
+        console.log("Error fetching genres: ", error);
+      }
+    };
+
+    fetchGetAllGenres();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.length === 0) {
+      setResults([]);
+      return;
+    }
+    const fetchMovies = async () => {
+      try {
+        const response = await fetchData(
+          `/admin/movies/search?search=${searchTerm}`
+        );
+        console.log("search:", response);
+        setResults(response.content);
+      } catch {
+        setResults([]);
+      }
+    };
+
+    const delayDebounceFn = setTimeout(() => {
+      fetchMovies();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
+  const handleCityChange = () => {
+
+  }
+
   return (
     <>
       {isLoggedIn && (
         <>
-          <section className="banner-section" style={{ marginBottom: "100px" }}>
+          <section className="banner-section">
             <div
               className="banner-bg bg_img bg-fixed"
               data-background="../../../assets/images/banner/banner01.jpg"
-              style={{ height: "450px" }}
             ></div>
             <div className="container">
               <div
@@ -55,7 +97,7 @@ const Movie = () => {
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">
                     <div className="search-ticket-header">
-                      <h6 className="category">welcome to Boleto</h6>
+                      <h4 className="category">welcome to Boleto</h4>
                       <h3 className="title">what are you looking for</h3>
                     </div>
                   </div>
@@ -64,18 +106,19 @@ const Movie = () => {
                       <li className="active">
                         <div className="tab-logo">
                           <img
-                            src="../../../assets/images/ticket/ticket-tab01.png"
+                            src="../../../assets/images/ticket/video-player.png"
                             alt="ticket"
+                            style={{width: "50px"}}
                           />
                         </div>
-                        <span>movie</span>
+                        <span>Movie</span>
                       </li>
                       <div className="search-container">
                         <form className="ticket-search-form">
                           <div className="form-group large">
                             <input
                               type="text"
-                              placeholder="Search for Movies"
+                              placeholder="Search for Movie"
                               value={searchTerm}
                               onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -95,249 +138,65 @@ const Movie = () => {
                     </ul>
                   </div>
                 </div>
+                <div className="filter-container">
+                  <div className="filter-group">
+                    <div class="thumb">
+                      <img
+                        src="../../../../assets/images/ticket/city.png"
+                        alt="ticket"
+                      />
+                    </div>
+                    <span class="type">city</span>
+                    <select
+                      className="select-bar"
+                      value={selectedCity}
+                      onChange={handleCityChange}
+                      style={{width: "160px"}}
+                    >
+                      <option value="" disabled>
+                        Choose City
+                      </option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="filter-group">
+                    <div class="thumb">
+                      <img
+                        src="../../../../assets/images/ticket/cinema.png"
+                        alt="ticket"
+                      />
+                    </div>
+                    <span class="type">theater</span>
+                    <select
+                      className="select-bar"
+                      value={selectedCity}
+                      onChange={handleCityChange}
+                      style={{width: "160px"}}
+                    >
+                      <option value="" disabled>
+                        Choose Theater
+                      </option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
-
-          {/* <section class="search-ticket-section padding-top pt-lg-0">
-            <div class="container">
-              <div
-                class="search-tab bg_img"
-                data-background="assets/images/ticket/ticket-bg01.jpg"
-              >
-                <div class="row align-items-center mb--20">
-                  <div class="col-lg-6 mb-20">
-                    <div class="search-ticket-header">
-                      <h6 class="category">welcome to Boleto </h6>
-                      <h3 class="title">what are you looking for</h3>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 mb-20">
-                    <ul class="tab-menu ticket-tab-menu">
-                      <li class="active">
-                        <div class="tab-thumb">
-                          <img
-                            src="assets/images/ticket/ticket-tab01.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span>movie</span>
-                      </li>
-                      <li>
-                        <div class="tab-thumb">
-                          <img
-                            src="assets/images/ticket/ticket-tab02.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span>events</span>
-                      </li>
-                      <li>
-                        <div class="tab-thumb">
-                          <img
-                            src="assets/images/ticket/ticket-tab03.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span>sports</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="tab-area">
-                  <div class="tab-item active">
-                    <form class="ticket-search-form">
-                      <div class="form-group large">
-                        <input type="text" placeholder="Search fo Movies" />
-                        <button type="submit">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/city.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">city</span>
-                        <select class="select-bar">
-                          <option value="london">London</option>
-                          <option value="dhaka">dhaka</option>
-                          <option value="rosario">rosario</option>
-                          <option value="madrid">madrid</option>
-                          <option value="koltaka">kolkata</option>
-                          <option value="rome">rome</option>
-                          <option value="khoksa">khoksa</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/date.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">date</span>
-                        <select class="select-bar">
-                          <option value="26-12-19">23/10/2020</option>
-                          <option value="26-12-19">24/10/2020</option>
-                          <option value="26-12-19">25/10/2020</option>
-                          <option value="26-12-19">26/10/2020</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/cinema.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">cinema</span>
-                        <select class="select-bar">
-                          <option value="Awaken">Awaken</option>
-                          <option value="dhaka">dhaka</option>
-                          <option value="rosario">rosario</option>
-                          <option value="madrid">madrid</option>
-                          <option value="koltaka">kolkata</option>
-                          <option value="rome">rome</option>
-                          <option value="khoksa">khoksa</option>
-                        </select>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="tab-item">
-                    <form class="ticket-search-form">
-                      <div class="form-group large">
-                        <input type="text" placeholder="Search fo Events" />
-                        <button type="submit">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/city.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">city</span>
-                        <select class="select-bar">
-                          <option value="london">London</option>
-                          <option value="dhaka">dhaka</option>
-                          <option value="rosario">rosario</option>
-                          <option value="madrid">madrid</option>
-                          <option value="koltaka">kolkata</option>
-                          <option value="rome">rome</option>
-                          <option value="khoksa">khoksa</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/date.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">date</span>
-                        <select class="select-bar">
-                          <option value="26-12-19">23/10/2020</option>
-                          <option value="26-12-19">24/10/2020</option>
-                          <option value="26-12-19">25/10/2020</option>
-                          <option value="26-12-19">26/10/2020</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/cinema.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">event</span>
-                        <select class="select-bar">
-                          <option value="angular">angular</option>
-                          <option value="startup">startup</option>
-                          <option value="rosario">rosario</option>
-                          <option value="madrid">madrid</option>
-                          <option value="koltaka">kolkata</option>
-                          <option value="Last-First">Last-First</option>
-                          <option value="wish">wish</option>
-                        </select>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="tab-item">
-                    <form class="ticket-search-form">
-                      <div class="form-group large">
-                        <input type="text" placeholder="Search fo Sports" />
-                        <button type="submit">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/city.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">city</span>
-                        <select class="select-bar">
-                          <option value="london">London</option>
-                          <option value="dhaka">dhaka</option>
-                          <option value="rosario">rosario</option>
-                          <option value="madrid">madrid</option>
-                          <option value="koltaka">kolkata</option>
-                          <option value="rome">rome</option>
-                          <option value="khoksa">khoksa</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/date.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">date</span>
-                        <select class="select-bar">
-                          <option value="26-12-19">23/10/2020</option>
-                          <option value="26-12-19">24/10/2020</option>
-                          <option value="26-12-19">25/10/2020</option>
-                          <option value="26-12-19">26/10/2020</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <div class="thumb">
-                          <img
-                            src="assets/images/ticket/cinema.png"
-                            alt="ticket"
-                          />
-                        </div>
-                        <span class="type">sports</span>
-                        <select class="select-bar">
-                          <option value="football">football</option>
-                          <option value="cricket">cricket</option>
-                          <option value="cabadi">cabadi</option>
-                          <option value="madrid">madrid</option>
-                          <option value="gadon">gadon</option>
-                          <option value="rome">rome</option>
-                          <option value="khoksa">khoksa</option>
-                        </select>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section> */}
 
           <section class="movie-section padding-top padding-bottom">
             <div class="container">
               <div class="row flex-wrap-reverse justify-content-center">
                 <div class="col-sm-10 col-md-8 col-lg-3">
-                  <MovieWidget />
+                  <MovieWidget genres={genres} />
                 </div>
                 <div class="col-lg-9 mb-50 mb-lg-0">
                   <div class="filter-tab tab">
