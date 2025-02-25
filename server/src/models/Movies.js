@@ -144,6 +144,7 @@ Movies.getMoviesByIds = async function (movieIds) {
             where: {
                 id: { [Op.in]: movieIds }
             },
+            order: [["release_date", "DESC"]],
         });
         return movies;
     } catch (error) {
@@ -165,5 +166,24 @@ Movies.getMovieSearched = async function (searchQuery) {
         console.error("Error:", error);
         throw error;
     }
+};
+Movies.fetchMovie = async function (movieId) {
+    const Genre = sequelize.models.genres;
+    try {
+        const movies = await Movies.findByPk(movieId, {
+            include: [
+                {
+                    model: Genre,
+                    as: "genres",
+                    attributes: ["id", "name"],
+                    through: { attributes: [] },
+                },
+            ],
+        });
+        return movies;
+    } catch (error) {
+        console.error("Error fetching movie:", error);
+        throw error;
+    };
 };
 module.exports = Movies;

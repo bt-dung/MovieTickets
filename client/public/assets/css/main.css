@@ -1178,6 +1178,57 @@ input[type="submit"] {
   background-color: #01173f;
 }
 
+.title-page {
+  margin: 30px 0;
+  text-align: center;
+  font-size: 32px;
+  letter-spacing: 2px;
+  position: relative;
+}
+
+.title-page h1 {
+  background: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  font-size: 50px;
+  margin: 0;
+}
+
+.theater-banner {
+  border-radius: 10px;
+  overflow: hidden;
+  color: white;
+}
+
+.theater-name {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ff4c4c;
+}
+
+.theater-address,
+.theater-time {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: #ff4c4c;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background: #e03b3b;
+}
+
+
 .sports-grid .movie-thumb .event-date,
 .event-grid .movie-thumb .event-date,
 .movie-grid .movie-thumb .event-date {
@@ -3288,6 +3339,9 @@ input[type="submit"] {
 .sports-grid .movie-content,
 .event-grid .movie-content,
 .movie-grid .movie-content {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   height: 100%;
   padding: 0 20px;
   position: relative;
@@ -3410,6 +3464,12 @@ input[type="submit"] {
   padding-left: 10px;
   line-height: 1;
   font-weight: 600;
+}
+
+.movie-theater {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 2px;
+  border-radius: 10px;
 }
 
 /*Movie-Grid Ends Here*/
@@ -3693,7 +3753,7 @@ input[type="submit"] {
   overflow: visible;
   padding: 40px 30px;
   position: relative;
-  z-index: 9;
+  z-index: 5;
 }
 
 .event-search::before,
@@ -4020,53 +4080,55 @@ input[type="submit"] {
 }
 
 .filter-container {
+  margin: auto;
   margin-top: 20px;
-  max-width: 300px;
+  width: fit-content;
   position: relative;
+}
+
+.filter-group .filter-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .filter-group {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  gap: 50px;
+  border: 2px;
+  padding: 10px;
+  background-color: rgba(0, 17, 55, 0.6);
+  border-radius: 10px;
 }
 
 .filter-group .type {
   font-weight: bold;
   color: #31d7a9;
   font-size: 16px;
+  width: 55px;
 }
 
 .filter-group input,
 .filter-group select,
 .filter-group button {
   height: 40px;
-  /* Đảm bảo chiều cao bằng nhau */
   padding: 0 10px;
-  /* Khoảng cách nội dung bên trong */
-  border: 1px solid #ccc;
-  /* Đường viền nhẹ */
-  border-radius: 4px;
-  /* Bo góc */
   box-sizing: border-box;
-  /* Đảm bảo padding không làm to phần tử */
 }
 
 .filter-group .select-bar {
   font-family: 'Poppins', sans-serif;
   font-weight: bold;
-  color: #007BFF;
+  color: white;
   font-size: 14px;
-  border: 1px solid #ccc;
   padding: 5px 10px;
-  border-radius: 4px;
-  background-color: #fff;
+  width: 250px;
+  background-image: -webkit-linear-gradient(169deg, #ff4343 0%, #aa52a1 37%, #5560ff 83%);
   outline: none;
 }
 
 .filter-group .select-bar option {
   color: #007BFF;
-  /* Màu chữ xanh cho các option */
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -4083,11 +4145,31 @@ input[type="submit"] {
   .ticket-search-form .form-group {
     width: calc(50% - 20px) !important;
   }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px;
+    padding: 15px;
+    background-color: rgba(0, 17, 55, 0.6);
+    border-radius: 10px;
+  }
 }
 
 @media (max-width: 767px) {
   .ticket-search-form .form-group.large {
     width: 100%;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px;
+    padding: 15px;
+    background-color: rgba(0, 17, 55, 0.6);
+    border-radius: 10px;
   }
 }
 

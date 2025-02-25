@@ -25,10 +25,12 @@ import Service from "../pages/admin/service/Service";
 import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
 import TheaterHome from "../pages/home/theater/Theater";
+import MoviePlan from "../pages/home/movie/MoviePlan";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome },
     { path: "/theater", component: TheaterHome, layout: MainLayoutHome },
+    { path: "/movie-schedule/:movieId", component: MoviePlan, layout: MainLayoutHome },
 ];
 
 export const adminRoutes = [

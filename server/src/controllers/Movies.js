@@ -1,7 +1,7 @@
 const Movie = require("../models/Movies")
 const getAllMovies = async (req, res) => {
     const page = parseInt(req.query.pageNumber) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 0;
     try {
         const { movies, totalPages } = await Movie.fetchMovies(page, limit);
         return res.json({ content: movies, totalPages });
@@ -52,8 +52,10 @@ const getFilmNewRelease = async (req, res) => {
 
 const getMovie = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
     try {
-        const data = Movie.findByPk(id);
+        const data = await Movie.fetchMovie(id);
+        console.log(data);
         return res.json(data);
     } catch (error) {
         console.log(error);
