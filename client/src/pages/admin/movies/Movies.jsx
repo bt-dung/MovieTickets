@@ -9,13 +9,14 @@ import { fetchData } from "../../../api/api";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    const fetchMovies = async (page = 0) => {
+    const fetchMovies = async (page = 1) => {
       try {
         const response = await fetchData(`/admin/movies?pageNumber=${page}&limit=3`);
+        console.log(response);
         setMovies(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {
@@ -27,7 +28,7 @@ const Movies = () => {
   }, [currentPage]);
 
   const handlePageChange = (page) => {
-    if (page >= 0 && page < totalPages) {
+    if (page >= 1 && page < totalPages) {
       setCurrentPage(page);
     }
   };
@@ -117,10 +118,7 @@ const Movies = () => {
 
               <nav className="d-flex justify-content-center">
                 <ul className="pagination">
-                  <li
-                    className={`page-item ${currentPage === 0 ? 'disabled' : ''
-                      }`}
-                  >
+                  <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                     <a
                       className="page-link"
                       href="javascript:void(0);"
@@ -134,22 +132,18 @@ const Movies = () => {
                   {Array.from({ length: totalPages }, (_, index) => (
                     <li
                       key={index}
-                      className={`page-item ${currentPage === index ? 'active' : ''
-                        }`}
+                      className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
                     >
                       <a
                         className="page-link"
                         href="javascript:void(0);"
-                        onClick={() => handlePageChange(index)}
+                        onClick={() => handlePageChange(index + 1)}
                       >
                         {index + 1}
                       </a>
                     </li>
                   ))}
-                  <li
-                    className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''
-                      }`}
-                  >
+                  <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                     <a
                       className="page-link"
                       href="javascript:void(0);"
@@ -162,6 +156,7 @@ const Movies = () => {
                   </li>
                 </ul>
               </nav>
+
             </div>
           </div>
         </div>

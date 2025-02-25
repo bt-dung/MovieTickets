@@ -1,7 +1,9 @@
 const Theaters = require("../models/Theater");
 const getAllTheater = async (req, res) => {
+    const area_id = parseInt(req.query.areaId) || "";
+    console.log("area_id:", area_id);
     try {
-        const theaters = await Theaters.getTheaters();
+        const theaters = await Theaters.getTheaters(area_id);
         return res.json({
             status: "SUCCESS",
             message: "FETCHED THEATERS DATA",
@@ -15,7 +17,6 @@ const getAllTheater = async (req, res) => {
         });
     }
 };
-
 const getTheater = async (req, res) => {
     const { id } = req.params;
     try {
@@ -28,7 +29,24 @@ const getTheater = async (req, res) => {
             success: "FAILED",
         });
     }
-}
+};
+
+const searchTheater = async (req, res) => {
+    const searchQuery = req.query.search || "";
+    try {
+        const data = await Theaters.getTheaterSearched(searchQuery);
+        if (data.length === 0) {
+            return res.status(404).json({ message: "No theaters found" });
+        }
+        return res.json({ content: data });
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({
+            message: 'An error occurred while searching theater',
+            error: error.message
+        });
+    }
+};
 
 const updateTheater = async (req, res) => {
     const { id } = req.params;
@@ -83,4 +101,4 @@ const deleteTheater = async (req, res) => {
     }
 };
 
-module.exports = { getAllTheater, getTheater, createTheater, updateTheater, deleteTheater };
+module.exports = { getAllTheater, getTheater, createTheater, updateTheater, deleteTheater, searchTheater };

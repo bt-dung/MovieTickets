@@ -3,7 +3,6 @@ const Area = require('../models/Area')
 const getArea = async (req, res) => {
     try {
         const areas = await Area.findAll();
-        console.log("area:", areas);
         return res.json({
             status: "SUCCESS",
             message: "FETCHED AREAS DATA",

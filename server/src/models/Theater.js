@@ -22,7 +22,7 @@ const Theaters = sequelize.define('theaters', {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'areas',
+            model: Area,
             key: 'id',
         },
         onDelete: 'SET NULL',
@@ -55,21 +55,26 @@ Theaters.hasMany(Screens, { foreignKey: 'theater_id' });
 Screens.belongsTo(Theaters, { foreignKey: 'theater_id' });
 Theaters.belongsTo(Area, { foreignKey: "area_id" });
 
-Theaters.getTheaters = async function () {
+Theaters.getTheaters = async function (area_id) {
     try {
-        const theaters = await Theaters.findAll({
+        const queryOptions = {
             include: [
                 {
                     model: Area,
                     attributes: ["id", "name"]
                 }
             ]
-        });
+        };
+        if (area_id) {
+            queryOptions.where = { area_id: area_id };
+        }
+
+        const theaters = await Theaters.findAll(queryOptions);
         return theaters;
     } catch (error) {
         throw error;
     }
-}
+};
 Theaters.insertTheater = async (theaterData) => {
     try {
         const existedTheater = await Theaters.findOne({ where: { name: theaterData.name, address: theaterData.address } });
@@ -122,6 +127,21 @@ Theaters.deleteTheater = async function (id) {
         return deletedRowsCount;
     } catch (error) {
         console.error('Error deleting Theater:', error);
+        throw error;
+    }
+};
+Theaters.getTheaterSearched = async function (searchQuery) {
+    try {
+        const data = await Theaters.findAll({
+            where: sequelize.where(
+                sequelize.fn('LOWER', sequelize.col('name')),
+                'LIKE',
+                `%${searchQuery.toLowerCase()}%`
+            )
+        });
+        return data;
+    } catch (error) {
+        console.error("Error:", error);
         throw error;
     }
 };
