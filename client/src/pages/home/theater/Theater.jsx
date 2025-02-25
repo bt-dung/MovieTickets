@@ -66,7 +66,7 @@ const Theater = () => {
                             <ul className="tab-menu ticket-tab-menu">
                                 <li className="active">
                                     <div className="tab-logo">
-                                        <img src="../../../assets/images/ticket/movie-theater.png" alt="ticket" />
+                                        <img src="/assets/images/ticket/movie-theater.png" alt="ticket" />
                                     </div>
                                     <span>Theater</span>
                                 </li>

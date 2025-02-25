@@ -14,7 +14,6 @@ const Theater = require("./routes/theater.route")
 const Area = require("./routes/area.route");
 const movieTheater = require("./routes/movieTheater.route");
 const Screen = require("./routes/screen.route");
-const SeatShowtime = require("./routes/seatShowtime.route")
 const Seat = require("./routes/seat.route");
 const Invoice = require("./routes/invoice.route");
 const Ticket = require("./routes/ticket.route");

@@ -52,8 +52,10 @@ const getFilmNewRelease = async (req, res) => {
 
 const getMovie = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
     try {
-        const data = Movie.findByPk(id);
+        const data = await Movie.fetchMovie(id);
+        console.log(data);
         return res.json(data);
     } catch (error) {
         console.log(error);
