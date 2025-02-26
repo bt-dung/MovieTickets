@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import FilterSection from "../../../components/home/movie/FilterSection";
 import { fetchData } from "../../../api/api";
 import { getUpcomingDates } from "../../../utils/dateTimeHelper";
+const useQueryParams = () => {
+    return new URLSearchParams(useLocation().search);
+};
 const MoviePlan = () => {
+    const query = useQueryParams();
+    const areaId = query.get("areaId");
+    const theaterId = query.get("theaterId");
+    const [dateTime, setDateTime] = useState(getUpcomingDates(5));
     const { movieId } = useParams();
     const [movie, setMovie] = useState(null);
     const [movie_schedule, setSchedule] = useState([]);
     const [theaters, setTheaters] = useState([]);
-    const [selectedTheaterID, setSelectedTheaterID] = useState('');
+    const [selectedTheaterID, setSelectedTheaterID] = useState(theaterId);
     const [cities, setCities] = useState([]);
-    const [selectedCityID, setSelectedCityID] = useState('');
-    const [selectedDate, setDate] = useState('');
-    const [dateTime, setDateTime] = useState(getUpcomingDates(5));
+    const [selectedCityID, setSelectedCityID] = useState(areaId);
+    const [selectedDate, setDate] = useState(dateTime.length > 0 ? dateTime[0].id : "");
+
     console.log(dateTime);
     useEffect(() => {
         const getMovie = async (movieId) => {
@@ -49,6 +56,20 @@ const MoviePlan = () => {
         };
         getTheaters(selectedCityID);
     }, [selectedCityID]);
+    useEffect(() => {
+        if (!selectedTheaterID) return;
+        const getShowtimeforMovie = async (movieId, selectedTheaterID, selectedDate) => {
+            try {
+                const res = await fetchData(`/api/v1/theater/${selectedTheaterID}/movie/${movieId}/showtimes/${selectedDate}`);
+                console.log(res.data);
+                setSchedule(res.data);
+            } catch (error) {
+                console.error("Error fetching theaters:", error);
+            }
+        };
+        getShowtimeforMovie(selectedTheaterID, movieId, selectedDate);
+    }, [selectedTheaterID, selectedDate]);
+
     return (
         <>
             {!movie ? (
@@ -105,7 +126,6 @@ const MoviePlan = () => {
                                     options={dateTime}
                                     selectedValue={selectedDate}
                                     onChange={(e) => setDate(e.target.value)}
-                                    defaultvalue={dateTime[0]}
                                     placeholder="--- Choose Date ---"
                                 />
                             </div>

@@ -99,6 +99,20 @@ const deleteShowtime = async (req, res) => {
         return res.status(400).json({ status: "FAILED", message: error.message });
     }
 };
+const getShowtimeofMovieInTheater = async (req, res) => {
+    const { theaterId, movieId, dateTime } = req.params;
+    const date = new Date(dateTime);
+
+    const formattedDateTime = date.toLocaleDateString('en-CA').replace(/-/g, '/');
+    try {
+        const showtimes = await Showtime.fetchShowtimeofMovieInTheater(movieId, theaterId, formattedDateTime);
+        return res.status(200).json({
+            status: "SUCCESS", data: showtimes
+        });
+    } catch (error) {
+        return res.status(404).json({ status: "FAILED", message: error.message });
+    }
+}
 
 
-module.exports = { ScheduleShowtime, getAllShowtimeofTheater, getShowtime, updateShowtime, deleteShowtime };
+module.exports = { ScheduleShowtime, getAllShowtimeofTheater, getShowtime, updateShowtime, deleteShowtime, getShowtimeofMovieInTheater };

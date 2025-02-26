@@ -1,6 +1,8 @@
 import { fetchData } from "../../../api/api";
 import FilterSection from "../../../components/home/movie/FilterSection";
 import { useEffect, useState } from "react";
+import imageURL from "/assets/images/banner/banner01.jpg"
+import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
 
 const Theater = () => {
     const [theaters, setTheaters] = useState([]);
@@ -38,6 +40,7 @@ const Theater = () => {
         if (!selectedTheaterID) return;
         const getInfoTheater = async (theaterId) => {
             try {
+                console.log("theater:", selectedTheaterID);
                 const res = await fetchData(`/api/v1/theaters/${theaterId}`);
                 const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}`);
                 console.log(res);
@@ -52,9 +55,9 @@ const Theater = () => {
     }, [selectedTheaterID])
     return (<>
         <section className="banner-section">
-            <div className="banner-bg bg_img bg-fixed" style={{ backgroundImage: "url('/assets/images/banner/banner01.jpg')" }}></div>
+            <div className="banner-bg bg_img bg-fixed" style={{ backgroundImage: `url(${imageURL})` }}></div>
             <div className="container">
-                <div className="search-tab bg_img" style={{ backgroundImage: "url('/assets/images/ticket/ticket-bg01.jpg')" }}>
+                <div className="search-tab bg_img" style={{ backgroundImage: `url(${searchURL})` }}>
                     <div className="row align-items-center mb--20">
                         <div className="col-lg-6 mb-20">
                             <div className="search-ticket-header">
@@ -124,13 +127,13 @@ const Theater = () => {
                                                     <div key={index} className="col-sm-6 col-lg-4">
                                                         <div className="movie-grid">
                                                             <div className="movie-thumb c-thumb">
-                                                                <a href="movie-details.html">
+                                                                <a href={`/starcinema/movie-schedule/${movie.id}?areaId=${selectedCityID}&theaterId=${selectedTheaterID}`}>
                                                                     <img src={movie.img_poster} alt="movie" />
                                                                 </a>
                                                             </div>
                                                             <div className="movie-content bg-one">
                                                                 <h5 className="title m-0">
-                                                                    <a href="movie-details.html">{movie.title}</a>
+                                                                    <a href={`/starcinema/movie-schedule/${movie.id}?areaId=${selectedCityID}&theaterId=${selectedTheaterID}`}>{movie.title}</a>
                                                                 </h5>
                                                             </div>
                                                         </div>

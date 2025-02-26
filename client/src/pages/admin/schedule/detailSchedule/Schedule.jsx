@@ -27,7 +27,7 @@ const Schedule = () => {
     const fetchShowtime = async (page = 0) => {
       try {
         const schedule = await fetchData(
-          `/api/v1/showtimes/${theaterId}/${selectedDate}?pageNumber=${page}&limit=8`
+          `/api/v1/theater/${theaterId}/showtimes/${selectedDate}?pageNumber=${page}&limit=8`
         );
         setShowtime(schedule.data);
         setShowtimeFilter(showtimes);
@@ -38,12 +38,12 @@ const Schedule = () => {
     };
     fetchShowtime(currentPage);
   }, [currentPage, theaterId, selectedDate]);
-  
-    useEffect(() => {
-      if (inputSearch.trim() === "") {
-        setShowtimeFilter(showtimes);
-      }
-    }, [inputSearch, showtimes]);
+
+  useEffect(() => {
+    if (inputSearch.trim() === "") {
+      setShowtimeFilter(showtimes);
+    }
+  }, [inputSearch, showtimes]);
 
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
@@ -257,9 +257,8 @@ const Schedule = () => {
               <nav className="d-flex justify-content-center">
                 <ul className="pagination">
                   <li
-                    className={`page-item ${
-                      currentPage === 0 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${currentPage === 0 ? "disabled" : ""
+                      }`}
                   >
                     <a
                       className="page-link"
@@ -274,9 +273,8 @@ const Schedule = () => {
                   {Array.from({ length: totalPages }, (_, index) => (
                     <li
                       key={index}
-                      className={`page-item ${
-                        currentPage === index ? "active" : ""
-                      }`}
+                      className={`page-item ${currentPage === index ? "active" : ""
+                        }`}
                     >
                       <a
                         className="page-link"
@@ -288,9 +286,8 @@ const Schedule = () => {
                     </li>
                   ))}
                   <li
-                    className={`page-item ${
-                      currentPage === totalPages - 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                      }`}
                   >
                     <a
                       className="page-link"
