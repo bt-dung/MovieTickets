@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useUser } from "../../context/UserContext";
-import { fetchData } from "../../api/api";
-import MovieItemList from "../../components/home/movie/MovieItemList";
-import MovieWidget from "../../components/home/movie/MovieWidget";
-import SearchContent from "../../components/home/movie/SearchContent";
+import { useUser } from "../../../context/UserContext";
+import { fetchData } from "../../../api/api";
+import MovieItemList from "../../../components/home/movie/MovieItemList";
+import MovieWidget from "../../../components/home/movie/MovieWidget";
+import SearchContent from "../../../components/home/movie/SearchContent";
+import FilterSection from "../../../components/home/movie/FilterSection";
 
 const Movie = () => {
   const { user, isLoggedIn } = useUser();
@@ -14,8 +15,10 @@ const Movie = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [theaters, setTheaters] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedCityID, setSelectedCityID] = useState('');
+  const [selectedTheaterID, setSelectedTheaterID] = useState('');
 
   useEffect(() => {
     const fetchNewRelease = async (page = 1) => {
@@ -42,7 +45,6 @@ const Movie = () => {
         console.log("Error fetching genres: ", error);
       }
     };
-
     fetchGetAllGenres();
   }, []);
 
@@ -75,10 +77,44 @@ const Movie = () => {
       setCurrentPage(page);
     }
   };
-
-  const handleCityChange = () => {
-
-  }
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const res = await fetchData("/api/v1/areas");
+        setCities(res.data);
+      } catch (error) {
+        console.error("Error fetching area:", error);
+      }
+    };
+    getCities();
+  }, []);
+  useEffect(() => {
+    if (!selectedCityID) return;
+    const getTheaters = async (cityId) => {
+      try {
+        console.log("city:", cityId);
+        const res = await fetchData(`/api/v1/theaters?areaId=${cityId}`);
+        setTheaters(res.data);
+      } catch (error) {
+        console.error("Error fetching theaters:", error);
+      }
+    };
+    getTheaters(selectedCityID);
+  }, [selectedCityID]);
+  useEffect(() => {
+    if (!selectedTheaterID) return;
+    const getMovieInTheater = async (theaterId) => {
+      try {
+        const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}`);
+        console.log(movieTheater);
+        setMovies(movieTheater.data);
+        setTotalPages(1);
+      } catch (error) {
+        console.error("Error fetching detail theater:", error);
+      }
+    }
+    getMovieInTheater(selectedTheaterID);
+  }, [selectedTheaterID])
 
   return (
     <>
@@ -87,12 +123,12 @@ const Movie = () => {
           <section className="banner-section">
             <div
               className="banner-bg bg_img bg-fixed"
-              data-background="../../../assets/images/banner/banner01.jpg"
+              style={{ backgroundImage: "url('/assets/images/banner/banner01.jpg')" }}
             ></div>
             <div className="container">
               <div
                 className="search-tab bg_img"
-                data-background="../../../assets/images/ticket/ticket-bg01.jpg"
+                style={{ backgroundImage: "url('/assets/images/ticket/ticket-bg01.jpg')" }}
               >
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">
@@ -108,7 +144,7 @@ const Movie = () => {
                           <img
                             src="../../../assets/images/ticket/video-player.png"
                             alt="ticket"
-                            style={{width: "50px"}}
+                            style={{ width: "50px" }}
                           />
                         </div>
                         <span>Movie</span>
@@ -140,62 +176,32 @@ const Movie = () => {
                 </div>
                 <div className="filter-container">
                   <div className="filter-group">
-                    <div class="thumb">
-                      <img
-                        src="../../../../assets/images/ticket/city.png"
-                        alt="ticket"
-                      />
-                    </div>
-                    <span class="type">city</span>
-                    <select
-                      className="select-bar"
-                      value={selectedCity}
-                      onChange={handleCityChange}
-                      style={{width: "160px"}}
-                    >
-                      <option value="" disabled>
-                        Choose City
-                      </option>
-                      {cities.map((city) => (
-                        <option key={city.id} value={city.name}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="filter-group">
-                    <div class="thumb">
-                      <img
-                        src="../../../../assets/images/ticket/cinema.png"
-                        alt="ticket"
-                      />
-                    </div>
-                    <span class="type">theater</span>
-                    <select
-                      className="select-bar"
-                      value={selectedCity}
-                      onChange={handleCityChange}
-                      style={{width: "160px"}}
-                    >
-                      <option value="" disabled>
-                        Choose Theater
-                      </option>
-                      {cities.map((city) => (
-                        <option key={city.id} value={city.name}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
+                    <FilterSection
+                      iconURL="../../../../assets/images/ticket/city.png"
+                      labelName="City"
+                      options={cities}
+                      selectedValue={selectedCityID}
+                      onChange={(e) => setSelectedCityID(e.target.value)}
+                      placeholder="--- Choose City ---"
+                    />
+                    <FilterSection
+                      iconURL="../../../../assets/images/ticket/cinema.png"
+                      labelName="Theater"
+                      options={theaters}
+                      selectedValue={selectedTheaterID}
+                      onChange={(e) => setSelectedTheaterID(e.target.value)}
+                      placeholder="--- Choose Theater ---"
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <section class="movie-section padding-top padding-bottom">
-            <div class="container">
-              <div class="row flex-wrap-reverse justify-content-center">
-                <div class="col-sm-10 col-md-8 col-lg-3">
+          <section className="movie-section padding-top padding-bottom">
+            <div className="container-xxl">
+              <div className="row flex-wrap-reverse justify-content-center">
+                <div className="col-sm-10 col-md-8 col-lg-3">
                   <MovieWidget genres={genres} />
                 </div>
                 <div class="col-lg-9 mb-50 mb-lg-0">

@@ -1,6 +1,5 @@
 import { fetchData } from "../../../api/api";
-import FilterSection from "../../../components/home/FilterSection";
-import SearchContent from "../../../components/home/movie/SearchContent";
+import FilterSection from "../../../components/home/movie/FilterSection";
 import { useEffect, useState } from "react";
 
 const Theater = () => {

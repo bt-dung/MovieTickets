@@ -1,8 +1,10 @@
 import { useUser } from "../../context/UserContext";
 import { fetchData } from "../../api/api";
 import { useState, useEffect } from "react";
-import SearchContent from "../../components/home/movie/SearchContent"
+import SearchContent from "../../components/home/movie/SearchContent";
 import MovieItem from "../../components/home/movie/MovieItem";
+import imageURL from "/assets/images/banner/banner01.jpg"
+import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
 
 const Home = () => {
   const { user, isLoggedIn } = useUser();
@@ -71,9 +73,9 @@ const Home = () => {
       {isLoggedIn ? (
         <>
           <section className="banner-section">
-            <div className="banner-bg bg_img bg-fixed" style={{ backgroundImage: "url('/assets/images/banner/banner01.jpg')" }}></div>
-            <div className="container">
-              <div className="search-tab bg_img" style={{ backgroundImage: "url('/assets/images/ticket/ticket-bg01.jpg')" }}>
+            <div className="banner-bg" style={{ backgroundImage: `url(${imageURL})` }}></div>
+            <div className="container-xl">
+              <div className="search-tab" style={{ backgroundImage: `url(${searchURL})` }}>
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">
                     <div className="search-ticket-header">
@@ -135,7 +137,7 @@ const Home = () => {
             </div>
           </section>
           <section class="movie-section padding-top padding-bottom">
-            <div class="container">
+            <div class="container-xxl">
               <div class="tab">
                 <div class="section-header-2">
                   <div class="left">

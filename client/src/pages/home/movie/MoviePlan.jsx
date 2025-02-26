@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import FilterSection from "../../../components/home/FilterSection";
+import FilterSection from "../../../components/home/movie/FilterSection";
 import { fetchData } from "../../../api/api";
+import { getUpcomingDates } from "../../../utils/dateTimeHelper";
 const MoviePlan = () => {
     const { movieId } = useParams();
-    const [genre, getGenre] = useState([]);
     const [movie, setMovie] = useState(null);
     const [movie_schedule, setSchedule] = useState([]);
     const [theaters, setTheaters] = useState([]);
-    const [selectedTheaterID, setSelectedTheaterID] = useState(2);
+    const [selectedTheaterID, setSelectedTheaterID] = useState('');
     const [cities, setCities] = useState([]);
-    const [selectedCityID, setSelectedCityID] = useState(1);
+    const [selectedCityID, setSelectedCityID] = useState('');
+    const [selectedDate, setDate] = useState('');
+    const [dateTime, setDateTime] = useState(getUpcomingDates(5));
+    console.log(dateTime);
     useEffect(() => {
         const getMovie = async (movieId) => {
             try {
@@ -23,6 +26,29 @@ const MoviePlan = () => {
         }
         getMovie(movieId);
     }, [movieId]);
+    useEffect(() => {
+        const getCities = async () => {
+            try {
+                const res = await fetchData("/api/v1/areas");
+                setCities(res.data);
+            } catch (error) {
+                console.error("Error fetching area:", error);
+            }
+        };
+        getCities();
+    }, []);
+    useEffect(() => {
+        if (!selectedCityID) return;
+        const getTheaters = async (cityId) => {
+            try {
+                const res = await fetchData(`/api/v1/theaters?areaId=${cityId}`);
+                setTheaters(res.data);
+            } catch (error) {
+                console.error("Error fetching theaters:", error);
+            }
+        };
+        getTheaters(selectedCityID);
+    }, [selectedCityID]);
     return (
         <>
             {!movie ? (
@@ -54,7 +80,7 @@ const MoviePlan = () => {
                     </div>
                 </section>
                 <section class="book-section bg-one">
-                    <div class="container">
+                    <div class="container-xl">
                         <div className="filter-container">
                             <div className="filter-group">
                                 <FilterSection
@@ -74,20 +100,21 @@ const MoviePlan = () => {
                                     placeholder="--- Choose Theater ---"
                                 />
                                 <FilterSection
-                                    iconURL="../../../../assets/images/ticket/city.png"
-                                    labelName="City"
-                                    options={cities}
-                                    selectedValue={selectedCityID}
-                                    onChange={(e) => setSelectedCityID(e.target.value)}
-                                    placeholder="--- Choose City ---"
+                                    iconURL="/assets/images/movie/date.png"
+                                    labelName="Date"
+                                    options={dateTime}
+                                    selectedValue={selectedDate}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    defaultvalue={dateTime[0]}
+                                    placeholder="--- Choose Date ---"
                                 />
                             </div>
                         </div>
                     </div>
                 </section>
-                <div class="ticket-plan-section padding-bottom padding-top">
-                    <div class="container">
-                        <div class="row justify-content-center">
+                <div className="ticket-plan-section padding-bottom padding-top">
+                    <div className="container-xxl">
+                        <div className="row justify-content-center">
                             <div class="col-lg-9 mb-5 mb-lg-0">
                                 <ul class="seat-plan-wrapper bg-five">
                                     <li>
