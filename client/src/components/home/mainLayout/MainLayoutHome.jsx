@@ -5,15 +5,15 @@ import "../../../../styles.scss";
 const MainLayoutHome = ({ children }) => {
     return (
         <>
-            <div class="preloader">
+            {/* <div class="preloader">
                 <div class="preloader-inner">
                     <div class="preloader-icon">
                         <span></span>
                         <span></span>
                     </div>
                 </div>
-            </div>
-            <div class="overlay"></div>
+            </div> */}
+            {/* <div class="overlay"></div> */}
             <a href="#0" class="scrollToTop">
                 <i class="fas fa-angle-up"></i>
             </a>

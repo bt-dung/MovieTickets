@@ -216,7 +216,7 @@ const Movie = () => {
                             </select>
                           </div>
                           <div class="item">
-                            <span class="show">Sort By :</span>
+                            <span class="show" style={{width: "250px"}}>Sort By :</span>
                             <select class="select-bar">
                               <option value="showing">now showing</option>
                               <option value="exclusive">exclusive</option>
