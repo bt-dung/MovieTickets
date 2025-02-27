@@ -64,7 +64,7 @@ Showtime.getMovieName = async function (showtime_id) {
 
         return showtime;
     } catch (error) {
-        console.error("❌ Error when gets title Movie:", error.message);
+        console.error("Error when gets title Movie:", error.message);
         throw error;
     }
 };
@@ -155,5 +155,32 @@ Showtime.deleteShowtime = async (id) => {
         throw error;
     }
 };
+Showtime.fetchShowtimeofMovieInTheater = async function (movieId, theaterId, dateTime) {
+    try {
+        const screen = await Screens.findAll({ where: { theater_id: theaterId }, attributes: ['id'] });
+        const screenIds = screen.map(screen => screen.id);
+        const showtimes = await Showtime.findAll({
+            where: {
+                movie_id: movieId,
+                screen_id: { [Op.in]: screenIds },
+                date_time: { [Op.startsWith]: dateTime }
+            },
+            include: [
+                {
+                    model: Movies,
+                    attributes: ['title'],
+                },
+                {
+                    model: Screens,
+                    attributes: ['name'],
+                }
+            ],
+            order: [['start_time', 'ASC']],
+        });
+        return showtimes;
+    } catch (error) {
+        throw error;
+    }
+}
 
 module.exports = Showtime;

@@ -3,13 +3,13 @@ const MovieItem = ({ movie }) => {
         <div className="item">
             <div className="movie-grid">
                 <div className="movie-thumb c-thumb">
-                    <a href="#0">
+                    <a href={`/starcinema/movie-detail/${movie.id}`}>
                         <img src={movie.img_poster} alt={movie.title} />
                     </a>
                 </div>
                 <div className="movie-content bg-one">
                     <h5 className="title m-0">
-                        <a href="#0">{movie.title}</a>
+                        <a href={`/starcinema/movie-detail/${movie.id}`}>{movie.title}</a>
                     </h5>
                     <ul className="movie-rating-percent">
                         <li>

@@ -5,10 +5,10 @@ const SearchContent = ({ results }) => {
         <div className="search-content">
             {results.length > 0 ? (
                 results.map((movie, index) => (
-                    <div key={index} className="search-item">
+                    <a key={index} href={`/starcinema/movie-detail/${movie.id}`} className="search-item">
                         <img src={movie.img_poster} alt={movie.title} />
                         <h3>{movie.title}</h3>
-                    </div>
+                    </a>
                 ))
             ) : (
                 <p>No results found</p>

@@ -139,11 +139,20 @@ Movies.deleteMovie = async (movieId) => {
 };
 
 Movies.getMoviesByIds = async function (movieIds) {
+    const Genre = sequelize.models.genres;
     try {
         const movies = await Movies.findAll({
             where: {
                 id: { [Op.in]: movieIds }
             },
+            include: [
+                {
+                    model: Genre,
+                    as: "genres",
+                    attributes: ["id", "name"],
+                    through: { attributes: [] },
+                },
+            ],
             order: [["release_date", "DESC"]],
         });
         return movies;
