@@ -8,7 +8,7 @@ const FilterSection = ({ iconURL, labelName, options, selectedValue, onChange, p
             </div>
             <span className="type">{labelName}</span>
             <select className="select-bar" value={selectedValue} onChange={onChange} style={{ fontSize: "16px" }}>
-                <option value="" disabled>{placeholder}</option>
+                <option value="">{placeholder}</option>
                 {options.map((option) => (
                     <option key={option.id} value={option.id} style={{ fontSize: "16px" }}>{option.name}</option>
                 ))}

@@ -1,7 +1,7 @@
 import { fetchData } from "../../../api/api";
 import FilterSection from "../../../components/home/movie/FilterSection";
 import { useEffect, useState } from "react";
-import imageURL from "/assets/images/banner/banner01.jpg"
+import imageURL from "/assets/images/banner/banner02.jpg"
 import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
 
 const Theater = () => {
@@ -110,8 +110,10 @@ const Theater = () => {
                                     <div className="theater-info">
                                         <h4 className="theater-name">{detailTheater.name}</h4>
                                         <p className="theater-address">Address: {detailTheater.address}</p>
-                                        <p className="theater-time">Giờ mở cửa: 8:00 AM - 11:00 PM</p>
-                                        <a href="/theater-details" className="btn btn-primary">Xem chi tiết</a>
+                                        <p className="theater-time">Opening hours: 8:00 AM - 11:00 PM</p>
+                                        <p className="theater-screen" style={{ fontWeight: "bold" }}>Totals Screen | {detailTheater.total_screens} Screens</p>
+                                        <p className="theater-screen" style={{ fontWeight: "bold" }}>Totals Seat | {detailTheater.total_seats} Seats</p>
+                                        <a href="/theater-details" className="btn btn-primary">Detail</a>
                                     </div>
                                 </div>
                             </div>

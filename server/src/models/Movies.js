@@ -80,7 +80,6 @@ Movies.fetchMovies = async function (page, limit) {
                 },
             ],
         });
-        console.log(totalMovies);
         const totalPages = Math.ceil(totalMovies / limit);
         return { movies, totalPages };
     } catch (error) {

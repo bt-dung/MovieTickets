@@ -1,5 +1,6 @@
 const Showtime = require('../models/Showtime')
 const Screens = require('../models/Screens');
+const MovieTheater = require("../models/MovieTheater");
 const ScheduleShowtime = async (req, res) => {
     const { movie_id, screen_id, date_time, start_time, end_time } = req.body;
     console.log("selectedDate:", date_time);
@@ -33,7 +34,6 @@ const getAllShowtimeofTheater = async (req, res) => {
     const date = new Date(dateTime);
 
     const formattedDateTime = date.toLocaleDateString('en-CA').replace(/-/g, '/');
-    console.log(formattedDateTime);
     try {
         const { showtimes, totalShowtimes } = await Showtime.getShowtimebyTheater(theaterId, formattedDateTime, page, limit);
 
@@ -102,7 +102,6 @@ const deleteShowtime = async (req, res) => {
 const getShowtimeofMovieInTheater = async (req, res) => {
     const { theaterId, movieId, dateTime } = req.params;
     const date = new Date(dateTime);
-
     const formattedDateTime = date.toLocaleDateString('en-CA').replace(/-/g, '/');
     try {
         const showtimes = await Showtime.fetchShowtimeofMovieInTheater(movieId, theaterId, formattedDateTime);
@@ -112,7 +111,28 @@ const getShowtimeofMovieInTheater = async (req, res) => {
     } catch (error) {
         return res.status(404).json({ status: "FAILED", message: error.message });
     }
-}
+};
+const getShowtimesofMovie = async (req, res) => {
+    const { movieId, dateTime } = req.params;
+    const date = new Date(dateTime);
+    const formattedDateTime = date.toLocaleDateString('en-CA').replace(/-/g, '/');
+    const Theater = await MovieTheater.findAll({
+        where: { movie_id: movieId },
+        attributes: ['theater_id'],
+        raw: true,
+    })
+    const theaterIds = Theater.map(theater => theater.theater_id);
+    try {
+        const showtimes = await Showtime.fetchShowtimesofMovie(movieId, formattedDateTime, theaterIds);
+        return res.status(200).json({
+            status: "SUCCESS", data: showtimes
+        });
+    } catch (error) {
+        console.error("Error while get showtimes for movie", error);
+        return res.status(404).json({ status: "FAILED", message: error.message });
+    }
+
+};
 
 
-module.exports = { ScheduleShowtime, getAllShowtimeofTheater, getShowtime, updateShowtime, deleteShowtime, getShowtimeofMovieInTheater };
+module.exports = { ScheduleShowtime, getAllShowtimeofTheater, getShowtime, updateShowtime, deleteShowtime, getShowtimeofMovieInTheater, getShowtimesofMovie };
