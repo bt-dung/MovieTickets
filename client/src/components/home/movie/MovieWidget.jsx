@@ -7,7 +7,7 @@ const MovieWidget = ({ genres }) => {
         <div class="widget-1-body">
           <a href="#0">
             <img
-              src="../../../../assets/images/sidebar/banner/banner01.jpg"
+              src="/assets/images/movie/sonic3.jpg"
               alt="banner"
             />
           </a>
@@ -32,7 +32,7 @@ const MovieWidget = ({ genres }) => {
         <div class="widget-1-body">
           <a href="#0">
             <img
-              src="../../../../assets/images/sidebar/banner/banner02.jpg"
+              src="/assets/images/banner/banner13.jpg"
               alt="banner"
             />
           </a>

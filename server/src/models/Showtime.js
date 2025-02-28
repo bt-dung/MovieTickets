@@ -57,7 +57,6 @@ Showtime.getMovieName = async function (showtime_id) {
                 attributes: ['title'],
             },
         });
-        console.log(showtime);
         if (!showtime || !showtime.movie) {
             throw new Error('Showtime or Movie no exist!');
         }
@@ -155,9 +154,9 @@ Showtime.deleteShowtime = async (id) => {
         throw error;
     }
 };
-Showtime.fetchShowtimeofMovieInTheater = async function (movieId, theaterId, dateTime) {
+Showtime.fetchShowtimeofMovieInTheater = async function (movieId, theater_id, dateTime) {
     try {
-        const screen = await Screens.findAll({ where: { theater_id: theaterId }, attributes: ['id'] });
+        const screen = await Screens.findAll({ where: { theater_id: theater_id }, attributes: ['id'] });
         const screenIds = screen.map(screen => screen.id);
         const showtimes = await Showtime.findAll({
             where: {
@@ -172,8 +171,39 @@ Showtime.fetchShowtimeofMovieInTheater = async function (movieId, theaterId, dat
                 },
                 {
                     model: Screens,
-                    attributes: ['name'],
+                    required: true,
                 }
+            ],
+            order: [['start_time', 'ASC']],
+        });
+        return showtimes;
+    } catch (error) {
+        console.error("Error while get show time of movie in theater:", error);
+        throw error;
+    }
+};
+Showtime.fetchShowtimesofMovie = async function (movie_id, dateTime, theaterIds) {
+    if (!movie_id || !dateTime) {
+        throw new Error("Movie_id and date time not empty!!");
+    }
+    try {
+        const showtimes = await Showtime.findAll({
+            where: {
+                movie_id: movie_id,
+                date_time: dateTime,
+            },
+            include: [
+                {
+                    model: Movies,
+                    attributes: ['title'],
+                },
+                {
+                    model: Screens,
+                    required: true,
+                    where: {
+                        theater_id: theaterIds,
+                    },
+                },
             ],
             order: [['start_time', 'ASC']],
         });

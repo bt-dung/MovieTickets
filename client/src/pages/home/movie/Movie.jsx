@@ -5,6 +5,8 @@ import MovieItemList from "../../../components/home/movie/MovieItemList";
 import MovieWidget from "../../../components/home/movie/MovieWidget";
 import SearchContent from "../../../components/home/movie/SearchContent";
 import FilterSection from "../../../components/home/movie/FilterSection";
+import imageURL from "/assets/images/banner/banner01.jpg"
+import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
 
 const Movie = () => {
   const { user, isLoggedIn } = useUser();
@@ -123,12 +125,12 @@ const Movie = () => {
           <section className="banner-section">
             <div
               className="banner-bg bg_img bg-fixed"
-              style={{ backgroundImage: "url('/assets/images/banner/banner01.jpg')" }}
+              style={{ backgroundImage: `url(${imageURL})` }}
             ></div>
             <div className="container">
               <div
                 className="search-tab bg_img"
-                style={{ backgroundImage: "url('/assets/images/ticket/ticket-bg01.jpg')" }}
+                style={{ backgroundImage: `url(${searchURL})` }}
               >
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">

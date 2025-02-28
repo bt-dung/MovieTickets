@@ -16,7 +16,6 @@ const getAllMovies = async (req, res) => {
 
 const searchMovies = async (req, res) => {
     const searchQuery = req.query.search || "";
-    console.log("searchQuery:", searchQuery);
     try {
         const data = await Movie.getMovieSearched(searchQuery);
         if (data.length === 0) {
@@ -52,10 +51,8 @@ const getFilmNewRelease = async (req, res) => {
 
 const getMovie = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     try {
         const data = await Movie.fetchMovie(id);
-        console.log(data);
         return res.json(data);
     } catch (error) {
         console.log(error);

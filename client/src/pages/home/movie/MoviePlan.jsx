@@ -3,6 +3,9 @@ import { useParams, useLocation } from "react-router-dom";
 import FilterSection from "../../../components/home/movie/FilterSection";
 import { fetchData } from "../../../api/api";
 import { getUpcomingDates } from "../../../utils/dateTimeHelper";
+import { FormatDate } from "../../../utils/formatDateHelper";
+import ScheduleItem from "../../../components/home/schedule/ScheduleItem";
+import { groupShowtimesByMovie } from "../../../utils/groupShowtimesByMovie";
 const useQueryParams = () => {
     return new URLSearchParams(useLocation().search);
 };
@@ -10,40 +13,32 @@ const MoviePlan = () => {
     const query = useQueryParams();
     const areaId = query.get("areaId");
     const theaterId = query.get("theaterId");
-    const [dateTime, setDateTime] = useState(getUpcomingDates(5));
+    const [dateTime, setDateTime] = useState([]);
     const { movieId } = useParams();
     const [movie, setMovie] = useState(null);
     const [movie_schedule, setSchedule] = useState([]);
     const [theaters, setTheaters] = useState([]);
-    const [selectedTheaterID, setSelectedTheaterID] = useState(theaterId);
+    const [selectedTheaterID, setSelectedTheaterID] = useState(theaterId || '');
     const [cities, setCities] = useState([]);
-    const [selectedCityID, setSelectedCityID] = useState(areaId);
-    const [selectedDate, setDate] = useState(dateTime.length > 0 ? dateTime[0].id : "");
+    const [selectedCityID, setSelectedCityID] = useState(areaId || '');
+    const [selectedDate, setDate] = useState(FormatDate(Date.now()));
+    const [detailTheater, setTheater] = useState(null);
 
-    console.log(dateTime);
     useEffect(() => {
         const getMovie = async (movieId) => {
             try {
                 const res = await fetchData(`/admin/movies/${movieId}`);
-                console.log(res);
                 setMovie(res);
+                const areas = await fetchData("/api/v1/areas");
+                setCities(areas.data);
+                setDateTime(getUpcomingDates(5));
             } catch (error) {
                 console.error("Error fetching movie:", error);
             }
         }
         getMovie(movieId);
     }, [movieId]);
-    useEffect(() => {
-        const getCities = async () => {
-            try {
-                const res = await fetchData("/api/v1/areas");
-                setCities(res.data);
-            } catch (error) {
-                console.error("Error fetching area:", error);
-            }
-        };
-        getCities();
-    }, []);
+
     useEffect(() => {
         if (!selectedCityID) return;
         const getTheaters = async (cityId) => {
@@ -56,13 +51,21 @@ const MoviePlan = () => {
         };
         getTheaters(selectedCityID);
     }, [selectedCityID]);
+
     useEffect(() => {
-        if (!selectedTheaterID) return;
-        const getShowtimeforMovie = async (movieId, selectedTheaterID, selectedDate) => {
+        const getShowtimeforMovie = async (selectedTheaterID, movieId, selectedDate) => {
             try {
-                const res = await fetchData(`/api/v1/theater/${selectedTheaterID}/movie/${movieId}/showtimes/${selectedDate}`);
-                console.log(res.data);
-                setSchedule(res.data);
+                let res;
+                if (!selectedTheaterID) {
+                    res = await fetchData(`/api/v1/movie/${movieId}/showtimes/${selectedDate}`);
+                } else {
+                    const resTheater = await fetchData(`/api/v1/theaters/${selectedTheaterID}`);
+                    setTheater(resTheater);
+                    res = await fetchData(`/api/v1/theater/${selectedTheaterID}/movie/${movieId}/showtimes/${selectedDate}`);
+                };
+                console.log("showtime2", groupShowtimesByMovie(res.data));
+                const allSchedule = groupShowtimesByMovie(res.data)
+                setSchedule(allSchedule);
             } catch (error) {
                 console.error("Error fetching theaters:", error);
             }
@@ -75,17 +78,6 @@ const MoviePlan = () => {
             {!movie ? (
                 <div>Loading...</div>
             ) : (<>
-                <section class="window-warning inActive">
-                    <div class="lay"></div>
-                    <div class="warning-item">
-                        <h6 class="subtitle">Welcome! </h6>
-                        <h4 class="title">Select Your Seats</h4>
-                        <div class="thumb">
-                            <img src="assets/images/movie/seat-plan.png" alt="movie" />
-                        </div>
-                        <a href="movie-seat-plan.html" class="custom-button seatPlanButton">Seat Plans<i class="fas fa-angle-right"></i></a>
-                    </div>
-                </section>
                 <section class="details-banner hero-area bg_img" data-background={movie.img_bg}>
                     <div className="container">
                         <div className="details-banner-wrapper">
@@ -134,172 +126,26 @@ const MoviePlan = () => {
                 </section>
                 <div className="ticket-plan-section padding-bottom padding-top">
                     <div className="container-xxl">
+                        <div className="title-page">
+                            <h1>MOVIE SHOWTIMES</h1>
+                            {!detailTheater ? (<p>Film "${movie.title}"</p>) : (<p>Film "${movie.title}" at {detailTheater.name} - address: {detailTheater.address} on {selectedDate}.</p>)}
+
+                        </div>
                         <div className="row justify-content-center">
                             <div class="col-lg-9 mb-5 mb-lg-0">
                                 <ul class="seat-plan-wrapper bg-five">
-                                    <li>
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">Genesis Cinema</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">the beach</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="active">
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">city work</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item active">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">box park</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">la mer</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="movie-name">
-                                            <div class="icons">
-                                                <i class="far fa-heart"></i>
-                                                <i class="fas fa-heart"></i>
-                                            </div>
-                                            <a href="#0" class="name">wanted</a>
-                                            <div class="location-icon">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="movie-schedule">
-                                            <div class="item">
-                                                09:40
-                                            </div>
-                                            <div class="item">
-                                                13:45
-                                            </div>
-                                            <div class="item">
-                                                15:45
-                                            </div>
-                                            <div class="item">
-                                                19:50
-                                            </div>
-                                        </div>
-                                    </li>
+                                    {!movie_schedule ? (<p className="text-center text-danger fs-5">The movie is not showing in theaters today.</p>) : (
+                                        movie_schedule.theaters?.map((theater) => (
+                                            <ScheduleItem key={theater.theater_id} schedules={theater} movieTitle={movie_schedule.title} />
+                                        ))
+                                    )}
                                 </ul>
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-10">
                                 <div class="widget-1 widget-banner">
                                     <div class="widget-1-body">
                                         <a href="#0">
-                                            <img src="/assets/images/sidebar/banner/banner03.jpg" alt="banner" />
+                                            <img src="/assets/images/banner/banner12.jpg" alt="banner" />
                                         </a>
                                     </div>
                                 </div>
@@ -307,7 +153,8 @@ const MoviePlan = () => {
                         </div>
                     </div>
                 </div></>
-            )}</>
+            )
+            }</>
     );
 };
 

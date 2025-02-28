@@ -99,11 +99,9 @@ Screens.deleteScreen = async (id) => {
 
 Screens.afterCreate(async (screen, options) => {
     const Theaters = sequelize.models.theaters;
-    console.log(Theaters)
     try {
         const theater = await Theaters.findByPk(screen.theater_id);
         if (theater) {
-            console.log(theater.id);
             theater.total_screens += 1;
             const totalSeats = screen.total_row * screen.total_column;
             theater.total_seats = (theater.total_seats || 0) + totalSeats;
