@@ -58,7 +58,14 @@ DetailMovie.insertDetail = async (DetailData) => {
         throw error;
     }
 };
-
+DetailMovie.getDetail = async function (movieId) {
+    try {
+        const detailMovie = await DetailMovie.findByPk(movieId);
+        return detailMovie;
+    } catch (error) {
+        throw error;
+    }
+};
 DetailMovie.updateDetail = async (movieId, updateDetail) => {
     try {
         const result = await DetailMovie.update(updateDetail, {

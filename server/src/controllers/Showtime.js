@@ -50,13 +50,8 @@ const getAllShowtimeofTheater = async (req, res) => {
 const getShowtime = async (req, res) => {
     const { id } = req.params;
     try {
-        const showtime = await Showtime.findByPk(id, {
-            include: {
-                model: Screens,
-                attributes: ['theater_id'],
-            },
-        });
-        return res.json(showtime);
+        const showtime = await Showtime.fetchShowtime(id);
+        return res.json({ status: "SUCCESS", data: showtime });
     } catch (error) {
         console.error("Fetching showtime error:", error);
         return res.status(404).json({ status: "FAILED", message: error.message });

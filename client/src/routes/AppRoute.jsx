@@ -2,6 +2,7 @@ import Home from "../pages/home/Home";
 import MoviePage from "../pages/home/movie/Movie"
 import TheaterHome from "../pages/home/theater/Theater";
 import DetailMovie from "../pages/home/movie/DetailMovie";
+import SeatPlan from "../pages/home/seatplan/SeatPlan";
 
 import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'
@@ -32,11 +33,12 @@ import MoviePlan from "../pages/home/movie/MoviePlan";
 
 
 export const userRoutes = [
-    { path: "/home", component: Home, layout: MainLayoutHome },
-    { path: "/movie", component: MoviePage, layout: MainLayoutHome },
-    { path: "/theater", component: TheaterHome, layout: MainLayoutHome },
-    { path: "/movie-schedule/:movieId", component: MoviePlan, layout: MainLayoutHome },
-    { path: "/movie-detail/:movieId", component: DetailMovie, layout: MainLayoutHome },
+    { path: "/home", component: Home, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/movie", component: MoviePage, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/theater", component: TheaterHome, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/movie-schedule/:movieId", component: MoviePlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/movie-detail/:movieId", component: DetailMovie, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/theater/:theaterId/choose-seat/:showtimeId/", component: SeatPlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

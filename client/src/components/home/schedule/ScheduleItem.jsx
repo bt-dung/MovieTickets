@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { fetchData } from "../../../api/api";
 import SeatSelectionModal from "./SeatSelectionModal ";
-const ScheduleItem = ({ schedules, movieTitle }) => {
+const ScheduleItem = ({ schedules }) => {
     const [showWarning, setShowWarning] = useState(false);
     const [selectedShowtime, setSelectedShowtime] = useState(null);
     const [theaterDetail, setTheater] = useState(null);
@@ -58,6 +58,7 @@ const ScheduleItem = ({ schedules, movieTitle }) => {
             showWarning={showWarning}
             setShowWarning={setShowWarning}
             showtime={selectedShowtime}
+            theater_id={schedules.theater_id}
         />
     </>);
 };

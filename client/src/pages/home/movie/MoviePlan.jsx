@@ -136,7 +136,7 @@ const MoviePlan = () => {
                                 <ul class="seat-plan-wrapper bg-five">
                                     {!movie_schedule ? (<p className="text-center text-danger fs-5">The movie is not showing in theaters today.</p>) : (
                                         movie_schedule.theaters?.map((theater) => (
-                                            <ScheduleItem key={theater.theater_id} schedules={theater} movieTitle={movie_schedule.title} />
+                                            <ScheduleItem key={theater.theater_id} schedules={theater} />
                                         ))
                                     )}
                                 </ul>

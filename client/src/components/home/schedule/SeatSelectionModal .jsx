@@ -1,6 +1,6 @@
 import React from "react";
 
-const SeatSelectionModal = ({ showWarning, setShowWarning, showtime }) => {
+const SeatSelectionModal = ({ showWarning, setShowWarning, showtime, theater_id }) => {
     if (!showWarning) return null;
     const formattedTime = new Date(showtime.start_time).toLocaleTimeString("en-GB", {
         hour: "2-digit",
@@ -18,7 +18,7 @@ const SeatSelectionModal = ({ showWarning, setShowWarning, showtime }) => {
                 <div className="thumb">
                     <img src="/assets/images/movie/seat-plan.png" alt="movie" />
                 </div>
-                <a href="movie-seat-plan.html" className="custom-button seatPlanButton">
+                <a href={`/starcinema/theater/${theater_id}/choose-seat/${showtime.id}`} className="custom-button seatPlanButton">
                     Seat Plans<i className="fas fa-angle-right"></i>
                 </a>
             </div>

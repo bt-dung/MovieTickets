@@ -67,6 +67,23 @@ Showtime.getMovieName = async function (showtime_id) {
         throw error;
     }
 };
+Showtime.fetchShowtime = async function (showtime_id) {
+    try {
+        const showtime = await Showtime.findByPk(showtime_id, {
+            include: [
+                {
+                    model: Movies,
+                },
+                {
+                    model: Screens,
+                }
+            ],
+        });
+        return showtime;
+    } catch (error) {
+        throw error;
+    }
+};
 Showtime.insertShowtime = async (showtimeData) => {
     try {
         const existingShowtimes = await Showtime.findAll({

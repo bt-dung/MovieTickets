@@ -2421,6 +2421,7 @@ input[type="submit"] {
 .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span::after {
   content: "|";
   font-size: 18px;
+  margin: 0 10px;
 }
 
 .details-banner.event-details-banner {
@@ -5211,6 +5212,7 @@ input[type="submit"] {
 }
 
 .single-seat .sit-num {
+  color: white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -5329,6 +5331,7 @@ input[type="submit"] {
 }
 
 .page-title-area .item {
+  align-items: center;
   margin: 0 15px 20px;
 }
 
@@ -5353,6 +5356,14 @@ input[type="submit"] {
 
 .page-title-area .date-item .date {
   margin-right: 30px;
+  font-size: 20px;
+  background: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-title-area .date-item .hour {
+  color: #31d7a9;
 }
 
 .page-title-area .date-item .select-bar {
@@ -5388,7 +5399,7 @@ input[type="submit"] {
 }
 
 .page-title {
-  padding: 40px 0;
+  padding: 30px 0;
   border-top: 1px solid #17305f;
   border-bottom: 1px solid #17305f;
 }
@@ -6492,6 +6503,14 @@ input[type="submit"] {
 .event-book-search * {
   position: relative;
   z-index: 1;
+}
+
+.countdown-box {
+  background-color: #31d7a9;
+  border-radius: 10px;
+  padding: 0 20px;
+  display: inline-block;
+  text-align: center;
 }
 
 .countdown li {
