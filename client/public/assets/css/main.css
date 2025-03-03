@@ -5146,7 +5146,9 @@ input[type="submit"] {
   padding: 0;
 }
 
-.seat-area .seat-line>span {
+.seat-area .seat-line span {
+  color: white;
+  font-weight: bold;
   width: 20px;
 }
 
@@ -5209,6 +5211,13 @@ input[type="submit"] {
 .single-seat {
   cursor: pointer;
   position: relative;
+  display: inline-block;
+}
+
+.single-seat img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .single-seat .sit-num {
@@ -5220,6 +5229,12 @@ input[type="submit"] {
   transform: translate(-50%, -50%);
   text-transform: uppercase;
   font-size: 14px;
+  font-weight: bold;
+}
+
+.single-seat .seat-booked {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 @media (max-width: 991px) {
@@ -5282,6 +5297,18 @@ input[type="submit"] {
 
 .proceed-to-book .book-item {
   margin-bottom: 25px;
+}
+
+.proceed-to-book .seat-type span {
+  color: #ffffff;
+  text-transform: capitalize;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.proceed-to-book .seat-type .title {
+  color: #31d7a9;
+  text-transform: uppercase;
 }
 
 .proceed-to-book .book-item span {

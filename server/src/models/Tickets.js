@@ -48,6 +48,8 @@ Showtime.hasMany(Tickets, { foreignKey: 'showtime_id' });
 Invoices.hasMany(Tickets, { foreignKey: 'invoice_id' });
 Tickets.belongsTo(Invoices, { foreignKey: 'invoice_id' });
 Tickets.belongsTo(Showtime, { foreignKey: 'showtime_id' });
+Tickets.belongsTo(Seats, { foreignKey: 'seat_id' });
+Seats.hasMany(Tickets, { foreignKey: 'seat_id' });
 
 Tickets.getTicketsByTheater = async (theaterId) => {
     try {
