@@ -10,8 +10,10 @@ const AddService = () => {
 
     const [name, setName] = useState('');
     const [img, setImg] = useState('');
+    const [category, setCategory] = useState('');
     const [inventory, setInventory] = useState('');
     const [price, setPrice] = useState('');
+    const [discount, setDiscount] = useState(0);
     const [description, setDescription] = useState('');
 
     const validateInput = () => {
@@ -27,11 +29,11 @@ const AddService = () => {
 
         const inventoryValue = parseInt(inventory, 10);
         const priceValue = parseFloat(price);
-
-        if (isNaN(inventoryValue) || isNaN(priceValue)) {
+        const discountValue = parseInt(discount);
+        if (isNaN(inventoryValue) || isNaN(priceValue) || isNaN(discountValue)) {
             Swal.fire({
                 title: 'Validation Error',
-                text: 'Inventory and Price must be valid numbers.',
+                text: 'Inventory, Price and Discount must be valid numbers.',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
@@ -47,7 +49,15 @@ const AddService = () => {
             });
             return false;
         }
-
+        if (discountValue > 100) {
+            Swal.fire({
+                title: 'Validation Error',
+                text: 'Discount cannot exceed 100%',
+                icon: 'error',
+                confirmButtonText: 'Okay',
+            });
+            return false;
+        }
         return true;
     };
 
@@ -62,8 +72,10 @@ const AddService = () => {
             const response = await postData('/api/v1/create-service', {
                 name,
                 img,
+                category,
                 inventory,
                 price,
+                discount,
                 description,
             });
 
@@ -78,8 +90,10 @@ const AddService = () => {
                 });
                 setName('');
                 setImg('');
+                setCategory('');
                 setInventory('');
                 setPrice('');
+                setDiscount(0);
                 setDescription('');
             }
         } catch (error) {
@@ -135,7 +149,21 @@ const AddService = () => {
                                     />
                                     {img && <img src={img} alt="Service" className="mt-2 img-fluid" style={{ maxWidth: '200px' }} />}
                                 </div>
-
+                                <div className="form-group mb-3">
+                                    <label htmlFor="category">Category</label>
+                                    <select
+                                        id="category"
+                                        className="form-control"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Select a category</option>
+                                        <option value="popcorn">Popcorn</option>
+                                        <option value="drink">Drink</option>
+                                        <option value="combo">Combo</option>
+                                    </select>
+                                </div>
                                 <div className="form-group mb-3">
                                     <label htmlFor="inventory">Inventory</label>
                                     <input
@@ -156,6 +184,17 @@ const AddService = () => {
                                         className="form-control"
                                         value={price}
                                         onChange={(e) => setPrice(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="discount">Discount</label>
+                                    <input
+                                        type="number"
+                                        id="discount"
+                                        className="form-control"
+                                        value={discount}
+                                        onChange={(e) => setDiscount(e.target.value)}
                                         required
                                     />
                                 </div>

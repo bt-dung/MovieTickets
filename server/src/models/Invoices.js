@@ -94,18 +94,16 @@ Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
 Invoices.createInvoice = async (invoiceData) => {
     try {
         const { user_id, theater_id } = invoiceData;
-        const user = await User.findByPk(user_id);
         if (!user_id || !theater_id) {
             throw new Error('Missing required fields: user_id, theater_id');
         };
-        console.log(user_id, theater_id);
         const newInvoiceData = {
             user_id,
             theater_id,
             purchase_date: new Date(),
         };
         const newInvoice = await Invoices.create(newInvoiceData);
-        return { newInvoice, user };
+        return newInvoice;
     } catch (error) {
         console.error("Error inserting invoice:", error);
         throw error;

@@ -2,7 +2,6 @@ const DetailMovie = require('./DetailsMovie');
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db');
 const { Op } = require('sequelize');
-
 const Movies = sequelize.define('movies', {
     id: {
         type: DataTypes.INTEGER,
@@ -66,14 +65,57 @@ Movies.hasOne(DetailMovie, { foreignKey: 'movie_id' });
  * @returns {Object} - The created movie object
  */
 
-Movies.fetchMovies = async function (page, limit) {
+Movies.fetchMovies = async function (page, limit, genresId) {
     const Genre = sequelize.models.genres;
+    const MovieGenres = sequelize.models.movie_genres;
     try {
-        const totalMovies = await Movies.count();
+        let filterGenres = {};
+        if (genresId && genresId.length > 0) {
+            const movieIds = await MovieGenres.findAll({
+                attributes: ["movie_id"],
+                where: {
+                    genre_id: { [Op.in]: genresId },
+                },
+                group: ["movie_id"],
+            });
+
+            const movieIdList = movieIds.map((item) => item.movie_id);
+
+            filterGenres = {
+                id: { [Op.in]: movieIdList }
+            };
+        }
+
+        const totalMovies = await Movies.count({
+            where: genresId.length > 0 ? filterGenres : undefined
+        });
+
         const movies = await Movies.findAll({
+            where: genresId.length > 0 ? filterGenres : undefined,
             offset: (page - 1) * limit,
             limit: limit,
             order: [["release_date", "DESC"]],
+            include: [
+                {
+                    model: Genre,
+                    attributes: ["id", "name"],
+                    through: { attributes: [] },
+                },
+            ],
+        });
+
+        const totalPages = Math.ceil(totalMovies / limit);
+        return { movies, totalPages };
+    } catch (error) {
+        console.error("Error fetching movies:", error);
+        throw error;
+    }
+};
+
+Movies.getDetail = async function (movieId) {
+    const Genre = sequelize.models.genres;
+    try {
+        const detailMovie = await Movies.findByPk(movieId, {
             include: [
                 {
                     model: Genre,
@@ -81,15 +123,19 @@ Movies.fetchMovies = async function (page, limit) {
                     attributes: ["id", "name"],
                     through: { attributes: [] },
                 },
+                {
+                    model: DetailMovie,
+                    attributes: ["runtime"],
+                    required: true,
+                },
             ],
         });
-        const totalPages = Math.ceil(totalMovies / limit);
-        return { movies, totalPages };
+        return detailMovie;
     } catch (error) {
-        console.error("Error fetching movie:", error);
         throw error;
     }
-}
+};
+
 Movies.insertMovie = async (movieData) => {
     try {
         const existingMovie = await Movies.findByPk(movieData.id);
@@ -220,4 +266,5 @@ Movies.fetchMovie = async function (movieId) {
         throw error;
     };
 };
+
 module.exports = Movies;

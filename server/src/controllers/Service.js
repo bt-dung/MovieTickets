@@ -2,12 +2,12 @@ const Service = require("../models/Service");
 
 const ServiceController = {
     createService: async (req, res) => {
-        const { name, img, inventory, price, description } = req.body;
-        if (!name || !img || !inventory || !price) {
+        const { name, img, category, inventory, price, discount, description } = req.body;
+        if (!name || !img || !category || !inventory || !price) {
             return res.status(404).json({ status: "FAILED", message: "All fields are required!!" })
         }
         const ServiceData = {
-            name, img, inventory, price, description
+            name, img, category, inventory, price, discount, description
         };
         if (description) {
             ServiceData.description = description;

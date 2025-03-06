@@ -152,8 +152,10 @@ const create_table_movies = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(50),
         img VARCHAR(255),
+        category ENUM('popcorn', 'drink', 'combo') NOT NULL,
         inventory INT,
         price DECIMAl(10,2) NOT NULL,
+        discount INT NOT NULL DEFAULT 0,
         description TEXT DEFAULT NULL
     );`,
 
