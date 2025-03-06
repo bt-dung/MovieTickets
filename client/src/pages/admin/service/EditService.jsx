@@ -11,8 +11,10 @@ const EditService = () => {
 
     const [name, setName] = useState('');
     const [img, setImg] = useState('');
+    const [category, setCategory] = useState('');
     const [inventory, setInventory] = useState('');
     const [price, setPrice] = useState('');
+    const [discount, setDiscount] = useState(0);
     const [description, setDescription] = useState('');
 
     useEffect(() => {
@@ -22,8 +24,10 @@ const EditService = () => {
                 if (response.status === "SUCCESS") {
                     setName(response.data.name);
                     setImg(response.data.img);
+                    setCategory(response.data.category);
                     setInventory(response.data.inventory);
                     setPrice(response.data.price);
+                    setDiscount(response.data.discount);
                     setDescription(response.data.description || '');
                 }
             } catch (error) {
@@ -34,7 +38,7 @@ const EditService = () => {
     }, [serviceId]);
 
     const validateInput = () => {
-        if (!name || !img || !inventory || !price) {
+        if (!name || !img || !category || !inventory || !price) {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'All fields except description are required.',
@@ -46,11 +50,11 @@ const EditService = () => {
 
         const inventoryValue = parseInt(inventory, 10);
         const priceValue = parseFloat(price);
-
-        if (isNaN(inventoryValue) || isNaN(priceValue)) {
+        const discountValue = parseInt(discount);
+        if (isNaN(inventoryValue) || isNaN(priceValue) || isNaN(discountValue)) {
             Swal.fire({
                 title: 'Validation Error',
-                text: 'Inventory and Price must be valid numbers.',
+                text: 'Inventory, Price and Discount must be valid numbers.',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
@@ -61,6 +65,15 @@ const EditService = () => {
             Swal.fire({
                 title: 'Validation Error',
                 text: 'Price cannot exceed 10,000,000.',
+                icon: 'error',
+                confirmButtonText: 'Okay',
+            });
+            return false;
+        }
+        if (discountValue > 100) {
+            Swal.fire({
+                title: 'Validation Error',
+                text: 'Discount cannot exceed 100%',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });
@@ -81,8 +94,10 @@ const EditService = () => {
             const response = await updateData(`/api/v1/service/${serviceId}/update`, {
                 name,
                 img,
+                category,
                 inventory,
                 price,
+                discount,
                 description,
             });
             if (response.status === "SUCCESS") {
@@ -147,7 +162,21 @@ const EditService = () => {
                                     />
                                     {img && <img src={img} alt="Service" className="mt-2 img-fluid" style={{ maxWidth: '200px' }} />}
                                 </div>
-
+                                <div className="form-group mb-3">
+                                    <label htmlFor="category">Category</label>
+                                    <select
+                                        id="category"
+                                        className="form-control"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Select a category</option>
+                                        <option value="popcorn">Popcorn</option>
+                                        <option value="drink">Drink</option>
+                                        <option value="combo">Combo</option>
+                                    </select>
+                                </div>
                                 <div className="form-group mb-3">
                                     <label htmlFor="inventory">Inventory</label>
                                     <input
@@ -171,7 +200,17 @@ const EditService = () => {
                                         required
                                     />
                                 </div>
-
+                                <div className="form-group mb-3">
+                                    <label htmlFor="discount">Discount</label>
+                                    <input
+                                        type="number"
+                                        id="discount"
+                                        className="form-control"
+                                        value={discount}
+                                        onChange={(e) => setDiscount(e.target.value)}
+                                        required
+                                    />
+                                </div>
                                 <div className="form-group mb-3">
                                     <label htmlFor="description">Description</label>
                                     <textarea

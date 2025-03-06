@@ -2,8 +2,9 @@ const Movie = require("../models/Movies")
 const getAllMovies = async (req, res) => {
     const page = parseInt(req.query.pageNumber) || 1;
     const limit = parseInt(req.query.limit) || 0;
+    const genresId = req.body;
     try {
-        const { movies, totalPages } = await Movie.fetchMovies(page, limit);
+        const { movies, totalPages } = await Movie.fetchMovies(page, limit, genresId);
         return res.json({ content: movies, totalPages });
     } catch (error) {
         console.log("Error:", error);
@@ -60,6 +61,6 @@ const getMovie = async (req, res) => {
             message: 'Unable to fetch the record!'
         });
     }
-}
+};
 
-module.exports = { getMovie, getAllMovies, getFilmNewRelease, searchMovies }
+module.exports = { getMovie, getAllMovies, getFilmNewRelease, searchMovies, filterMovie }

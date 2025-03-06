@@ -47,28 +47,37 @@ const InvoiceController = {
         }
     },
 
+    // updateInvoice: async (req, res) => {
+    //     const { id } = req.params;
+    //     const { seat_id, showtime_id, PaymentStatus } = req.body;
+    //     if (!seat_id || !showtime_id || !PaymentStatus) {
+    //         return res.status(400).json({ status: "FAILED", message: 'All fields are required!!' });
+    //     }
+    //     const updateTicket = {
+    //         seat_id,
+    //         showtime_id
+    //     };
+    //     const updateInvoice = {
+    //         PaymentStatus
+    //     }
+    //     try {
+    //         const updatedTicket = await Tickets.updatedTicket(id, updateTicket);
+    //         if (updatedTicket) {
+    //             const updatedInvoice = await Invoices.updateInvoice(id, updateInvoice);
+    //             return res.status(200).json({ status: "SUCCESS", message: 'Ticket updated successfully', data: updatedShowtime });
+    //         }
+    //         const updatedInvoice = await Invoices.updateInvoice(id, updateInvoice);
+    //         return res.status(200).json({ status: "SUCCESS", message: ' updated successfully', data: updatedShowtime });
+    //     } catch (error) {
+    //         return res.status(400).json({ status: "FAILED", message: error.message });
+    //     }
+    // },
     updateInvoice: async (req, res) => {
-        const { id } = req.params;
-        const { seat_id, showtime_id, PaymentStatus } = req.body;
-        if (!seat_id || !showtime_id || !PaymentStatus) {
-            return res.status(400).json({ status: "FAILED", message: 'All fields are required!!' });
-        }
-        const updateTicket = {
-            seat_id,
-            showtime_id
-        };
-        const updateInvoice = {
-            PaymentStatus
-        }
+        const { data } = req.body;
         try {
-            const updatedTicket = await Tickets.updatedTicket(id, updateTicket);
-            if (updateTicket) {
-                const updatedInvoice = await Invoices.updateInvoice(id, updateInvoice);
-                return res.status(200).json({ status: "SUCCESS", message: 'Ticket updated successfully', data: updatedShowtime });
-            }
-            const updatedInvoice = await Invoices.updateInvoice(id, updateInvoice);
-            return res.status(200).json({ status: "SUCCESS", message: ' updated successfully', data: updatedShowtime });
+
         } catch (error) {
+            console.log("Error while update invoice:", error);
             return res.status(400).json({ status: "FAILED", message: error.message });
         }
     },

@@ -96,6 +96,7 @@ const Service = () => {
                         <div className="col-md-6">
                           <div className="card-body">
                             <h5 className="card-title text-body">{service.name}</h5>
+                            <p className="card-text">Category: {service.category}</p>
                             <p className="card-text">Inventory: {service.inventory}</p>
                             <p className="card-text text-truncate " style={{ height: '20px' }}>{service.description}</p>
                             <p className="card-text"><small class="text-muted">Price: {service.price} </small></p>

@@ -33,7 +33,7 @@ transporter.verify((error, success) => {
 const BookTicket = async (req, res) => {
     const { user_id, theater_id, seat_id, showtime_id } = req.body;
 
-    if (!user_id || !theater_id || !seat_id || !showtime_id || !Array.isArray(seat_id)) {
+    if (!user_id || !theater_id || !seat_id || !showtime_id || !Array.isArray(seat_id) || seat_id.length === 0) {
         return res.status(400).json({ status: "FAILED", message: "Invalid input data." });
     }
 

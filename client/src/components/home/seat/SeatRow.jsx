@@ -31,14 +31,16 @@ const SeatRow = ({ seats, rowLabel, selectedSeats, toggleSeatSelection }) => {
                                         className={`single-seat ${isBooked ? 'seat-booked' : 'sit-free'}`}
                                         key={seat.id}
                                         onClick={() => !isBooked && toggleSeatSelection(seat.id, seat.seat_name, seat.seat_type.price, seat.seat_type.type_name)}
+                                        aria-disabled={isBooked}
                                     >
                                         <img
                                             src={
                                                 seat.tickets.length > 0 || isSelected
-                                                    ? "/assets/images/movie/seat01.png"
-                                                    : "/assets/images/movie/seat01-free.png"
+                                                    ? "/assets/images/movie/seat01-free.png"
+                                                    : "/assets/images/movie/seat01.png"
                                             }
                                             alt={seat.seat_name}
+                                            style={{ width: "42px" }}
                                         />
                                         <span className="sit-num">{seat.seat_name}</span>
                                     </li>

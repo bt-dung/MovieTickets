@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
 import { useUser } from "../../../context/UserContext";
-import { fetchData } from "../../../api/api";
+import { fetchData, postData } from "../../../api/api";
 import SeatMap from "../../../components/home/seat/SeatMap";
 import { formatDatetoString, formatHour } from "../../../utils/formatDateHelper";
 import CountDownHandle from "../../../components/home/countdown/CountDownHandle";
-import backgroundURL from "/assets/images/banner/banner04.jpg";
+import backgroundURL from "/assets/images/banner/banner02.jpg";
 import proceedURL from "/assets/images/movie/movie-bg-proceed.jpg";
-
+import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatPlan = () => {
     const { user, isLoggedIn } = useUser();
+    const { selectedSeats, setSelectedSeats, showtime, setShowtime, invoice, setInvoice } = useCurrentSeat();
     const { theaterId, showtimeId } = useParams();
     const [theater, setTheater] = useState(null);
     const [movie, setMovie] = useState(null);
     const navigate = useNavigate();
-    const [showtime, setShowtime] = useState(null);
-    const [selectedSeats, setSelectedSeats] = useState([]);
     useEffect(() => {
         if (!isLoggedIn || !user) {
             navigate("/login");
@@ -35,7 +35,46 @@ const SeatPlan = () => {
         }
         fetchShowtime(showtimeId);
     }, [showtimeId]);
-
+    const onClickBookedSeat = async (e) => {
+        e.preventDefault();
+        if (selectedSeats.length === 0) {
+            Swal.fire({
+                text: 'Please select a seat before proceeding to the next step.',
+                icon: 'warning',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Okay',
+            })
+            return;
+        };
+        const { isConfirmed } = await Swal.fire({
+            text: 'Do you really want to choose seats?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, choose it!',
+            cancelButtonText: 'Cancel',
+        });
+        if (isConfirmed) {
+            console.log(invoice);
+            if (invoice !== null) {
+                navigate(`/starcinema/service-options/${invoice.id}`);
+                return;
+            };
+            const data = {
+                user_id: user.id,
+                theater_id: theaterId,
+            };
+            try {
+                const createInvoice = await postData("/api/v1/createInvoice", data);
+                setInvoice(createInvoice);
+                navigate(`/starcinema/service-options/${createInvoice.id}`);
+            } catch (error) {
+                console.error('Error confirm choose the seat:', error);
+            };
+        };
+    };
     return (<>
         <section className="details-banner hero-area bg-img seat-plan-banner" style={{ backgroundImage: `url(${backgroundURL})` }}>
             <div className="container">
@@ -104,7 +143,7 @@ const SeatPlan = () => {
 
                         </div>
                         <div className="book-item">
-                            <a href="movie-checkout.html" class="custom-button">proceed</a>
+                            <div className="custom-button" onClick={onClickBookedSeat}>proceed</div>
                         </div>
                     </div>
                 </div>
