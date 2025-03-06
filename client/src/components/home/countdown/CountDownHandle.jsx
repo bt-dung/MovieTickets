@@ -1,21 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Countdown from "react-countdown";
+import { useCurrentSeat } from "../../../context/SeatContext";
+import { updateData, deleteData } from "../../../api/api";
+import Swal from 'sweetalert2';
 
-const CountDownHandle = ({ bookingId }) => {
-    const countdownTime = 15 * 60 * 1000;
-    const handleTimeout = async () => {
-        if (!bookingId) return;
-        try {
-            const response = await fetch(`/api/cancel-booking/${bookingId}`, { method: "POST" });
-            if (response.ok) {
-                alert("Hóa đơn đã bị hủy do hết thời gian!");
-            } else {
-                console.error("Lỗi khi hủy hóa đơn");
-            }
-        } catch (error) {
-            console.error("Lỗi kết nối API:", error);
+const CountDownHandle = () => {
+    const { endTime, setEndTime, setShowtime, setSelectedSeats, invoice, setInvoice } = useCurrentSeat();
+
+    useEffect(() => {
+        if (Date.now() >= endTime) {
+            setShowtime('');
+            setSelectedSeats([]);
+            setInvoice(null);
         }
+    }, [endTime]);
+
+    const handleTimeout = async () => {
+        if (invoice) {
+            try {
+                const data = {
+                    PaymentStatus: "Cancelled"
+                }
+                const response = await updateData(`/api/v1/invoice/${invoice.id}/update`, data);
+                if (response.ok) {
+                    const deleteInvoice = await deleteData(`/api/v1/invoice/${invoice.id}/delete`);
+                    if (deleteInvoice) {
+                        await Swal.fire({
+                            text: 'Your current transaction has been canceled due to timeout. Please select your seats again and book your tickets!!',
+                            icon: 'info',
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Okay',
+                        });
+
+                        return;
+                    };
+                } else {
+                    console.error("Lỗi khi hủy hóa đơn");
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối API:", error);
+            }
+        };
+        setEndTime(null);
+        setShowtime('');
+        setSelectedSeats([]);
+        setInvoice(null);
     };
+
     const renderer = ({ minutes, seconds }) => {
         return (
             <span style={{ fontSize: "20px", fontWeight: "bold" }}>
@@ -23,10 +55,11 @@ const CountDownHandle = ({ bookingId }) => {
             </span>
         );
     };
+
     return (
         <div className="countdown-box">
             <h5 className="title">
-                <Countdown date={Date.now() + countdownTime} onComplete={handleTimeout} renderer={renderer} />
+                <Countdown date={parseInt(endTime, 10)} onComplete={handleTimeout} renderer={renderer} />
             </h5>
         </div>
     );

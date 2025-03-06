@@ -43,7 +43,6 @@ const DetailMovie = sequelize.define('detail_movie', {
     timestamps: false,
 });
 
-
 DetailMovie.insertDetail = async (DetailData) => {
     try {
         const existingDetailMovie = await DetailMovie.findByPk(DetailData.movie_id);
@@ -60,7 +59,11 @@ DetailMovie.insertDetail = async (DetailData) => {
 };
 DetailMovie.getDetail = async function (movieId) {
     try {
-        const detailMovie = await DetailMovie.findByPk(movieId);
+        const detailMovie = await DetailMovie.findByPk(movieId, {
+            include: {
+                model: Movies,
+            },
+        });
         return detailMovie;
     } catch (error) {
         throw error;

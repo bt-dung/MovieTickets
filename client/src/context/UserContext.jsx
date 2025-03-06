@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import TokenService from "../service/TokenService";
 
 const UserContext = createContext();
-
 export const UserProvider = (props) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,3 +30,4 @@ export const UserProvider = (props) => {
 export const useUser = () => {
     return useContext(UserContext);
 };
+

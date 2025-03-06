@@ -3034,6 +3034,7 @@ input[type="submit"] {
 
 .booking-summery ul {
   border-bottom: 1px dashed #11326f;
+  margin-bottom: 10px;
 }
 
 .booking-summery ul li {
@@ -3050,7 +3051,10 @@ input[type="submit"] {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  margin-bottom: 7px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .booking-summery ul li .subtitle:last-child {
@@ -3063,6 +3067,7 @@ input[type="submit"] {
   justify-content: space-between;
   font-size: 14px;
   text-transform: uppercase;
+  word-wrap: break-word;
   color: #9aace5;
 }
 
@@ -3098,6 +3103,7 @@ input[type="submit"] {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  font-size: 18px;
   margin-bottom: 23px;
 }
 
@@ -5232,7 +5238,7 @@ input[type="submit"] {
   font-weight: bold;
 }
 
-.single-seat .seat-booked {
+.seat-booked {
   pointer-events: none;
   opacity: 0.5;
 }
@@ -5447,6 +5453,8 @@ input[type="submit"] {
 }
 
 .grid--area .filter li {
+  color: white;
+  font-weight: bold;
   padding: 5px 25px;
   line-height: 30px;
   border: 1px solid #11326f;
@@ -5499,6 +5507,7 @@ input[type="submit"] {
 }
 
 .grid--area .grid-item .grid-inner .grid-thumb img {
+  height: 400px;
   width: 100%;
 }
 
@@ -6909,6 +6918,8 @@ input[type="submit"] {
 
 .cart-plus-minus input {
   height: 40px;
+  font-size: 20px;
+  color: white;
   border-radius: 20px;
   border: 1px solid #11326f;
   text-align: center;
@@ -6918,12 +6929,13 @@ input[type="submit"] {
 .cart-plus-minus .qtybutton {
   width: 40px;
   height: 100%;
+  color: white;
   top: 0;
   position: absolute;
   cursor: pointer;
-  height: 100%;
   line-height: 40px;
   text-align: center;
+  font-size: 20px;
 }
 
 .cart-plus-minus .qtybutton.inc {

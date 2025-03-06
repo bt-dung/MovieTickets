@@ -17,6 +17,10 @@ const Service = sequelize.define('services', {
         allowNull: true,
         defaultValue: null,
     },
+    category: {
+        type: DataTypes.ENUM('popcorn', 'drink', 'combo'),
+        allowNull: false,
+    },
     inventory: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -24,6 +28,11 @@ const Service = sequelize.define('services', {
     price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
+    },
+    discount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
     },
     description: {
         type: DataTypes.TEXT,

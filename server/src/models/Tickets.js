@@ -78,7 +78,7 @@ Tickets.createTicket = async (ticketData) => {
             throw new Error(`Seat ${ticketData.seat_id} booked!!`);
         }
         const newTicket = await Tickets.create(ticketData);
-        return newTicket, titleMovie;
+        return { newTicket, titleMovie };
     } catch (error) {
         console.error("Error creating ticket:", error);
         throw error;

@@ -30,6 +30,7 @@ import Service from "../pages/admin/service/Service";
 import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
 import MoviePlan from "../pages/home/movie/MoviePlan";
+import ServiceOptions from "../pages/home/service/Service";
 
 
 export const userRoutes = [
@@ -39,6 +40,7 @@ export const userRoutes = [
     { path: "/movie-schedule/:movieId", component: MoviePlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/movie-detail/:movieId", component: DetailMovie, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/theater/:theaterId/choose-seat/:showtimeId/", component: SeatPlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/service-options/:invoiceId", component: ServiceOptions, layout: MainLayoutHome, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

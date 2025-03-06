@@ -8,6 +8,7 @@ import {
 import Login from "./pages/login/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 import RoleRoute from "./routes/RoleRoute";
+import { CurrentSeatProvider } from "./context/SeatContext";
 import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
@@ -21,7 +22,9 @@ function App() {
   return (
     <Router>
       <UserProvider>
-        <AppRoutes />
+        <CurrentSeatProvider>
+          <AppRoutes />
+        </CurrentSeatProvider>
       </UserProvider>
     </Router>
   );
