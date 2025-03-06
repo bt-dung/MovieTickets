@@ -2299,8 +2299,8 @@ input[type="submit"] {
   font-weight: 600;
 }
 
-.book-wrapper .left-side .item .item-header .counter-item.odometer::after {
-  content: "%";
+.book-wrapper .left-side .item .item-header::after {
+  content: "";
 }
 
 .book-wrapper .left-side .item .item-header .title {
@@ -2915,22 +2915,20 @@ input[type="submit"] {
   margin-bottom: 13px;
 }
 
-/* .widget-1.widget-check .form-group div {
-  display: block;
-  display: flex;
-  align-items: center;
-} */
+.widget-1.widget-check .form-group div {
+  
+}
 
 .widget-1.widget-check .form-group input {
   width: 14px;
   height: 14px;
-  opacity: 0;
-  z-index: -9;
+  /* opacity: 0; */
+  z-index: 10;
 }
 
 .widget-1.widget-check .form-group input:checked~label::before {
   color: #ffffff;
-  content: "\f00c";
+  content: "";
   font-family: "Font Awesome 5 Free";
   font-weight: 600;
   font-size: 8px;
@@ -2949,12 +2947,13 @@ input[type="submit"] {
 }
 
 .widget-1.widget-check .form-group label::before {
-  width: 14px;
+  /* width: 14px;
   height: 14px;
   border: 1px solid #ffffff;
   border-radius: 1px;
   left: -14px;
-  top: 7px;
+  top: -1px;
+  z-index: 1; */
 }
 
 @media (min-width: 992px) {
@@ -4269,7 +4268,6 @@ input[type="submit"] {
   border: 1px solid rgba(163, 177, 198, 0.151);
   border-radius: 20px;
   padding: 0 20px;
-  background: transparent;
 }
 
 .filter-main .left .item .select-bar .list {

@@ -1,19 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { fetchData } from "../../../api/api";
+
 const DetailMovie = () => {
+  const [movieInfo, setMovieInfo] = useState({});
+
+  const { movieId } = useParams();
+
+  useEffect(() => {
+    const fetchDetailMovie = async () => {
+      try {
+        const res = await fetchData(`/admin/movie/${movieId}/details-movie`);
+        setMovieInfo(res.data);
+      } catch (error) {
+        console.error("Error fetching detail movie:", error);
+      }
+    };
+
+    fetchDetailMovie();
+    console.log("movieId");
+  }, []);
+
+  function formatMinutesToHours(minutes) {
+    if (typeof minutes !== "number" || minutes < 0) return "Invalid input";
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours > 0 && remainingMinutes > 0) {
+      return `${hours} hrs and ${remainingMinutes} mins`;
+    } else if (hours > 0) {
+      return `${hours} hrs`;
+    } else {
+      return `${remainingMinutes} mins`;
+    }
+  }
+
   return (
     <>
-      <section
-        class="details-banner bg_img"
-        data-background="../../../assets/images/banner/banner03.jpg"
-      >
+      <section class="details-banner bg_img" data-background={movieInfo.img_bg}>
         <div class="container">
           <div class="details-banner-wrapper">
             <div class="details-banner-thumb">
-              <img src="../../../assets/images/movie/venus.jpg" alt="movie" />
-              <a
-                href="https://www.youtube.com/embed/KGeBMAgc46E"
-                class="video-popup"
-              >
+              <img src={movieInfo.img_poster} alt="movie" />
+              <a href="" class="video-popup">
                 <img
                   src="../../../assets/images/movie/video-button.png"
                   alt="movie"
@@ -21,41 +51,39 @@ const DetailMovie = () => {
               </a>
             </div>
             <div class="details-banner-content offset-lg-3">
-              <h3 class="title">Venus</h3>
+              <h3 class="title">{movieInfo.title}</h3>
               <div class="tags">
-                <a href="#0">English</a>
-                <a href="#0">Hindi</a>
-                <a href="#0">Telegu</a>
-                <a href="#0">Tamil</a>
+                <a href="#0">{movieInfo.original_language}</a>
               </div>
-              <a href="#0" class="button">
-                horror
-              </a>
+              {movieInfo?.genres?.map((genre) => {
+                return (
+                  <a
+                    href=""
+                    class="button"
+                    key={genre.id}
+                    style={{ marginRight: "10px" }}
+                  >
+                    {genre.name}
+                  </a>
+                );
+              })}
               <div class="social-and-duration">
                 <div class="duration-area">
                   <div class="item">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>06 Dec, 2020</span>
+                    <span>{movieInfo.release_date}</span>
                   </div>
                   <div class="item">
                     <i class="far fa-clock"></i>
-                    <span>2 hrs 50 mins</span>
+                    <span>
+                      {formatMinutesToHours(movieInfo?.detail_movie?.runtime)}
+                    </span>
                   </div>
                 </div>
                 <ul class="social-share">
                   <li>
                     <a href="#0">
                       <i class="fab fa-facebook-f"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <i class="fab fa-twitter"></i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#0">
-                      <i class="fab fa-pinterest-p"></i>
                     </a>
                   </li>
                   <li>
@@ -90,9 +118,9 @@ const DetailMovie = () => {
                   <div class="counter-area">
                     <span
                       class="counter-item odometer"
-                      data-odometer-final="88"
+                      data-odometer-final={movieInfo.vote_average}
                     >
-                      0
+                      {movieInfo.vote_average}
                     </span>
                   </div>
                 </div>
@@ -109,18 +137,18 @@ const DetailMovie = () => {
                   <div class="counter-area">
                     <span
                       class="counter-item odometer"
-                      data-odometer-final="88"
+                      data-odometer-final={movieInfo.vote_count}
                     >
-                      0
+                      {movieInfo.vote_count}
                     </span>
                   </div>
                 </div>
                 <p>audience Score</p>
               </div>
             </div>
-            <a href="#0" class="custom-button">
-              book tickets
-            </a>
+            <div class="custom-button" style={{ cursor: "pointer" }}>
+              <a href={`/starcinema/movie-schedule/${movieId}`} style={{color: "white"}}>book tickets</a>
+            </div>
           </div>
         </div>
       </section>
@@ -130,7 +158,7 @@ const DetailMovie = () => {
           <div class="row justify-content-center flex-wrap-reverse mb--50">
             <div class="col-lg-3 col-sm-10 col-md-6 mb-50">
               <div class="widget-1 widget-tags">
-                <ul>
+                <ul style={{ display: "block" }}>
                   <li>
                     <a href="#0">2D</a>
                   </li>
@@ -210,26 +238,11 @@ const DetailMovie = () => {
               <div class="movie-details">
                 <div class="tab summery-review">
                   <ul class="tab-menu">
-                    <li class="active">summery</li>
+                    <li class="active">Overview</li>
                   </ul>
                   <div class="tab-area">
                     <div class="tab-item active">
-                      <div class="item">
-                        <h5 class="sub-title">Synopsis</h5>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Proin vehicula eros sit amet est tincidunt
-                          aliquet. Fusce laoreet ligula ac ultrices eleifend.
-                          Donec hendrerit fringilla odio, ut feugiat mi
-                          convallis nec. Fusce elit ex, blandit vitae mattis sit
-                          amet, iaculis ac elit. Ut diam mauris, viverra sit
-                          amet dictum vel, aliquam ac quam. Ut mi nisl,
-                          fringilla sit amet erat et, convallis porttitor
-                          ligula. Sed auctor, orci id luctus venenatis, dui
-                          dolor euismod risus, et pharetra orci lectus quis
-                          sapien. Duis blandit ipsum ac consectetur scelerisque.{" "}
-                        </p>
-                      </div>
+                      <p style={{ color: "white" }}>{movieInfo.overview}</p>
                     </div>
                   </div>
                 </div>

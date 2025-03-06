@@ -11,6 +11,9 @@ import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
 const Movie = () => {
   const { user, isLoggedIn } = useUser();
   const [movies, setMovies] = useState([]);
+  const [movieFilter, setMovieFilter] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [limit, setLimit] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isList, setIsList] = useState(true);
@@ -26,7 +29,7 @@ const Movie = () => {
     const fetchNewRelease = async (page = 1) => {
       try {
         const resMovie = await fetchData(
-          `/admin/movies?pageNumber=${page}&limit=8`
+          `/admin/movies?pageNumber=${page}&limit=${limit}`
         );
         setMovies(resMovie.content);
         setTotalPages(resMovie.totalPages);
@@ -36,7 +39,7 @@ const Movie = () => {
     };
 
     fetchNewRelease(currentPage);
-  }, [currentPage]);
+  }, [currentPage, limit]);
 
   useEffect(() => {
     const fetchGetAllGenres = async () => {
@@ -117,6 +120,10 @@ const Movie = () => {
     }
     getMovieInTheater(selectedTheaterID);
   }, [selectedTheaterID])
+
+  const handleLimitChange = (e) => {
+    setLimit(e.target.value);
+  };
 
   return (
     <>
@@ -204,7 +211,7 @@ const Movie = () => {
             <div className="container-xxl">
               <div className="row flex-wrap-reverse justify-content-center">
                 <div className="col-sm-10 col-md-8 col-lg-3">
-                  <MovieWidget genres={genres} />
+                  <MovieWidget genres={genres} movies={movies} setMovieFilter={setMovieFilter} setSelectedGenres={setSelectedGenres} selectedGenres={selectedGenres} />
                 </div>
                 <div class="col-lg-9 mb-50 mb-lg-0">
                   <div class="filter-tab tab">
@@ -213,14 +220,10 @@ const Movie = () => {
                         <div class="left">
                           <div class="item">
                             <span class="show">Show :</span>
-                            <select class="select-bar">
-                              <option value="12">12</option>
+                            <select class="select-bar" value={limit} onChange={handleLimitChange}>
+                              <option value="5">5</option>
+                              <option value="10">10</option>
                               <option value="15">15</option>
-                              <option value="18">18</option>
-                              <option value="21">21</option>
-                              <option value="24">24</option>
-                              <option value="27">27</option>
-                              <option value="30">30</option>
                             </select>
                           </div>
                           <div class="item">
