@@ -11,7 +11,7 @@ import proceedURL from "/assets/images/movie/movie-bg-proceed.jpg";
 import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatPlan = () => {
     const { user, isLoggedIn } = useUser();
-    const { selectedSeats, setSelectedSeats, showtime, setShowtime, invoice, setInvoice } = useCurrentSeat();
+    const { selectedSeats, setSelectedSeats, showtime, setShowtime, invoice, setInvoice, userId, setUserID } = useCurrentSeat();
     const { theaterId, showtimeId } = useParams();
     const [theater, setTheater] = useState(null);
     const [movie, setMovie] = useState(null);
@@ -20,6 +20,9 @@ const SeatPlan = () => {
         if (!isLoggedIn || !user) {
             navigate("/login");
             return;
+        }
+        if (user.id !== userId) {
+            setUserID(user.id);
         }
         const fetchShowtime = async (showtime_id) => {
             try {
@@ -34,7 +37,7 @@ const SeatPlan = () => {
             }
         }
         fetchShowtime(showtimeId);
-    }, [showtimeId]);
+    }, [showtimeId, user, setUserID]);
     const onClickBookedSeat = async (e) => {
         e.preventDefault();
         if (selectedSeats.length === 0) {
@@ -127,18 +130,18 @@ const SeatPlan = () => {
                     <div className="proceed-to-book">
                         <div className="book-item">
                             <span>You have Choosed Seat</span>
-                            <h3 className="title">{selectedSeats.map(seat => seat.seat_name).join(", ")}</h3>
+                            <h3 className="title">{selectedSeats.map(seat => seat?.seat_name).join(", ")}</h3>
                         </div>
                         <div className="seat-type">
                             <span>Seat type</span>
                             <h3 className="title">
-                                {[...new Set(selectedSeats.map(seat => seat.seat_type))].join(", ")}
+                                {[...new Set(selectedSeats.map(seat => seat?.seat_type))].join(", ")}
                             </h3>
                         </div>
                         <div className="book-item">
                             <span>total price</span>
                             <h3 className="title">
-                                {selectedSeats.reduce((total, seat) => total + Number(seat.seat_price), 0).toLocaleString()}Đ
+                                {selectedSeats.reduce((total, seat) => total + Number(seat?.seat_price), 0).toLocaleString()}Đ
                             </h3>
 
                         </div>

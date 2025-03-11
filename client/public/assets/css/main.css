@@ -1004,9 +1004,9 @@ input[type="submit"] {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  justify-content: center;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  
 }
 
 .event-banner-section::after,
@@ -1064,6 +1064,11 @@ input[type="submit"] {
 .tab-item .item {
   height: 100%;
   width: calc(25% - 10px);
+}
+
+.movie-area {
+  max-width: 90%;
+  width: 100%;
 }
 
 .tab-menu li {
@@ -3520,10 +3525,12 @@ input[type="submit"] {
 
 .movie-list .movie-content .title {
   margin-bottom: 18px;
+  word-wrap: break-word;
 }
 
 .movie-list .movie-content .movie-tags {
   margin-bottom: 3px;
+  word-wrap: break-word;
 }
 
 .movie-list .movie-content .movie-tags p {

@@ -11,6 +11,7 @@
   "keywords": [],
   "description": "",
   "dependencies": {
+    "@payos/node": "^1.0.10",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -27,9 +28,10 @@
     "nodemailer": "^6.9.16",
     "qrcode": "^1.5.4",
     "sequelize": "^6.37.5",
+    "socket.io": "^4.8.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.9"
   }
 }
