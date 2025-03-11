@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { fetchData, postData } from "../../../api/api";
 
 const MovieWidget = ({
   genres,
   movies,
-  setMovieFilter,
+  setMovies,
   setSelectedGenres,
   selectedGenres,
+  currentPage,
+  setTotalPages
 }) => {
+
+
   const handleChangeGenres = (genreId) => {
     setSelectedGenres((prevSelected) =>
       prevSelected.includes(genreId)
@@ -14,20 +19,6 @@ const MovieWidget = ({
         : [...prevSelected, genreId]
     );
   };
-
-  const filteredMovies =
-    selectedGenres.length === 0
-      ? movies
-      : movies.filter((movie) =>
-          selectedGenres.every((selectedGenre) =>
-            movie.genres.some((genre) => genre.id === selectedGenre)
-          )
-        );
-
-  useEffect(() => {
-    setMovieFilter(filteredMovies);
-  }, [selectedGenres]);
-
 
   return (
     <>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../../context/UserContext";
-import { fetchData } from "../../../api/api";
+import { fetchData, postData } from "../../../api/api";
 import MovieItemList from "../../../components/home/movie/MovieItemList";
 import MovieWidget from "../../../components/home/movie/MovieWidget";
 import SearchContent from "../../../components/home/movie/SearchContent";
 import FilterSection from "../../../components/home/movie/FilterSection";
-import imageURL from "/assets/images/banner/banner01.jpg"
-import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
+import imageURL from "/assets/images/banner/banner01.jpg";
+import searchURL from "/assets/images/ticket/ticket-bg01.jpg";
 
 const Movie = () => {
   const { user, isLoggedIn } = useUser();
@@ -22,14 +22,15 @@ const Movie = () => {
   const [genres, setGenres] = useState([]);
   const [theaters, setTheaters] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCityID, setSelectedCityID] = useState('');
-  const [selectedTheaterID, setSelectedTheaterID] = useState('');
+  const [selectedCityID, setSelectedCityID] = useState("");
+  const [selectedTheaterID, setSelectedTheaterID] = useState("");
 
   useEffect(() => {
     const fetchNewRelease = async (page = 1) => {
       try {
-        const resMovie = await fetchData(
-          `/admin/movies?pageNumber=${page}&limit=${limit}`
+        const resMovie = await postData(
+          `/admin/movies?pageNumber=${page}&limit=${limit}`,
+          selectedGenres
         );
         setMovies(resMovie.content);
         setTotalPages(resMovie.totalPages);
@@ -39,7 +40,7 @@ const Movie = () => {
     };
 
     fetchNewRelease(currentPage);
-  }, [currentPage, limit]);
+  }, [currentPage, limit, selectedGenres]);
 
   useEffect(() => {
     const fetchGetAllGenres = async () => {
@@ -110,16 +111,18 @@ const Movie = () => {
     if (!selectedTheaterID) return;
     const getMovieInTheater = async (theaterId) => {
       try {
-        const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}`);
+        const movieTheater = await fetchData(
+          `/api/v1/movies-theater/${theaterId}`
+        );
         console.log(movieTheater);
         setMovies(movieTheater.data);
         setTotalPages(1);
       } catch (error) {
         console.error("Error fetching detail theater:", error);
       }
-    }
+    };
     getMovieInTheater(selectedTheaterID);
-  }, [selectedTheaterID])
+  }, [selectedTheaterID]);
 
   const handleLimitChange = (e) => {
     setLimit(e.target.value);
@@ -211,7 +214,15 @@ const Movie = () => {
             <div className="container-xxl">
               <div className="row flex-wrap-reverse justify-content-center">
                 <div className="col-sm-10 col-md-8 col-lg-3">
-                  <MovieWidget genres={genres} movies={movies} setMovieFilter={setMovieFilter} setSelectedGenres={setSelectedGenres} selectedGenres={selectedGenres} />
+                  <MovieWidget
+                    genres={genres}
+                    movies={movies}
+                    setMovies={setMovies}
+                    setSelectedGenres={setSelectedGenres}
+                    selectedGenres={selectedGenres}
+                    currentPage={currentPage}
+                    setTotalPages={setTotalPages}
+                  />
                 </div>
                 <div class="col-lg-9 mb-50 mb-lg-0">
                   <div class="filter-tab tab">
@@ -219,15 +230,21 @@ const Movie = () => {
                       <div class="filter-main">
                         <div class="left">
                           <div class="item">
-                            <span class="show">Show :</span>
-                            <select class="select-bar" value={limit} onChange={handleLimitChange}>
+                            <span class="show" style={{color: "white"}}>Show :</span>
+                            <select
+                              class="select-bar"
+                              value={limit}
+                              onChange={handleLimitChange}
+                            >
                               <option value="5">5</option>
                               <option value="10">10</option>
                               <option value="15">15</option>
                             </select>
                           </div>
                           <div class="item">
-                            <span class="show" style={{width: "250px"}}>Sort By :</span>
+                            <span class="show" style={{ width: "250px", color: "white" }}>
+                              Sort By :
+                            </span>
                             <select class="select-bar">
                               <option value="showing">now showing</option>
                               <option value="exclusive">exclusive</option>

@@ -3,6 +3,7 @@ const getAllMovies = async (req, res) => {
     const page = parseInt(req.query.pageNumber) || 1;
     const limit = parseInt(req.query.limit) || 0;
     const genresId = req.body;
+    console.log("GenresId:", genresId);
     try {
         const { movies, totalPages } = await Movie.fetchMovies(page, limit, genresId);
         return res.json({ content: movies, totalPages });

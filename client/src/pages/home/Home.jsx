@@ -1,5 +1,5 @@
 import { useUser } from "../../context/UserContext";
-import { fetchData } from "../../api/api";
+import { fetchData, postData } from "../../api/api";
 import { useState, useEffect } from "react";
 import SearchContent from "../../components/home/movie/SearchContent";
 import MovieItem from "../../components/home/movie/MovieItem";
@@ -20,7 +20,7 @@ const Home = () => {
     const fetchNewRelease = async (page = 1) => {
       try {
         const response = await fetchData("/admin/movies/newRelease");
-        const resMovie = await fetchData(`/admin/movies?pageNumber=${page}&limit=8`);
+        const resMovie = await postData(`/admin/movies?pageNumber=${page}&limit=8`);
         console.log(resMovie);
         setNewRelease(response);
         setMovies(resMovie.content);
