@@ -3,7 +3,10 @@ const dotenv = require("dotenv");
 const { createTableDB } = require("./database/createDB");
 const { connectDB } = require("./database/db");
 const cors = require("cors");
+const http = require("http");
 const cookieParser = require("cookie-parser");
+const { Server } = require("socket.io");
+const SeatSocket = require("./sockets/seatSocket");
 const { insertData, insertGenres } = require("./database/updateDB");
 const authRoute = require("./routes/auth.route");
 const verification = require("./routes/verify.route");
@@ -17,14 +20,16 @@ const Screen = require("./routes/screen.route");
 const Seat = require("./routes/seat.route");
 const Invoice = require("./routes/invoice.route");
 const Ticket = require("./routes/ticket.route");
-const BookingTicket = require("./routes/bookTicket.route");
+// const BookingTicket = require("./routes/bookTicket.route");
 const Service = require("./routes/service.route");
 const GenreRoute = require("./routes/genre.route");
 
-const app = express();
+dotenv.config();
 
 const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
-dotenv.config();
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 app.use(cookieParser());
 app.use(
   cors({
@@ -37,7 +42,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5001;
-
+SeatSocket(io);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -53,7 +58,7 @@ app.use("/api/v1", Screen);
 app.use("/api/v1", Seat);
 app.use("/api/v1", Invoice);
 app.use("/api/v1", Ticket);
-app.use("/api/v1", BookingTicket);
+// app.use("/api/v1", BookingTicket);
 app.use("/api/v1", Service);
 app.use("/api/v1", GenreRoute);
 
@@ -61,6 +66,7 @@ createTableDB();
 connectDB();
 insertGenres();
 insertData();
-app.listen(PORT, () =>
+
+server.listen(PORT, () =>
   console.log(`Server started on port:http://localhost:${PORT}`)
 );

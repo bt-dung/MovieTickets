@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import { fetchData } from "../../../api/api";
 import SeatRow from "./SeatRow";
+import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatMap = ({ screen, showtimeId, selectedSeats, setSelectedSeats }) => {
     const [seats, setSeatofScreen] = useState([]);
+    const { occupiedSeats } = useCurrentSeat();
     console.log("seat choose:", selectedSeats);
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     useEffect(() => {
+        if (!screen) return;
         const fetchSeat = async (screenId) => {
             const data = await fetchData(`/api/v1/seats/${screenId}?showtimeId=${showtimeId}`);
             console.log(data);
@@ -41,7 +44,7 @@ const SeatMap = ({ screen, showtimeId, selectedSeats, setSelectedSeats }) => {
     const seatRows = Array.from({ length: screen?.total_row }).map((_, i) => {
         const rowLabel = alphabet[i];
         const rowSeats = seats.slice(i * screen?.total_column, (i + 1) * screen?.total_column);
-        return <SeatRow key={i} seats={rowSeats} rowLabel={rowLabel} selectedSeats={selectedSeats} toggleSeatSelection={toggleSeatSelection} />;
+        return <SeatRow key={i} seats={rowSeats} rowLabel={rowLabel} selectedSeats={selectedSeats} toggleSeatSelection={toggleSeatSelection} occupiedSeats={occupiedSeats} />;
     });
     return (
         <ul className="seat-area">

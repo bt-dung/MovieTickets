@@ -16,6 +16,17 @@ const SeatController = {
             return res.status(404).json({ status: "FAILED", message: error.message });
         }
     },
+
+    getSeatbyID: async (req, res) => {
+        const seatIds = req.body;
+        try {
+            const seats = await Seat.fetchSeatById(seatIds);
+            return res.json(seats);
+        } catch (error) {
+            console.error("Fetching seat error:", error);
+            return res.status(404).json({ status: "FAILED", message: error.message });
+        }
+    }
 };
 
 module.exports = SeatController;
