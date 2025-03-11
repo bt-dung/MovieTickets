@@ -1,7 +1,7 @@
+const DetailMovie = require('./DetailsMovie');
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db');
 const { Op } = require('sequelize');
-const DetailMovie = require('./DetailsMovie');
 const Movies = sequelize.define('movies', {
     id: {
         type: DataTypes.INTEGER,
@@ -58,6 +58,7 @@ const Movies = sequelize.define('movies', {
 });
 DetailMovie.belongsTo(Movies, { foreignKey: 'movie_id' });
 Movies.hasOne(DetailMovie, { foreignKey: 'movie_id' });
+
 /**
  * Insert a new movie
  * @param {Object} movieData - Data to insert
@@ -146,6 +147,29 @@ Movies.insertMovie = async (movieData) => {
         }
     } catch (error) {
         console.error("Error inserting movie:", error);
+        throw error;
+    }
+};
+Movies.getDetail = async function (movieId) {
+    const Genre = sequelize.models.genres;
+    try {
+        const detailMovie = await Movies.findByPk(movieId, {
+            include: [
+                {
+                    model: Genre,
+                    as: "genres",
+                    attributes: ["id", "name"],
+                    through: { attributes: [] },
+                },
+                {
+                    model: DetailMovie,
+                    attributes: ["runtime"],
+                    required: true,
+                },
+            ],
+        });
+        return detailMovie;
+    } catch (error) {
         throw error;
     }
 };

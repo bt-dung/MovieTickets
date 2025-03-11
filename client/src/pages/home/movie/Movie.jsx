@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../../context/UserContext";
-import { fetchData } from "../../../api/api";
+import { fetchData, postData } from "../../../api/api";
 import MovieItemList from "../../../components/home/movie/MovieItemList";
 import MovieWidget from "../../../components/home/movie/MovieWidget";
 import SearchContent from "../../../components/home/movie/SearchContent";
 import FilterSection from "../../../components/home/movie/FilterSection";
-import imageURL from "/assets/images/banner/banner01.jpg"
-import searchURL from "/assets/images/ticket/ticket-bg01.jpg"
+import imageURL from "/assets/images/banner/banner01.jpg";
+import searchURL from "/assets/images/ticket/ticket-bg01.jpg";
 
 const Movie = () => {
   const { user, isLoggedIn } = useUser();
   const [movies, setMovies] = useState([]);
+  const [movieFilter, setMovieFilter] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [limit, setLimit] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isList, setIsList] = useState(true);
@@ -19,14 +22,15 @@ const Movie = () => {
   const [genres, setGenres] = useState([]);
   const [theaters, setTheaters] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCityID, setSelectedCityID] = useState('');
-  const [selectedTheaterID, setSelectedTheaterID] = useState('');
+  const [selectedCityID, setSelectedCityID] = useState("");
+  const [selectedTheaterID, setSelectedTheaterID] = useState("");
 
   useEffect(() => {
     const fetchNewRelease = async (page = 1) => {
       try {
-        const resMovie = await fetchData(
-          `/admin/movies?pageNumber=${page}&limit=8`
+        const resMovie = await postData(
+          `/admin/movies?pageNumber=${page}&limit=${limit}`,
+          selectedGenres
         );
         setMovies(resMovie.content);
         setTotalPages(resMovie.totalPages);
@@ -36,7 +40,7 @@ const Movie = () => {
     };
 
     fetchNewRelease(currentPage);
-  }, [currentPage]);
+  }, [currentPage, limit, selectedGenres]);
 
   useEffect(() => {
     const fetchGetAllGenres = async () => {
@@ -107,16 +111,22 @@ const Movie = () => {
     if (!selectedTheaterID) return;
     const getMovieInTheater = async (theaterId) => {
       try {
-        const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}`);
+        const movieTheater = await fetchData(
+          `/api/v1/movies-theater/${theaterId}`
+        );
         console.log(movieTheater);
         setMovies(movieTheater.data);
         setTotalPages(1);
       } catch (error) {
         console.error("Error fetching detail theater:", error);
       }
-    }
+    };
     getMovieInTheater(selectedTheaterID);
-  }, [selectedTheaterID])
+  }, [selectedTheaterID]);
+
+  const handleLimitChange = (e) => {
+    setLimit(e.target.value);
+  };
 
   return (
     <>
@@ -204,7 +214,15 @@ const Movie = () => {
             <div className="container-xxl">
               <div className="row flex-wrap-reverse justify-content-center">
                 <div className="col-sm-10 col-md-8 col-lg-3">
-                  <MovieWidget genres={genres} />
+                  <MovieWidget
+                    genres={genres}
+                    movies={movies}
+                    setMovies={setMovies}
+                    setSelectedGenres={setSelectedGenres}
+                    selectedGenres={selectedGenres}
+                    currentPage={currentPage}
+                    setTotalPages={setTotalPages}
+                  />
                 </div>
                 <div class="col-lg-9 mb-50 mb-lg-0">
                   <div class="filter-tab tab">
@@ -212,19 +230,21 @@ const Movie = () => {
                       <div class="filter-main">
                         <div class="left">
                           <div class="item">
-                            <span class="show">Show :</span>
-                            <select class="select-bar">
-                              <option value="12">12</option>
+                            <span class="show" style={{color: "white"}}>Show :</span>
+                            <select
+                              class="select-bar"
+                              value={limit}
+                              onChange={handleLimitChange}
+                            >
+                              <option value="5">5</option>
+                              <option value="10">10</option>
                               <option value="15">15</option>
-                              <option value="18">18</option>
-                              <option value="21">21</option>
-                              <option value="24">24</option>
-                              <option value="27">27</option>
-                              <option value="30">30</option>
                             </select>
                           </div>
                           <div class="item">
-                            <span class="show">Sort By :</span>
+                            <span class="show" style={{ width: "250px", color: "white" }}>
+                              Sort By :
+                            </span>
                             <select class="select-bar">
                               <option value="showing">now showing</option>
                               <option value="exclusive">exclusive</option>
@@ -244,346 +264,6 @@ const Movie = () => {
                       </div>
                     </div>
                     <div class="tab-area">
-                      {/* <div class="tab-item">
-                                <div class="row mb-10 justify-content-center">
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie01.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">alone</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie02.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">mars</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie03.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">venus</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie04.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">on watch</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie05.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">fury</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie06.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">trooper</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie07.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">horror night</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie08.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">the lost name</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie09.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">calm stedfast</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie10.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">criminal on party</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie11.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">halloween party</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="movie-grid">
-                                            <div class="movie-thumb c-thumb">
-                                                <a href="movie-details.html">
-                                                    <img src="assets/images/movie/movie12.jpg" alt="movie">
-                                                </a>
-                                            </div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title m-0">
-                                                    <a href="movie-details.html">the most wanted</a>
-                                                </h5>
-                                                <ul class="movie-rating-percent">
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/tomato.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="thumb">
-                                                            <img src="assets/images/movie/cake.png" alt="movie">
-                                                        </div>
-                                                        <span class="content">88%</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
                       <div class="tab-item active">
                         <div class="movie-area mb-10">
                           {movies.length > 0 ? (
