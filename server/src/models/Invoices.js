@@ -90,7 +90,14 @@ Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
         throw error;
     }
 };
-
+Invoices.fetchInvoicebyId = async function (invoiceId) {
+    try {
+        const invoice = await Invoices.findByPk(invoiceId);
+        return invoice;
+    } catch (error) {
+        throw error;
+    }
+};
 Invoices.createInvoice = async (invoiceData) => {
     try {
         const { user_id, theater_id } = invoiceData;

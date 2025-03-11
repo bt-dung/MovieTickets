@@ -80,4 +80,23 @@ Seat.getSeatbyScreenID = async (screen_id, showtime_id) => {
     }
 };
 
+Seat.fetchSeatById = async function (seatIds) {
+    try {
+        const seats = await Seat.findAll({
+            where: {
+                id: {
+                    [Op.in]: seatIds,
+                }
+            },
+            include: {
+                model: SeatType,
+                required: true,
+            },
+        });
+        return seats;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = Seat;

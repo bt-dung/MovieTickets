@@ -48,7 +48,16 @@ const getFilmNewRelease = async (req, res) => {
         return res.status(500).json({ status: "FAILED", message: 'Error when fetching movie!!', error });
     }
 };
-
+const getDetailsMovie = async (req, res) => {
+    const { movieId } = req.params;
+    try {
+        const detailMovie = await Movie.getDetail(movieId);
+        return res.status(201).json({ status: "SUCCESS", data: detailMovie });
+    } catch (error) {
+        console.error("Error while get detail movie:", error);
+        return res.status(400).json({ status: "FAILED", message: error.message });
+    }
+};
 
 const getMovie = async (req, res) => {
     const { id } = req.params;
@@ -63,4 +72,4 @@ const getMovie = async (req, res) => {
     }
 };
 
-module.exports = { getMovie, getAllMovies, getFilmNewRelease, searchMovies, filterMovie }
+module.exports = { getMovie, getAllMovies, getFilmNewRelease, searchMovies, getDetailsMovie }

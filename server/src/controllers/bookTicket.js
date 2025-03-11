@@ -4,9 +4,11 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const QRCode = require('qrcode');
 const dotenv = require('dotenv');
-
+const PayOs = require('@payos/node');
 
 dotenv.config();
+
+const payos = new PayOs('client-code', 'api-key', 'checksum-key');
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -29,27 +31,22 @@ transporter.verify((error, success) => {
         console.log(success);
     }
 })
+const paymentActiveLink = async (req, res) => {
 
-const BookTicket = async (req, res) => {
-    const { user_id, theater_id, seat_id, showtime_id } = req.body;
+}
+const paymentSuccess = async (req, res) => {
+    const { invoice_id, seat_id, showtime_id, url_return, url_cancel } = req.body;
 
     if (!user_id || !theater_id || !seat_id || !showtime_id || !Array.isArray(seat_id) || seat_id.length === 0) {
         return res.status(400).json({ status: "FAILED", message: "Invalid input data." });
     }
 
     try {
-        const InvoiceData = {
-            user_id,
-            theater_id,
-        };
-        const { user, newInvoice } = await Invoices.createInvoice(InvoiceData);
-        if (!newInvoice || !newInvoice.id) {
-            throw new Error("Failed to create invoice.");
-        }
+        const invoice = await Invoices.fetchInvoicebyId(invoice_id);
 
         const ticketPromises = seat_id.map(async (seatId) => {
             const ticketData = {
-                invoice_id: newInvoice.id,
+                invoice_id: invoice.id,
                 seat_id: seatId,
                 showtime_id,
             };
@@ -74,7 +71,6 @@ const BookTicket = async (req, res) => {
         // if (sentEmail) {
         //     console.log("Email sending successful!!")
         // }
-        const invoice = await Invoices.findByPk(newInvoice.id);
         return res.status(201).json({
             status: "SUCCESS",
             message: "Tickets have been booked successfully! Check ticket sent email.",
@@ -92,6 +88,7 @@ const generateOrderCode = (email, timestamp) => {
         .digest('hex')
         .slice(0, 10)
 };
+
 const sendTicketEmail = async ({ email, ticketInfo }) => {
     try {
         console.log("Gửi email đến:", email);
@@ -143,4 +140,4 @@ const sendTicketEmail = async ({ email, ticketInfo }) => {
         throw error;
     }
 }
-module.exports = BookTicket;
+module.exports = paymentSuccess;
