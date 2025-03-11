@@ -3512,6 +3512,11 @@ input[type="submit"] {
   }
 }
 
+.movie-area {
+  max-width: 90%;
+  width: 100%;
+}
+
 .movie-list .movie-content {
   background: transparent;
   width: 100%;
@@ -3524,6 +3529,7 @@ input[type="submit"] {
 
 .movie-list .movie-content .movie-tags {
   margin-bottom: 3px;
+  word-wrap: break-word;
 }
 
 .movie-list .movie-content .movie-tags p {
