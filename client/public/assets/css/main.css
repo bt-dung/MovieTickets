@@ -1006,7 +1006,7 @@ input[type="submit"] {
   display: flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  
+
 }
 
 .event-banner-section::after,
@@ -2920,9 +2920,7 @@ input[type="submit"] {
   margin-bottom: 13px;
 }
 
-.widget-1.widget-check .form-group div {
-  
-}
+.widget-1.widget-check .form-group div {}
 
 .widget-1.widget-check .form-group input {
   width: 14px;
@@ -3043,7 +3041,6 @@ input[type="submit"] {
 }
 
 .booking-summery ul li {
-  padding: 0;
   margin-bottom: 30px;
 }
 
@@ -3074,6 +3071,17 @@ input[type="submit"] {
   text-transform: uppercase;
   word-wrap: break-word;
   color: #9aace5;
+}
+
+.booking-summery ul li .delete-icon {
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 14px;
+  transition: color 0.2s ease-in-out;
+}
+
+.booking-summery ul li .delete-icon:hover {
+  color: rgba(255, 0, 0, 0.7);
 }
 
 .booking-summery ul li .info:last-child {
@@ -3119,7 +3127,7 @@ input[type="submit"] {
 .side-shape::after,
 .side-shape::before {
   width: 48px;
-  height: 48px;
+  height: auto;
   background-color: #001232;
   border-radius: 50%;
   top: -48px;
@@ -5804,6 +5812,57 @@ input[type="submit"] {
   border-radius: 50%;
   top: -20px;
   right: -20px;
+}
+
+.checkout-widget .payment-description {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(248, 248, 248, 0.8);
+  border-radius: 5px;
+  display: block;
+}
+
+.checkout-widget .payment-description::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgba(248, 248, 248, 0.8);
+  /* Cùng màu với nền */
+}
+
+.checkout-widget .payment-description h2 {
+  margin: 0;
+  padding: 5px 0;
+  line-height: 1.5;
+  text-align: left;
+  background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.payment-bubble {
+  padding: 15px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-size: 16px;
+  text-align: left;
+}
+
+.checkout-widget .payment-description h5 {
+  margin: 0;
+  padding: 5px 0;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #555;
+  text-align: left;
 }
 
 .checkout-widget.checkout-card .subtitle {
@@ -9819,6 +9878,7 @@ aside {
 }
 
 .custom-button {
+  cursor: pointer;
   background-image: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);
   padding: 11px 24px;
   font-weight: 600;

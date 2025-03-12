@@ -5,11 +5,10 @@ import { updateData, deleteData } from "../../../api/api";
 import Swal from 'sweetalert2';
 
 const CountDownHandle = () => {
-    const { endTime, setEndTime, setShowtime, setSelectedSeats, invoice, setInvoice } = useCurrentSeat();
+    const { endTime, setEndTime, setSelectedSeats, invoice, setInvoice } = useCurrentSeat();
 
     useEffect(() => {
         if (Date.now() >= endTime) {
-            setShowtime('');
             setSelectedSeats([]);
             setInvoice(null);
         }
@@ -43,7 +42,6 @@ const CountDownHandle = () => {
             }
         };
         setEndTime(null);
-        setShowtime('');
         setSelectedSeats([]);
         setInvoice(null);
     };

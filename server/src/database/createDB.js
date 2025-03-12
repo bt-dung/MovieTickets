@@ -120,6 +120,7 @@ const create_table_movies = [
     `CREATE TABLE IF NOT EXISTS invoices (
         id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
         purchase_date DATETIME DEFAULT CURRENT_TIMESTAMP,
         TotalAmount DECIMAL(10,2) NOT NULL DEFAULT 0,
         PaymentStatus ENUM('Paid', 'Pending', 'Cancelled') DEFAULT 'Pending',

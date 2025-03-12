@@ -8,20 +8,21 @@ const socket = io("http://localhost:5000", {
 const SeatContext = createContext();
 
 export const CurrentSeatProvider = ({ children }) => {
-    const [showtime, setShowtime] = useState('');
+    const [currentShowtimeId, setShowtimeId] = useState('');
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [invoice, setInvoice] = useState(null);
     const [endTime, setEndTime] = useState(Date.now() + 15 * 60 * 1000);
     const [userId, setUserID] = useState('');
     const [occupiedSeats, setOccupiedSeats] = useState(new Set());
+    const [selectedService, setSelectedService] = useState([]);
 
     useEffect(() => {
-        console.log("showtime2:", showtime);
-        if (!showtime) {
+        console.log("showtime2:", currentShowtimeId);
+        if (!currentShowtimeId) {
             console.log("chua co showtime");
             return;
         };
-        socket.emit("get_held_seats", { showtimeId: showtime.id, userId });
+        socket.emit("get_held_seats", { showtimeId: currentShowtimeId, userId });
 
         socket.on("seat_status_update", async ({ selectedSeatsOfUser, endTime, selectedSeatsOthers }) => {
             console.log("Ghế của user:", selectedSeatsOfUser);
@@ -50,36 +51,27 @@ export const CurrentSeatProvider = ({ children }) => {
         return () => {
             socket.off("seat_status_update");
         };
-    }, [showtime, userId]);
+    }, [currentShowtimeId, userId]);
 
     useEffect(() => {
-        // if (selectedSeats.length === 0 || selectedSeats.some(seat => seat === null)) {
-
-        //     console.log("dữ liệu rỗng");
-        //     if (JSON.stringify(selectedSeats) !== JSON.stringify(initialSeats)) {
-        //         console.log("Khách hàng đã hủy hết ghế.");
-        //         socket.emit("hold_seat", { showtimeId: showtime.id, selectedSeats: [], userId, endTime });
-        //     };
-        //     return;
-        // };
-        console.log("showtime:", showtime);
+        console.log("showtime:", currentShowtimeId);
         console.log("user:", userId);
         console.log('seats:', selectedSeats);
         console.log("end time:", endTime);
         const seats = selectedSeats.map((seat) => seat?.id);
-        socket.emit("hold_seat", { showtimeId: showtime.id, selectedSeats: seats, userId, endTime });
+        socket.emit("hold_seat", { showtimeId: currentShowtimeId, selectedSeats: seats, userId, endTime });
     }, [selectedSeats]);
 
     useEffect(() => {
-        if (!showtime || !userId) return;
+        if (!currentShowtimeId || !userId) return;
         socket.on("seat_status_update", ({ showtimeId, seatIds }) => {
-            if (showtimeId === showtime.id) {
+            if (showtimeId === currentShowtimeId) {
                 console.log("Cập nhật danh sách ghế đã giữ:", seatIds);
                 setOccupiedSeats(new Set(seatIds));
             }
         });
         return () => socket.off("seat_status_update");
-    }, [showtime, userId]);
+    }, [currentShowtimeId, userId]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -94,11 +86,11 @@ export const CurrentSeatProvider = ({ children }) => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [endTime, selectedSeats, showtime]);
+    }, [endTime, selectedSeats, currentShowtimeId]);
 
     return (
         <SeatContext.Provider value={{
-            selectedSeats, setSelectedSeats, showtime, setShowtime, invoice, setInvoice, endTime, setEndTime, userId, setUserID, occupiedSeats
+            selectedSeats, setSelectedSeats, setShowtimeId, invoice, setInvoice, endTime, setEndTime, userId, setUserID, occupiedSeats, selectedService, setSelectedService
         }}>
             {children}
         </SeatContext.Provider>

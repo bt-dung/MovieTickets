@@ -11,8 +11,9 @@ import proceedURL from "/assets/images/movie/movie-bg-proceed.jpg";
 import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatPlan = () => {
     const { user, isLoggedIn } = useUser();
-    const { selectedSeats, setSelectedSeats, showtime, setShowtime, invoice, setInvoice, userId, setUserID } = useCurrentSeat();
+    const { selectedSeats, setSelectedSeats, setShowtimeId, userId, setUserID } = useCurrentSeat();
     const { theaterId, showtimeId } = useParams();
+    const [showtime, setShowtime] = useState('');
     const [theater, setTheater] = useState(null);
     const [movie, setMovie] = useState(null);
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const SeatPlan = () => {
         }
         if (user.id !== userId) {
             setUserID(user.id);
+            setShowtimeId(showtimeId);
         }
         const fetchShowtime = async (showtime_id) => {
             try {
@@ -60,22 +62,8 @@ const SeatPlan = () => {
             cancelButtonText: 'Cancel',
         });
         if (isConfirmed) {
-            console.log(invoice);
-            if (invoice !== null) {
-                navigate(`/starcinema/service-options/${invoice.id}`);
-                return;
-            };
-            const data = {
-                user_id: user.id,
-                theater_id: theaterId,
-            };
-            try {
-                const createInvoice = await postData("/api/v1/createInvoice", data);
-                setInvoice(createInvoice);
-                navigate(`/starcinema/service-options/${createInvoice.id}`);
-            } catch (error) {
-                console.error('Error confirm choose the seat:', error);
-            };
+            const showtimeId = showtime?.id ?? '';
+            navigate(`/starcinema/service-options/${showtimeId}`);
         };
     };
     return (<>

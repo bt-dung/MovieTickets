@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-const CartBill = ({ selectedSeats, showtime, invoice, selectedService }) => {
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
+const CartBill = ({ selectedSeats, showtime, selectedService, setSelectedService }) => {
+    const navigate = useNavigate();
     const [totalAmount, setAmount] = useState(0);
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
@@ -15,6 +18,43 @@ const CartBill = ({ selectedSeats, showtime, invoice, selectedService }) => {
         const newTotalAmount = totalSeatsPrice + totalProductsPrice;
         setAmount(newTotalAmount);
     }, [selectedSeats, selectedService]);
+    const handleDelete = (productId, category) => {
+        setSelectedService((prev) => {
+            if (!prev[category]) return prev;
+
+            const updatedCategory = prev[category].filter(product => product.id !== productId);
+
+            if (updatedCategory.length === 0) {
+                const { [category]: _, ...rest } = prev;
+                return rest;
+            }
+
+            return {
+                ...prev,
+                [category]: updatedCategory,
+            };
+        });
+    };
+    const onClickBookedSeat = async (e) => {
+        e.preventDefault();
+        if (selectedSeats.length === 0) {
+            Swal.fire({
+                text: 'Please select a seat before proceeding to the next step.',
+                icon: 'warning',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Okay',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate("/starcinema/home");
+                }
+            });
+
+            return;
+        }
+        const showtimeId = showtime?.id ?? '';
+        navigate(`/starcinema/final-invoice/${showtimeId}`);
+    };
     return (<>
         <div class="col-lg-4">
             <div class="booking-summery bg-one">
@@ -26,7 +66,7 @@ const CartBill = ({ selectedSeats, showtime, invoice, selectedService }) => {
                     </li>
                     <li>
                         <h6 class="subtitle"><span>Number of seats</span><span>{selectedSeats?.length}</span></h6>
-                        <div class="info"><span>{formatDateTime(invoice?.purchase_date)}</span> <span>{selectedSeats.map(seat => seat.seat_name).join(", ")}</span></div>
+                        <div class="info"><span>{formatDateTime(Date.now())}</span> <span>{selectedSeats.map(seat => seat.seat_name).join(", ")}</span></div>
                     </li>
                     <li>
                         <h6 class="subtitle mb-0"><span>Tickets  Price</span><span>{selectedSeats.reduce((total, seat) => total + Number(seat.seat_price), 0).toLocaleString()}Đ</span></h6>
@@ -45,11 +85,10 @@ const CartBill = ({ selectedSeats, showtime, invoice, selectedService }) => {
                                     <span>{selectedService[category].reduce((total, product) => total + product.total_price, 0).toLocaleString()} Đ</span>
                                 </h6>
                                 {selectedService[category].map((product) => (
-                                    <div key={product.id}>
-                                        <span className="info">
-                                            <span>{product.quantity} * {product.name}</span>
-                                        </span>
-                                    </div>
+                                    <span className="info">
+                                        <span>{product.quantity} * {product.name}</span>
+                                        <span className="delete-icon" onClick={() => handleDelete(product.id, category)}>x</span>
+                                    </span>
                                 ))}
                             </li>
                         ))
@@ -66,7 +105,7 @@ const CartBill = ({ selectedSeats, showtime, invoice, selectedService }) => {
             </div>
             <div class="proceed-area  text-center">
                 <h6 class="subtitle"><span>Amount Payable</span><span>{Number(totalAmount * 115 / 100).toLocaleString()} Đ</span></h6>
-                <a href="#0" class="custom-button back-button">proceed</a>
+                <div className="custom-button" onClick={onClickBookedSeat}>proceed</div>
             </div>
             <div class="note">
                 <h5 class="title">Note :</h5>

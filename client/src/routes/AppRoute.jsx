@@ -3,6 +3,8 @@ import MoviePage from "../pages/home/movie/Movie"
 import TheaterHome from "../pages/home/theater/Theater";
 import DetailMovie from "../pages/home/movie/DetailMovie";
 import SeatPlan from "../pages/home/seatplan/SeatPlan";
+import FinalInvoice from "../pages/home/invoice/FinalInvoice";
+import PaymentSuccess from "../components/home/payment/PaymentSucces";
 
 import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'
@@ -40,7 +42,9 @@ export const userRoutes = [
     { path: "/movie-schedule/:movieId", component: MoviePlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/movie-detail/:movieId", component: DetailMovie, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/theater/:theaterId/choose-seat/:showtimeId/", component: SeatPlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
-    { path: "/service-options/:invoiceId", component: ServiceOptions, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/service-options/:showtimeId", component: ServiceOptions, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/final-invoice/:showtimeId", component: FinalInvoice, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/payment-success", component: PaymentSuccess, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

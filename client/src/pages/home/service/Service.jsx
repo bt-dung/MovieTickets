@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { fetchData } from '../../../api/api';
 import CountDownHandle from '../../../components/home/countdown/CountDownHandle';
-import BackgroundURL from "/assets/images/banner/banner04.jpg";
 import ProductFilter from '../../../components/home/product/ProductFilter';
 import { useCurrentSeat } from '../../../context/SeatContext';
+import { useUser } from '../../../context/UserContext';
 import CartBill from '../../../components/home/invoice/CartBill';
+import BannerTop from '../../../components/home/banner/BannerTop';
 const ServiceOptions = () => {
-    const { selectedSeats, showtime, invoice } = useCurrentSeat();
-    const { invoiceId } = useParams();
-    console.log(selectedSeats, showtime);
-    const [selectedService, setSelectedService] = useState([]);
+    const { showtimeId } = useParams();
+    console.log(showtimeId);
+    const { user } = useUser();
+    console.log(user);
+    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService } = useCurrentSeat();
+    const [showtime, setShowtime] = useState('');
     useEffect(() => {
-        console.log("Product selected: ", selectedService);
-    }, [selectedService]);
+        if (user.id !== userId) {
+            setUserID(user.id);
+            setShowtimeId(showtimeId);
+        }
+        const fetchShowtime = async (showtime_id) => {
+            try {
+                const res = await fetchData(`/api/v1/showtime/${showtime_id}`);
+                console.log("showtime:", res.data);
+                setShowtime(res.data);
+            } catch (error) {
+                console.error("Error fetching showtime data:", error);
+            }
+        }
+        fetchShowtime(showtimeId);
+    }, [showtimeId, user, setUserID]);
+
     return (<>
-        <section className="details-banner hero-area seat-plan-banner" style={{ backgroundImage: `url(${BackgroundURL})` }}>
-            <div className="container">
-                <div className="details-banner-wrapper">
-                    <div class="details-banner-content style-two">
-                        <h3 className="title">Services</h3>
-                        <div className="tags">
-                            <a href="#0">Foods</a>
-                            <a href="#0">Drinks</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <BannerTop title={"Services"} tags={['Foods', 'Drinks']} />
         <section className="page-title bg-one">
             <div className="container-xxl">
                 <div class="page-title-area">
@@ -57,7 +63,7 @@ const ServiceOptions = () => {
                         </div>
                         <ProductFilter setSelectedService={setSelectedService} />
                     </div>
-                    <CartBill selectedSeats={selectedSeats} showtime={showtime} invoice={invoice} selectedService={selectedService} />
+                    <CartBill selectedSeats={selectedSeats} showtime={showtime} selectedService={selectedService} setSelectedService={setSelectedService} />
                 </div>
             </div>
         </div>

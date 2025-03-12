@@ -19,6 +19,11 @@ const Invoices = sequelize.define('invoices', {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
     purchase_date: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -100,12 +105,13 @@ Invoices.fetchInvoicebyId = async function (invoiceId) {
 };
 Invoices.createInvoice = async (invoiceData) => {
     try {
-        const { user_id, theater_id } = invoiceData;
+        const { user_id, email, theater_id } = invoiceData;
         if (!user_id || !theater_id) {
             throw new Error('Missing required fields: user_id, theater_id');
         };
         const newInvoiceData = {
             user_id,
+            email,
             theater_id,
             purchase_date: new Date(),
         };
