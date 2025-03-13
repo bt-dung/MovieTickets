@@ -4,7 +4,7 @@ import TheaterHome from "../pages/home/theater/Theater";
 import DetailMovie from "../pages/home/movie/DetailMovie";
 import SeatPlan from "../pages/home/seatplan/SeatPlan";
 import FinalInvoice from "../pages/home/invoice/FinalInvoice";
-import PaymentSuccess from "../components/home/payment/PaymentSucces";
+import PaymentSuccess from "../pages/home/payment/PaymentSuccess";
 
 import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'

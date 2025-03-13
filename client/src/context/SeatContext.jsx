@@ -10,7 +10,6 @@ const SeatContext = createContext();
 export const CurrentSeatProvider = ({ children }) => {
     const [currentShowtimeId, setShowtimeId] = useState('');
     const [selectedSeats, setSelectedSeats] = useState([]);
-    const [invoice, setInvoice] = useState(null);
     const [endTime, setEndTime] = useState(Date.now() + 15 * 60 * 1000);
     const [userId, setUserID] = useState('');
     const [occupiedSeats, setOccupiedSeats] = useState(new Set());
@@ -80,7 +79,6 @@ export const CurrentSeatProvider = ({ children }) => {
                 // socket.emit("release_seat", { showtimeId: showtime, seatIds: selectedSeats, userId: "user123" });
 
                 setSelectedSeats([]);
-                setInvoice(null);
                 setEndTime(null);
             }
         }, 1000);
@@ -90,7 +88,7 @@ export const CurrentSeatProvider = ({ children }) => {
 
     return (
         <SeatContext.Provider value={{
-            selectedSeats, setSelectedSeats, setShowtimeId, invoice, setInvoice, endTime, setEndTime, userId, setUserID, occupiedSeats, selectedService, setSelectedService
+            selectedSeats, setSelectedSeats, setShowtimeId, endTime, setEndTime, userId, setUserID, occupiedSeats, selectedService, setSelectedService
         }}>
             {children}
         </SeatContext.Provider>

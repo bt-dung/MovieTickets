@@ -6019,12 +6019,13 @@ input[type="submit"] {
 }
 
 .checkout-contact-form .form-group input {
+  color: white;
   height: 40px;
   border: none;
   border-bottom: 1px solid #11326f;
   border-radius: 0;
   padding: 0;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .checkout-contact-form .form-group input::-webkit-input-placeholder {

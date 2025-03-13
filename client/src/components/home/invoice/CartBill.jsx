@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-const CartBill = ({ selectedSeats, showtime, selectedService, setSelectedService }) => {
+const CartBill = ({ selectedSeats, showtime, selectedService, setSelectedService, totalAmount, setAmount }) => {
     const navigate = useNavigate();
-    const [totalAmount, setAmount] = useState(0);
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
         const options = { day: '2-digit', month: 'short', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: true };

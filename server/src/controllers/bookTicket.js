@@ -8,7 +8,7 @@ const PayOs = require('@payos/node');
 
 dotenv.config();
 
-const payos = new PayOs('client-code', 'api-key', 'checksum-key');
+const payos = new PayOs(process.env.CLIENT_ID, process.env.API_KEY, process.env.CHECKSUM_KEY);
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -31,16 +31,38 @@ transporter.verify((error, success) => {
         console.log(success);
     }
 })
-const paymentActiveLink = async (req, res) => {
-
-}
-const paymentSuccess = async (req, res) => {
-    const { invoice_id, seat_id, showtime_id, url_return, url_cancel } = req.body;
-
-    if (!user_id || !theater_id || !seat_id || !showtime_id || !Array.isArray(seat_id) || seat_id.length === 0) {
+const makePayment = async (req, res) => {
+    const { invoice_id, selectedSeats, selectedProducts, showtime_id, totalAmount, url_return, url_cancel } = req.body;
+    console.log("invoice_id:", invoice_id);
+    console.log("selectedSeats:", selectedSeats);
+    console.log("selectedProducts:", selectedProducts);
+    console.log("showtime_id:", showtime_id);
+    console.log("totalAmount:", totalAmount);
+    console.log("url_return:", url_return);
+    console.log("url_cancel:", url_cancel);
+    if (!invoice_id || !selectedSeats || !showtime_id || !totalAmount || !Array.isArray(selectedSeats) || selectedSeats.length === 0 || !url_return || !url_cancel) {
         return res.status(400).json({ status: "FAILED", message: "Invalid input data." });
     }
+    try {
+        await paymentActiveLink(totalAmount, url_return, url_cancel);
+    } catch (error) {
+        console.log("Error when create Link payment:", error);
+    }
 
+
+};
+const paymentActiveLink = async (totalAmount, url_return, url_cancel) => {
+    const order = {
+        amount: totalAmount,
+        description: "Payment at Star Cinema",
+        orderCode: 12,
+        returnUrl: url_return,
+        cancelUrl: url_cancel
+    };
+    const paymentLink = await payos.createPaymentLink(order);
+    res.redirect(303, paymentLink.checkoutUrl);
+}
+const paymentSuccess = async (req, res) => {
     try {
         const invoice = await Invoices.fetchInvoicebyId(invoice_id);
 
@@ -140,4 +162,4 @@ const sendTicketEmail = async ({ email, ticketInfo }) => {
         throw error;
     }
 }
-module.exports = paymentSuccess;
+module.exports = makePayment;

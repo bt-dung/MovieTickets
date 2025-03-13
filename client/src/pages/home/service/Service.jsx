@@ -14,6 +14,7 @@ const ServiceOptions = () => {
     console.log(user);
     const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService } = useCurrentSeat();
     const [showtime, setShowtime] = useState('');
+    const [totalAmount, setAmount] = useState(0);
     useEffect(() => {
         if (user.id !== userId) {
             setUserID(user.id);
@@ -63,7 +64,7 @@ const ServiceOptions = () => {
                         </div>
                         <ProductFilter setSelectedService={setSelectedService} />
                     </div>
-                    <CartBill selectedSeats={selectedSeats} showtime={showtime} selectedService={selectedService} setSelectedService={setSelectedService} />
+                    <CartBill selectedSeats={selectedSeats} showtime={showtime} selectedService={selectedService} setSelectedService={setSelectedService} totalAmount={totalAmount} setAmount={setAmount} />
                 </div>
             </div>
         </div>
