@@ -122,25 +122,25 @@ Tickets.deleteTicket = async (id) => {
     }
 };
 
-Tickets.afterCreate(async (ticket, options) => {
-    try {
-        const invoice = await Invoices.findByPk(ticket.invoice_id);
-        if (!invoice) return;
+// Tickets.afterCreate(async (ticket, options) => {
+//     try {
+//         const invoice = await Invoices.findByPk(ticket.invoice_id);
+//         if (!invoice) return;
 
-        const seat = await Seats.findOne({
-            where: { id: ticket.seat_id },
-            include: { model: SeatType, attributes: ["price"] },
-        });
+//         const seat = await Seats.findOne({
+//             where: { id: ticket.seat_id },
+//             include: { model: SeatType, attributes: ["price"] },
+//         });
 
-        if (!seat) return;
+//         if (!seat) return;
 
-        await Invoices.increment("TotalAmount", {
-            by: parseFloat(seat.seat_type.price) || 0,
-            where: { id: invoice.id },
-        });
-    } catch (error) {
-        console.error('Error prepare the invoice :', error);
-    }
-});
+//         await Invoices.increment("TotalAmount", {
+//             by: parseFloat(seat.seat_type.price) || 0,
+//             where: { id: invoice.id },
+//         });
+//     } catch (error) {
+//         console.error('Error prepare the invoice :', error);
+//     }
+// });
 
 module.exports = Tickets;

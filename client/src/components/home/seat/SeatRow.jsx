@@ -27,7 +27,7 @@ const SeatRow = ({ seats, rowLabel, selectedSeats, toggleSeatSelection, occupied
                         <ul>
                             {group.map((seat) => {
                                 const isSelected = selectedSeats.some(selectedSeat => selectedSeat?.id === seat.id && selectedSeat?.seat_name === seat.seat_name);
-                                const isBooked = seat.tickets.length > 0;
+                                const isBooked = seat.tickets.length > 0 || seat.tickets?.invoices?.PaymentStatus === "Paid";
                                 const isHolding = occupiedSeats.has(seat.id) && !selectedSeats.some(selectedSeat => selectedSeat?.id === seat.id);
                                 let seatImage = "/assets/images/movie/seat01.png";
                                 if (isHolding) {

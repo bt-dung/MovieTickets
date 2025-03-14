@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Swal from 'sweetalert2';
 const CartBill = ({ selectedSeats, showtime, selectedService, setSelectedService, totalAmount, setAmount }) => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const isFinalInvoicePage = location.pathname === `/starcinema/final-invoice/${showtime.id}`;
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);
         const options = { day: '2-digit', month: 'short', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: true };
@@ -93,18 +95,10 @@ const CartBill = ({ selectedSeats, showtime, selectedService, setSelectedService
                         ))
                     )}
                 </ul>
-
-
-                <ul>
-                    <li>
-                        <span class="info"><span>price</span><span>{Number(totalAmount).toLocaleString()} Đ</span></span>
-                        <span class="info"><span>vat</span><span>15%</span></span>
-                    </li>
-                </ul>
             </div>
             <div class="proceed-area  text-center">
-                <h6 class="subtitle"><span>Amount Payable</span><span>{Number(totalAmount * 115 / 100).toLocaleString()} Đ</span></h6>
-                <div className="custom-button" onClick={onClickBookedSeat}>proceed</div>
+                <h6 class="subtitle"><span>Amount Payable</span><span>{Number(totalAmount).toLocaleString()} Đ</span></h6>
+                {isFinalInvoicePage ? (<></>) : (<div className="custom-button" onClick={onClickBookedSeat}>proceed</div>)}
             </div>
             <div class="note">
                 <h5 class="title">Note :</h5>

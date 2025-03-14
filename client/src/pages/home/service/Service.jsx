@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { fetchData } from '../../../api/api';
 import CountDownHandle from '../../../components/home/countdown/CountDownHandle';
 import ProductFilter from '../../../components/home/product/ProductFilter';
@@ -8,6 +8,7 @@ import { useUser } from '../../../context/UserContext';
 import CartBill from '../../../components/home/invoice/CartBill';
 import BannerTop from '../../../components/home/banner/BannerTop';
 const ServiceOptions = () => {
+    const navigate = useNavigate();
     const { showtimeId } = useParams();
     console.log(showtimeId);
     const { user } = useUser();
@@ -38,7 +39,7 @@ const ServiceOptions = () => {
             <div className="container-xxl">
                 <div class="page-title-area">
                     <div className="item md-order-1">
-                        <button className="custom-button back-button" onClick={() => window.history.back()}>
+                        <button className="custom-button back-button" onClick={() => navigate(`/starcinema/theater/${showtime?.screen?.theater_id}/choose-seat/${showtime?.id}/`)}>
                             <i className="flaticon-double-right-arrows-angles" style={{ fontSize: "20px" }}></i> Back
                         </button>
                     </div>

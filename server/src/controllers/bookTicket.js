@@ -1,5 +1,6 @@
 const Invoices = require("../models/Invoices");
 const Tickets = require("../models/Tickets");
+const InvoiceService = require("../models/InvoiceService");
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const QRCode = require('qrcode');
@@ -32,73 +33,84 @@ transporter.verify((error, success) => {
     }
 })
 const makePayment = async (req, res) => {
-    const { invoice_id, selectedSeats, selectedProducts, showtime_id, totalAmount, url_return, url_cancel } = req.body;
-    console.log("invoice_id:", invoice_id);
-    console.log("selectedSeats:", selectedSeats);
-    console.log("selectedProducts:", selectedProducts);
-    console.log("showtime_id:", showtime_id);
-    console.log("totalAmount:", totalAmount);
-    console.log("url_return:", url_return);
-    console.log("url_cancel:", url_cancel);
-    if (!invoice_id || !selectedSeats || !showtime_id || !totalAmount || !Array.isArray(selectedSeats) || selectedSeats.length === 0 || !url_return || !url_cancel) {
+    const { invoice_id, selectedSeatsID, selectedProducts, showtime_id, totalAmount, url_return, url_cancel } = req.body;
+    if (!invoice_id || !selectedSeatsID || !Array.isArray(selectedSeatsID) || selectedSeatsID.length === 0 || !showtime_id || !totalAmount || !url_return || !url_cancel) {
         return res.status(400).json({ status: "FAILED", message: "Invalid input data." });
     }
     try {
-        await paymentActiveLink(totalAmount, url_return, url_cancel);
-    } catch (error) {
-        console.log("Error when create Link payment:", error);
-    }
-
-
-};
-const paymentActiveLink = async (totalAmount, url_return, url_cancel) => {
-    const order = {
-        amount: totalAmount,
-        description: "Payment at Star Cinema",
-        orderCode: 12,
-        returnUrl: url_return,
-        cancelUrl: url_cancel
-    };
-    const paymentLink = await payos.createPaymentLink(order);
-    res.redirect(303, paymentLink.checkoutUrl);
-}
-const paymentSuccess = async (req, res) => {
-    try {
         const invoice = await Invoices.fetchInvoicebyId(invoice_id);
-
-        const ticketPromises = seat_id.map(async (seatId) => {
+        const ticketPromises = selectedSeatsID.map(async (seatId) => {
             const ticketData = {
                 invoice_id: invoice.id,
                 seat_id: seatId,
                 showtime_id,
             };
-            return await Tickets.createTicket(ticketData);
+            try {
+                return await Tickets.createTicket(ticketData);
+            } catch (error) {
+                console.error(`Error creating ticket for seat ${seatId}:`, error);
+                throw new Error(`Error creating ticket for seat ${seatId}`);
+            }
         });
 
-        const createdTickets = await Promise.all(ticketPromises);
-        // const sentEmail = sendTicketEmail(user.email, createdTickets);
-        if (!createdTickets || createdTickets.length !== seat_id.length) {
+        const createdTickets = await Promise.allSettled(ticketPromises);
 
+        const servicePromises = selectedProducts.map(async (product) => {
+            const servicetData = {
+                invoice_id: invoice.id,
+                service_id: product.id,
+                quantity: product.quantity,
+                total_price: product.total_price
+            };
             try {
-                await Invoices.update(
-                    { status: 'Cancelled' },
-                    { where: { id: newInvoice.id } }
-                );
-                throw new Error("Failed to create one or more tickets. Invoice has been cancelled.");
+                return await InvoiceService.createServiceInvoice(servicetData);
+            } catch (error) {
+                console.error(`Error creating service for product ${product.id}:`, error);
+                throw new Error(`Error creating service for product ${product.id}`);
+            }
+        });
+
+        const createdServices = await Promise.allSettled(servicePromises);
+        const failedTicketPromises = createdTickets.filter(ticket => ticket.status === 'rejected');
+        const failedServicePromises = createdServices.filter(service => service.status === 'rejected');
+
+        if (failedTicketPromises.length > 0 || failedServicePromises.length > 0) {
+            try {
+                await Invoices.updateInvoice(invoice.id, { PaymentStatus: "Cancelled" });
+                console.log("Invoice has been cancelled due to failed ticket or service creation.");
+                throw new Error("Failed to create one or more tickets or services. Invoice has been cancelled.");
             } catch (updateError) {
                 console.error("Error updating invoice status:", updateError);
                 throw updateError;
             }
+        } else {
+            console.log("Created ticket and service successful!!");
         }
+        const orderCode = setOrderCode(invoice_id);
+        const order = {
+            amount: totalAmount,
+            description: "Payment at Star Cinema",
+            orderCode: orderCode,
+            returnUrl: url_return,
+            cancelUrl: url_cancel
+        };
+
+        const paymentLink = await payos.createPaymentLink(order);
+        console.log("Redirecting to:", paymentLink.checkoutUrl);
+        return res.status(200).json({ checkoutUrl: paymentLink.checkoutUrl });
+    } catch (error) {
+        console.log("Error when create Link payment:", error);
+        return res.status(500).json({ status: "FAILED", message: "Payment link creation failed." });
+    }
+};
+const getPaymentStatus = async (req, res) => {
+    const statusPayment = req.body;
+    try {
+        console.log(statusPayment);
+        // const sentEmail = sendTicketEmail(user.email, createdTickets);
         // if (sentEmail) {
         //     console.log("Email sending successful!!")
         // }
-        return res.status(201).json({
-            status: "SUCCESS",
-            message: "Tickets have been booked successfully! Check ticket sent email.",
-            invoice: invoice,
-            tickets: createdTickets,
-        });
     } catch (error) {
         console.error("Error when booking tickets:", error);
         return res.status(400).json({ status: "FAILED", message: error.message });
@@ -162,4 +174,9 @@ const sendTicketEmail = async ({ email, ticketInfo }) => {
         throw error;
     }
 }
-module.exports = makePayment;
+function setOrderCode(invoice_id) {
+    const hash = crypto.createHash("sha256").update(String(invoice_id)).digest("hex");
+    const orderCode = parseInt(hash.substring(0, 12), 16) % 9007199254740991;
+    return orderCode;
+};
+module.exports = { makePayment, getPaymentStatus };

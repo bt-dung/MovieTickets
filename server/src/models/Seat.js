@@ -57,6 +57,7 @@ Seat.insertSeat = async (seatData) => {
 
 Seat.getSeatbyScreenID = async (screen_id, showtime_id) => {
     const Tickets = sequelize.models.tickets;
+    const Invoices = sequelize.models.invoices;
     try {
         const seats = await Seat.findAll({
             where: { screen_id: screen_id },
@@ -66,6 +67,13 @@ Seat.getSeatbyScreenID = async (screen_id, showtime_id) => {
                     model: Tickets,
                     where: { showtime_id: showtime_id },
                     required: false,
+                    include: [
+                        {
+                            model: Invoices,
+                            attributes: ['PaymentStatus'],
+                            required: false
+                        }
+                    ]
                 },
                 {
                     model: SeatType,

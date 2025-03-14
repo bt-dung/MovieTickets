@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import CountDownHandle from "../../../components/home/countdown/CountDownHandle";
 import BannerTop from "../../../components/home/banner/BannerTop";
 import CartBill from "../../../components/home/invoice/CartBill";
@@ -8,15 +9,17 @@ import { useUser } from "../../../context/UserContext";
 import { fetchData, postData } from "../../../api/api";
 
 const FinalInvoice = () => {
+    const navigate = useNavigate();
     const { showtimeId } = useParams();
     const { user } = useUser();
-    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService } = useCurrentSeat();
+    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService, to } = useCurrentSeat();
     const [showtime, setShowtime] = useState('');
     const [selectedPayment, setSelectedPayment] = useState("");
     const [totalAmount, setAmount] = useState(0);
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [numberphone, setNumberPhone] = useState('');
+    const [emailError, setEmailError] = useState("");
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
     useEffect(() => {
@@ -57,16 +60,40 @@ const FinalInvoice = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!email) {
+            setEmailError("Email cannot be empty!");
+            return;
+        } else {
+            setEmailError("");
+        }
         setIsFormSubmitted(true);
     };
 
     const onClickBookedSeat = async (e) => {
         e.preventDefault();
+        if (!isFormSubmitted) {
+            Swal.fire({
+                text: "Please confirm your information and choose your payment method before paying the bill !!",
+                icon: "info",
+                confirmButtonColor: "#3498db",
+                confirmButtonText: "Okay",
+            });
+            return;
+        };
+        if (selectedPayment === "") {
+            Swal.fire({
+                text: "Please choose your payment method before paying the bill !!",
+                icon: "info",
+                confirmButtonColor: "#3498db",
+                confirmButtonText: "Okay",
+            });
+            return;
+        };
         if (selectedSeats.length === 0) {
             Swal.fire({
                 text: "Please select a seat before proceeding to the next step.",
                 icon: "warning",
-                confirmButtonColor: "#d33",
+                confirmButtonColor: "#3498db",
                 confirmButtonText: "Okay",
             }).then(() => {
                 navigate("/starcinema/home");
@@ -78,19 +105,26 @@ const FinalInvoice = () => {
                 const dataInvoice = {
                     user_id: user.id,
                     email: email,
+                    TotalAmount: totalAmount,
                     theater_id: showtime?.screen?.theater_id,
                 }
                 const newInvoice = await postData("/api/v1/createInvoice", dataInvoice);
                 if (newInvoice) {
+                    const selectedProducts = Object.values(selectedService).flat();
                     const makePayment = await postData("/api/v1/create-link-payment", {
                         invoice_id: newInvoice?.id,
-                        selectedSeats: selectedSeats,
-                        selectedProducts: selectedService,
-                        showtime_id: showtime?.id,
+                        selectedSeatsID: selectedSeats.map(seat => seat.id),
+                        selectedProducts: selectedProducts,
+                        showtime_id: showtime.id,
                         totalAmount: totalAmount,
                         url_return: "http://localhost:5173/starcinema/payment-success",
                         url_cancel: `http://localhost:5173/starcinema/final-invoice/${showtime.id}`
                     });
+                    if (makePayment.checkoutUrl) {
+                        window.location.href = makePayment.checkoutUrl;
+                    } else {
+                        alert("Failed to create payment link");
+                    }
                 }
             } catch (error) {
                 console.log("Error:", error);
@@ -105,7 +139,7 @@ const FinalInvoice = () => {
                 <div className="container-xxl">
                     <div className="page-title-area">
                         <div className="item md-order-1">
-                            <button className="custom-button back-button" onClick={() => window.history.back()}>
+                            <button className="custom-button back-button" onClick={() => navigate(`/starcinema/service-options/${showtime?.id}`)}>
                                 <i className="flaticon-double-right-arrows-angles" style={{ fontSize: "20px" }}></i> Back
                             </button>
                         </div>
@@ -139,8 +173,12 @@ const FinalInvoice = () => {
                                             type="email"
                                             value={email}
                                             placeholder="Enter your Mail"
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            onChange={(e) => {
+                                                setEmail(e.target.value);
+                                                setIsFormSubmitted(false);
+                                            }}
                                         />
+                                        {emailError && <p style={{ color: "red", fontStyle: "italic", marginTop: "5px" }}>{emailError}</p>}
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="phone">Phone Number:</label>

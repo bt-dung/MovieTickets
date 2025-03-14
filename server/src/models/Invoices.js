@@ -105,13 +105,14 @@ Invoices.fetchInvoicebyId = async function (invoiceId) {
 };
 Invoices.createInvoice = async (invoiceData) => {
     try {
-        const { user_id, email, theater_id } = invoiceData;
-        if (!user_id || !theater_id) {
-            throw new Error('Missing required fields: user_id, theater_id');
+        const { user_id, email, TotalAmount, theater_id } = invoiceData;
+        if (!user_id || !email || !TotalAmount || !theater_id) {
+            throw new Error('Missing required fields: user_id,email, totalAmount, theater_id');
         };
         const newInvoiceData = {
             user_id,
             email,
+            TotalAmount,
             theater_id,
             purchase_date: new Date(),
         };
