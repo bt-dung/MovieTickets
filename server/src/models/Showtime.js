@@ -52,11 +52,13 @@ Showtime.getMovieName = async function (showtime_id) {
     try {
         const showtime = await Showtime.findOne({
             where: { id: showtime_id },
-            include: {
+            include: [{
                 model: Movies,
                 attributes: ['title'],
-            },
+                required: false,
+            },],
         });
+        console.log(showtime);
         if (!showtime || !showtime.movie) {
             throw new Error('Showtime or Movie no exist!');
         }

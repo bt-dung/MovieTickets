@@ -33,6 +33,7 @@ import AddService from "../pages/admin/service/AddService";
 import EditService from "../pages/admin/service/EditService";
 import MoviePlan from "../pages/home/movie/MoviePlan";
 import ServiceOptions from "../pages/home/service/Service";
+import PaymentCancel from "../pages/home/payment/PaymentCancel";
 
 
 export const userRoutes = [
@@ -44,7 +45,8 @@ export const userRoutes = [
     { path: "/theater/:theaterId/choose-seat/:showtimeId/", component: SeatPlan, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/service-options/:showtimeId", component: ServiceOptions, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/final-invoice/:showtimeId", component: FinalInvoice, layout: MainLayoutHome, allowedRoles: ["user_role"] },
-    { path: "/payment-success", component: PaymentSuccess, allowedRoles: ["user_role"] },
+    { path: "/payment-success/:showtimeId", component: PaymentSuccess, allowedRoles: ["user_role"] },
+    { path: "/payment-cancel/:showtimeId", component: PaymentCancel, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

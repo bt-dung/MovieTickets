@@ -30,6 +30,7 @@ const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
 app.use(cookieParser());
 app.use(
   cors({
@@ -42,6 +43,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 5001;
+global.io = io;
 SeatSocket(io);
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -58,7 +60,7 @@ app.use("/api/v1", Screen);
 app.use("/api/v1", Seat);
 app.use("/api/v1", Invoice);
 app.use("/api/v1", Ticket);
-app.use("/api/v1", MakePaymentRoute);
+app.use("/api/v1", MakePaymentRoute(io));
 app.use("/api/v1", Service);
 app.use("/api/v1", GenreRoute);
 

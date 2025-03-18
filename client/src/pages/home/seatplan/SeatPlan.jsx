@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useUser } from "../../../context/UserContext";
@@ -11,7 +11,7 @@ import proceedURL from "/assets/images/movie/movie-bg-proceed.jpg";
 import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatPlan = () => {
     const { user, isLoggedIn } = useUser();
-    const { selectedSeats, setSelectedSeats, setShowtimeId, userId, setUserID } = useCurrentSeat();
+    const { selectedSeats, setSelectedSeats, setShowtimeId, userId, setUserID, fetchHeldSeats } = useCurrentSeat();
     const { theaterId, showtimeId } = useParams();
     const [showtime, setShowtime] = useState('');
     const [theater, setTheater] = useState(null);
@@ -39,8 +39,9 @@ const SeatPlan = () => {
             }
         }
         fetchShowtime(showtimeId);
+        fetchHeldSeats(showtimeId, user.id);
     }, [showtimeId, user, setUserID]);
-    const onClickBookedSeat = async (e) => {
+    const onClickBookedSeat = useCallback(async (e) => {
         e.preventDefault();
         if (selectedSeats.length === 0) {
             Swal.fire({
@@ -49,9 +50,10 @@ const SeatPlan = () => {
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Okay',
-            })
+            });
             return;
-        };
+        }
+
         const { isConfirmed } = await Swal.fire({
             text: 'Do you really want to choose seats?',
             icon: 'info',
@@ -61,11 +63,11 @@ const SeatPlan = () => {
             confirmButtonText: 'Yes, choose it!',
             cancelButtonText: 'Cancel',
         });
+
         if (isConfirmed) {
-            const showtimeId = showtime?.id ?? '';
             navigate(`/starcinema/service-options/${showtimeId}`);
-        };
-    };
+        }
+    }, [selectedSeats, navigate, showtimeId]);
     return (<>
         <section className="details-banner hero-area bg-img seat-plan-banner" style={{ backgroundImage: `url(${backgroundURL})` }}>
             <div className="container">

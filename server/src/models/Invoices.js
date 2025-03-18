@@ -3,6 +3,7 @@ const { sequelize } = require('../database/db');
 const User = require("./User");
 const InvoiceService = require("./InvoiceService");
 const moment = require("moment");
+const Tickets = require('./Tickets');
 const Invoices = sequelize.define('invoices', {
     id: {
         type: DataTypes.INTEGER,
@@ -55,6 +56,8 @@ const Invoices = sequelize.define('invoices', {
 Invoices.belongsTo(User, { foreignKey: 'user_id' });
 InvoiceService.belongsTo(Invoices, { foreignKey: 'invoice_id' });
 Invoices.hasMany(InvoiceService, { foreignKey: 'invoice_id' });
+Invoices.hasMany(Tickets, { foreignKey: 'invoice_id' });
+Tickets.belongsTo(Invoices, { foreignKey: 'invoice_id' });
 
 Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
     try {
@@ -123,21 +126,71 @@ Invoices.createInvoice = async (invoiceData) => {
         throw error;
     }
 };
-
-Invoices.updateInvoice = async (id, updateData) => {
+Invoices.fetchInvoiceByUser = async function (userId) {
     try {
-        const invoice = await Invoices.findByPk(id);
+        const invoices = await Invoices.findAll({
+            where: { user_id: userId },
+        })
+        return invoices;
+    } catch (error) {
+        throw error
+    };
+}
+Invoices.updateInvoice = async (id, updateData) => {
+    const Tickets = sequelize.models.tickets;
+    try {
+        const invoice = await Invoices.findByPk(id, {
+            include: [{
+                model: Tickets,
+                required: false,
+            }]
+        });
         if (!invoice) {
             throw new Error(`Invoice not found with id: ${id}`);
         }
         await invoice.update(updateData);
-        return invoice;
+        const invoiceData = invoice.get({ plain: true });
+        return invoiceData;
     } catch (error) {
         console.error("Error updating invoice:", error);
         throw error;
     }
 };
 
+// Invoices.getTicketsbyInvoice = async function (invoice_id) {
+//     const Showtime = sequelize.models.showtimes;
+//     const Seats = sequelize.models.seats;
+//     try {
+//         const invoices = await Invoices.findByPk(invoice_id, {
+//             include: [{
+//                 model: Tickets,
+//                 required: false,
+//                 include: [{
+//                     model: Seats,
+//                     as: 'seat',
+//                     attributes: ['seat_name'],
+//                 }]
+//             }]
+//         });
+//         console.log(invoices);
+//         if (!invoices.tickets || invoices.tickets.length === 0) {
+//             throw new Error("Get list of booked tickets on invoice failed!!");
+//         }
+//         const showtimeIds = invoices.tickets.map(ticket => ticket.showtime_id);
+
+//         const uniqueShowtimeIds = [...new Set(showtimeIds)];
+
+//         if (uniqueShowtimeIds.length !== 1) {
+//             throw new Error("The tickets in the invoice have different showtimes!");
+//         }
+//         const showtime_id = uniqueShowtimeIds[0];
+//         console.log(showtime_id);
+//         const showtime = await Showtime.getMovieName(showtime_id);
+//         return { invoices, showtime }
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 Invoices.deleteInvoice = async (id) => {
     try {
         const deleteData = await Invoices.findByPk(id);

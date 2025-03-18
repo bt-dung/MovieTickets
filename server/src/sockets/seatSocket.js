@@ -1,4 +1,3 @@
-
 module.exports = function SeatSocket(io) {
     let showtimeSeats = {};
     io.on("connection", (socket) => {
@@ -15,46 +14,59 @@ module.exports = function SeatSocket(io) {
                     .filter(seatInfo => seatInfo.userId !== userId)
                     .flatMap(seatInfo => seatInfo.selectedSeats);
                 console.log("seat holding:", userSeats);
-                socket.emit("seat_status_update", {
+                socket.emit("seat_status_current", {
                     selectedSeatsOfUser: userSeats,
                     endTime: endTime,
                     selectedSeatsOthers: otherSeats
                 });
             } else {
-                socket.emit("seat_status_update", {
+                socket.emit("seat_status_current", {
                     selectedSeatsOfUser: [],
                     selectedSeatsOthers: []
                 });
             }
         });
 
-
         socket.on("hold_seat", ({ showtimeId, selectedSeats, userId, endTime }) => {
-            console.log("showtime:", showtimeId, userId, selectedSeats, endTime);
             Object.keys(showtimeSeats).forEach((id) => {
                 if (id !== showtimeId) {
                     showtimeSeats[id] = showtimeSeats[id].filter(seat => seat.userId !== userId);
                 }
             });
+
             if (!showtimeSeats[showtimeId]) {
                 showtimeSeats[showtimeId] = [];
             }
+
             const existingSeatIndex = showtimeSeats[showtimeId].findIndex(seat => seat.userId === userId);
 
             if (existingSeatIndex !== -1) {
+                if (!endTime && selectedSeats.length === 0) {
+                    console.log(`User ${userId} đã thanh toán, xóa ghế khỏi danh sách.`);
+                    showtimeSeats[showtimeId] = showtimeSeats[showtimeId].filter(userSeat => userSeat.userId !== userId);
+                    console.log("ghế sau khi xóa: ", showtimeSeats[showtimeId]);
+                    io.emit("seat_status_update", {
+                        showtimeId,
+                        seatIds: showtimeSeats[showtimeId].flatMap(({ selectedSeats }) => selectedSeats)
+                    });
+                    return;
+                }
                 showtimeSeats[showtimeId][existingSeatIndex].selectedSeats = selectedSeats;
+                console.log("selectedSeats:", showtimeSeats[showtimeId]);
             } else {
                 showtimeSeats[showtimeId].push({
                     userId: userId,
                     selectedSeats: selectedSeats,
                     endTime: endTime
                 });
+                console.log("selectedSeats:", showtimeSeats[showtimeId].find(seat => seat.userId === userId));
             }
-            console.log(showtimeSeats[showtimeId]);
+
             socket.broadcast.emit("seat_status_update", {
                 showtimeId,
                 seatIds: showtimeSeats[showtimeId].flatMap(({ selectedSeats }) => selectedSeats)
             });
+
             setTimeout(() => {
                 showtimeSeats[showtimeId] = showtimeSeats[showtimeId].filter(userSeat => {
                     if (Date.now() >= userSeat.endTime) {
@@ -69,25 +81,17 @@ module.exports = function SeatSocket(io) {
                 });
             }, endTime - Date.now());
         });
-        socket.on("update_seat", ({ showtimeId, selectedSeats, userId, endTime }) => {
-            if (!showtimeSeats[showtimeId]) {
-                showtimeSeats[showtimeId] = {};
+
+        socket.on("delete_user", ({ showtimeId, userId }) => {
+            console.log("delete_user:", showtimeId, userId);
+            if (showtimeSeats[showtimeId]) {
+                showtimeSeats[showtimeId] = showtimeSeats[showtimeId].filter(userSeat => userSeat.userId !== userId);
+
+                io.emit("seat_status_update", {
+                    showtimeId,
+                    seatIds: showtimeSeats[showtimeId].flatMap(({ selectedSeats }) => selectedSeats)
+                });
             }
-
-            selectedSeats.forEach((seatId) => {
-                if (showtimeSeats[showtimeId][seatId]?.userId === userId) {
-                    showtimeSeats[showtimeId][seatId] = { userId, endTime };
-                }
-            });
-
-            io.emit("seat_status_update", {
-                showtimeId,
-                seats: Object.entries(showtimeSeats[showtimeId]).map(([seatId, data]) => ({
-                    seatId,
-                    userId: data.userId,
-                    endTime: data.endTime,
-                })),
-            });
         });
     });
 };

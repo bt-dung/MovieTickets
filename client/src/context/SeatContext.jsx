@@ -15,15 +15,16 @@ export const CurrentSeatProvider = ({ children }) => {
     const [occupiedSeats, setOccupiedSeats] = useState(new Set());
     const [selectedService, setSelectedService] = useState([]);
 
-    useEffect(() => {
-        console.log("showtime2:", currentShowtimeId);
-        if (!currentShowtimeId) {
-            console.log("chua co showtime");
+    const fetchHeldSeats = async (showtimeId, userId) => {
+        console.log("showtime2:", showtimeId);
+        if (!showtimeId) {
+            console.log("Chưa có showtime");
             return;
-        };
-        socket.emit("get_held_seats", { showtimeId: currentShowtimeId, userId });
+        }
 
-        socket.on("seat_status_update", async ({ selectedSeatsOfUser, endTime, selectedSeatsOthers }) => {
+        socket.emit("get_held_seats", { showtimeId: showtimeId, userId });
+
+        socket.on("seat_status_current", async ({ selectedSeatsOfUser = [], endTime, selectedSeatsOthers = [] }) => {
             console.log("Ghế của user:", selectedSeatsOfUser);
             console.log("Ghế đã được giữ bởi người khác:", selectedSeatsOthers);
 
@@ -48,9 +49,10 @@ export const CurrentSeatProvider = ({ children }) => {
         });
 
         return () => {
-            socket.off("seat_status_update");
+            socket.off("seat_status_current");
         };
-    }, [currentShowtimeId, userId]);
+    };
+
 
     useEffect(() => {
         console.log("showtime:", currentShowtimeId);
@@ -72,23 +74,9 @@ export const CurrentSeatProvider = ({ children }) => {
         return () => socket.off("seat_status_update");
     }, [currentShowtimeId, userId]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (Date.now() >= endTime) {
-                console.log("Timeout reached, releasing seats...");
-                // socket.emit("release_seat", { showtimeId: showtime, seatIds: selectedSeats, userId: "user123" });
-
-                setSelectedSeats([]);
-                setEndTime(null);
-            }
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [endTime, selectedSeats, currentShowtimeId]);
-
     return (
         <SeatContext.Provider value={{
-            selectedSeats, setSelectedSeats, setShowtimeId, endTime, setEndTime, userId, setUserID, occupiedSeats, selectedService, setSelectedService
+            selectedSeats, setSelectedSeats, currentShowtimeId, setShowtimeId, endTime, setEndTime, userId, setUserID, occupiedSeats, selectedService, setSelectedService, fetchHeldSeats
         }}>
             {children}
         </SeatContext.Provider>

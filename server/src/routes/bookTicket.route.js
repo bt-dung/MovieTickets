@@ -1,7 +1,11 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express");
 const { makePayment, getPaymentStatus } = require("../controllers/bookTicket");
-router.post("/create-link-payment", makePayment)
-    .post("/receive-hook", getPaymentStatus);
 
-module.exports = router;
+module.exports = (io) => {
+    const router = express.Router();
+
+    router.post("/create-link-payment", makePayment);
+    router.post("/receive-hook", getPaymentStatus);
+
+    return router;
+};

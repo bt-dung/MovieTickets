@@ -12,7 +12,7 @@ const FinalInvoice = () => {
     const navigate = useNavigate();
     const { showtimeId } = useParams();
     const { user } = useUser();
-    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService, to } = useCurrentSeat();
+    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService, fetchHeldSeats } = useCurrentSeat();
     const [showtime, setShowtime] = useState('');
     const [selectedPayment, setSelectedPayment] = useState("");
     const [totalAmount, setAmount] = useState(0);
@@ -43,6 +43,7 @@ const FinalInvoice = () => {
             }
         }
         fetchShowtime(showtimeId);
+        fetchHeldSeats(showtimeId, user.id);
     }, [showtimeId, user, setUserID]);
 
     const handleSelectPayment = (paymentMethod) => {
@@ -107,27 +108,28 @@ const FinalInvoice = () => {
                     email: email,
                     TotalAmount: totalAmount,
                     theater_id: showtime?.screen?.theater_id,
-                }
-                const newInvoice = await postData("/api/v1/createInvoice", dataInvoice);
-                if (newInvoice) {
+                };
+                const invoiceToUse = await postData("/api/v1/createInvoice", dataInvoice);
+                if (invoiceToUse) {
                     const selectedProducts = Object.values(selectedService).flat();
                     const makePayment = await postData("/api/v1/create-link-payment", {
-                        invoice_id: newInvoice?.id,
+                        invoice_id: invoiceToUse.id,
                         selectedSeatsID: selectedSeats.map(seat => seat.id),
                         selectedProducts: selectedProducts,
                         showtime_id: showtime.id,
                         totalAmount: totalAmount,
-                        url_return: "http://localhost:5173/starcinema/payment-success",
-                        url_cancel: `http://localhost:5173/starcinema/final-invoice/${showtime.id}`
+                        url_return: `http://localhost:5173/starcinema/payment-success/${showtime.id}`,
+                        url_cancel: `http://localhost:5173/starcinema/payment-cancel/${showtime.id}`
                     });
-                    if (makePayment.checkoutUrl) {
+
+                    if (makePayment?.checkoutUrl) {
                         window.location.href = makePayment.checkoutUrl;
                     } else {
                         alert("Failed to create payment link");
                     }
                 }
             } catch (error) {
-                console.log("Error:", error);
+                console.error("Error:", error);
             }
         }
     };

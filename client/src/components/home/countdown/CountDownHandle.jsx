@@ -5,45 +5,32 @@ import { updateData, deleteData } from "../../../api/api";
 import Swal from 'sweetalert2';
 
 const CountDownHandle = () => {
-    const { endTime, setEndTime, setSelectedSeats, invoice, setInvoice } = useCurrentSeat();
-
+    const { endTime, setEndTime, setSelectedSeats, setSelectedService } = useCurrentSeat();
+    const [isTimeout, setIsTimeout] = useState(false);
     useEffect(() => {
         if (Date.now() >= endTime) {
-            setSelectedSeats([]);
-            setInvoice(null);
+            handleTimeout();
         }
     }, [endTime]);
 
     const handleTimeout = async () => {
-        if (invoice) {
-            try {
-                const data = {
-                    PaymentStatus: "Cancelled"
-                }
-                const response = await updateData(`/api/v1/invoice/${invoice.id}/update`, data);
-                if (response.ok) {
-                    const deleteInvoice = await deleteData(`/api/v1/invoice/${invoice.id}/delete`);
-                    if (deleteInvoice) {
-                        await Swal.fire({
-                            text: 'Your current transaction has been canceled due to timeout. Please select your seats again and book your tickets!!',
-                            icon: 'info',
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Okay',
-                        });
-
-                        return;
-                    };
-                } else {
-                    console.error("Lỗi khi hủy hóa đơn");
-                }
-            } catch (error) {
-                console.error("Lỗi kết nối API:", error);
-            }
-        };
-        setEndTime(null);
+        if (isTimeout) return;
+        setIsTimeout(true);
         setSelectedSeats([]);
-        setInvoice(null);
+        setSelectedService([]);
+        setEndTime(null);
+        setIsTimeout(false);
+
+        const isConfirm = await Swal.fire({
+            text: 'Your current transaction has been canceled due to timeout. Please select your seats again and book your tickets!!',
+            icon: 'info',
+            confirmButtonColor: '#3498db',
+            confirmButtonText: 'Okay',
+        });
+
+        if (isConfirm.isConfirmed) {
+            window.location.reload();
+        }
     };
 
     const renderer = ({ minutes, seconds }) => {

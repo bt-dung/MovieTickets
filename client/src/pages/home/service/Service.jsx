@@ -13,7 +13,7 @@ const ServiceOptions = () => {
     console.log(showtimeId);
     const { user } = useUser();
     console.log(user);
-    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService } = useCurrentSeat();
+    const { selectedSeats, setShowtimeId, setUserID, userId, selectedService, setSelectedService, fetchHeldSeats } = useCurrentSeat();
     const [showtime, setShowtime] = useState('');
     const [totalAmount, setAmount] = useState(0);
     useEffect(() => {
@@ -31,6 +31,7 @@ const ServiceOptions = () => {
             }
         }
         fetchShowtime(showtimeId);
+        fetchHeldSeats(showtimeId, user.id);
     }, [showtimeId, user, setUserID]);
 
     return (<>

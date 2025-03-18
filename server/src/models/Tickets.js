@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db');
-const Invoices = require("./Invoices");
 const Seats = require("./Seat");
 const SeatType = require("./SeatType");
 const Showtime = require("./Showtime");
@@ -14,7 +13,7 @@ const Tickets = sequelize.define('tickets', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Invoices,
+            model: sequelize.models.invoices,
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -45,13 +44,12 @@ const Tickets = sequelize.define('tickets', {
     timestamps: false,
 });
 Showtime.hasMany(Tickets, { foreignKey: 'showtime_id' });
-Invoices.hasMany(Tickets, { foreignKey: 'invoice_id' });
-Tickets.belongsTo(Invoices, { foreignKey: 'invoice_id' });
 Tickets.belongsTo(Showtime, { foreignKey: 'showtime_id' });
-Tickets.belongsTo(Seats, { foreignKey: 'seat_id' });
+Tickets.belongsTo(Seats, { foreignKey: 'seat_id', as: 'seat' });
 Seats.hasMany(Tickets, { foreignKey: 'seat_id' });
 
 Tickets.getTicketsByTheater = async (theaterId) => {
+    const Invoices = sequelize.models.invoices;
     try {
         const invoices = await Invoices.findAll({ where: { theater_id: theaterId } });
         const invoiceIds = invoices.map(invoice => invoice.id);
@@ -66,19 +64,48 @@ Tickets.getTicketsByTheater = async (theaterId) => {
     }
 };
 
+Tickets.getTicketsbyInvoice = async function (invoice_id) {
+    try {
+        const tickets = await Tickets.findAll({
+            where: { invoice_id: invoice_id },
+            include: [{
+                model: Seats,
+                as: 'seat',
+                attributes: ['seat_name'],
+            }]
+        });
+        if (!tickets || tickets.length === 0) {
+            throw new Error("Get list of booked tickets on invoice failed!!");
+        }
+        const showtimeIds = tickets.map(ticket => ticket.showtime_id);
+
+        const uniqueShowtimeIds = [...new Set(showtimeIds)];
+
+        if (uniqueShowtimeIds.length !== 1) {
+            throw new Error("The tickets in the invoice have different showtimes!");
+        }
+        const showtime_id = uniqueShowtimeIds[0];
+        console.log(showtime_id);
+        const showtime = await Showtime.getMovieName(showtime_id);
+        return { tickets, showtime }
+    } catch (error) {
+        throw error;
+    }
+}
+
 /**
  * Create a new ticket
  * @param {Object} ticketData
  */
 Tickets.createTicket = async (ticketData) => {
     try {
-        const titleMovie = await Showtime.getMovieName(ticketData.showtime_id);
         const existingTicket = await Tickets.findOne({ where: { showtime_id: ticketData.showtime_id, seat_id: ticketData.seat_id } });
         if (existingTicket) {
-            throw new Error(`Seat ${ticketData.seat_id} booked!!`);
+            console.log(`Seat ${ticketData.seat_id} booked!!`);
+            return { existingTicket, titleMovie };
         }
         const newTicket = await Tickets.create(ticketData);
-        return { newTicket, titleMovie };
+        return newTicket;
     } catch (error) {
         console.error("Error creating ticket:", error);
         throw error;

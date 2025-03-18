@@ -47,6 +47,16 @@ const InvoiceController = {
         }
     },
 
+    getInvoiceByUser: async (req, res) => {
+        const { userId } = req.params;
+        try {
+            const invoices = await Invoices.fetchInvoiceByUser(userId);
+            return res.json(invoices);
+        } catch (error) {
+            console.error("Error when get invoices of user:", error);
+            return res.status(404).json({ status: "FAILED", message: error.message });
+        }
+    },
     // updateInvoice: async (req, res) => {
     //     const { id } = req.params;
     //     const { seat_id, showtime_id, PaymentStatus } = req.body;
