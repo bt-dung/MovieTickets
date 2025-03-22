@@ -190,12 +190,18 @@ const sendTicketEmail = async ({ userId, email, ticketInfo }) => {
 
                     <p style="margin-top:20px;">Vui lòng xuất trình mã QR dưới đây khi vào rạp:</p>
                     <div style="text-align:center; margin-top:10px;">
-                        <img src="${qrCodeImage}" alt="QR Code" width="200" style="border:1px solid #ccc; padding:5px; border-radius:8px;"/>
+                        <img src="cid:qrcode" alt="QR Code" width="200" style="border:1px solid #ccc; padding:5px; border-radius:8px;"/>
                     </div>
 
                     <p style="text-align:center; margin-top:20px; font-size:14px; color:#777;">🎞️ Chúc bạn có một buổi xem phim vui vẻ!</p>
                 </div>
             `,
+            attachments: [{
+                filename: "qrcode.png",
+                content: qrCodeImage.split(";base64,").pop(),
+                encoding: "base64",
+                cid: "qrcode"
+            }]
         };
 
         const sentEmail = await transporter.sendMail(mailOptions);

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import Icon from '@mdi/react';
 import { mdiAccountArrowRight, mdiAccountBoxOutline, mdiLogout } from '@mdi/js';
 import { NavLink } from "react-router-dom";
 const HeaderHome = () => {
     const { user } = useUser();
+    const [isAction, setIsAction] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const handleLogout = (e) => {
         try {
             e.preventDefault();
@@ -23,7 +25,7 @@ const HeaderHome = () => {
                         <img src="../../../../assets/images/logo/logo.png" alt="logo" />
                     </a>
                 </div>
-                <ul className="menu">
+                <ul className={`menu ${isAction ? "active" : ""}`}>
                     <li>
                         <NavLink to="/starcinema/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
                     </li>
@@ -42,11 +44,11 @@ const HeaderHome = () => {
                     <li>
                         <NavLink to="/starcinema/contact" className={({ isActive }) => isActive ? 'active' : ''}>Contact</NavLink>
                     </li>
-                    <li className="header-button pr-0">
+                    <li className="header-button pr-0" onClick={() => setIsOpen(!isOpen)}>
                         <a href="#0">{user.name}</a>
-                        <ul class="dropdown-menu" >
+                        <ul className={`dropdown-menu ${isOpen ? "show" : ""}`} style={{ position: "absolute" }}>
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a className="dropdown-item" href="#">
                                     <i className="me-2">
                                         <Icon path={mdiAccountBoxOutline} size={1} />
                                     </i>
@@ -54,7 +56,7 @@ const HeaderHome = () => {
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/login" onClick={handleLogout}>
+                                <a className="dropdown-item" href="/login" onClick={handleLogout}>
                                     <i className="me-2">
                                         <Icon path={mdiLogout} size={1} />
                                     </i>
@@ -64,7 +66,7 @@ const HeaderHome = () => {
                         </ul>
                     </li>
                 </ul>
-                <div class="header-bar d-lg-none">
+                <div className={`header-bar d-lg-none ${isAction ? "active" : ""}`} onClick={() => setIsAction(!isAction)}>
                     <span></span>
                     <span></span>
                     <span></span>

@@ -78,7 +78,7 @@ const MoviePlan = () => {
             {!movie ? (
                 <div>Loading...</div>
             ) : (<>
-                <section class="details-banner hero-area bg_img" data-background={movie.img_bg}>
+                <section class="details-banner hero-area bg_img" style={{ backgroundImage: `url(${movie.img_bg})` }}>
                     <div className="container">
                         <div className="details-banner-wrapper">
                             <div className="details-banner-content">
