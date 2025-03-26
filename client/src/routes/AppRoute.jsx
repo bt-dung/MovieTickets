@@ -34,6 +34,8 @@ import EditService from "../pages/admin/service/EditService";
 import MoviePlan from "../pages/home/movie/MoviePlan";
 import ServiceOptions from "../pages/home/service/Service";
 import PaymentCancel from "../pages/home/payment/PaymentCancel";
+import OrderTracking from "../pages/home/ticket/OrderTracking";
+import DetailOrder from "../pages/home/ticket/DetailOrder";
 
 
 export const userRoutes = [
@@ -47,6 +49,8 @@ export const userRoutes = [
     { path: "/final-invoice/:showtimeId", component: FinalInvoice, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/payment-success/:showtimeId", component: PaymentSuccess, allowedRoles: ["user_role"] },
     { path: "/payment-cancel/:showtimeId", component: PaymentCancel, allowedRoles: ["user_role"] },
+    { path: "/orders/order-tracking", component: OrderTracking, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/orders/detail-order/:invoiceId", component: DetailOrder, layout: MainLayoutHome, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

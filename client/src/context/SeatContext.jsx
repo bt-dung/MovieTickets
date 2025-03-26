@@ -15,16 +15,16 @@ export const CurrentSeatProvider = ({ children }) => {
     const [occupiedSeats, setOccupiedSeats] = useState(new Set());
     const [selectedService, setSelectedService] = useState([]);
 
-    const fetchHeldSeats = async (showtimeId, userId) => {
-        console.log("showtime2:", showtimeId);
+    const fetchHeldSeats = async ({ showtimeId, userId }) => {
+        console.log(showtimeId);
+        console.log("user:", userId);
         if (!showtimeId) {
-            console.log("Chưa có showtime");
-            return;
+            socket.emit("get_held_seats", { userId });
+        } else {
+            socket.emit("get_held_seats", { showtimeId: showtimeId, userId });
         }
 
-        socket.emit("get_held_seats", { showtimeId: showtimeId, userId });
-
-        socket.on("seat_status_current", async ({ selectedSeatsOfUser = [], endTime, selectedSeatsOthers = [] }) => {
+        socket.on("seat_status_current", async ({ selectedSeatsOfUser = [], endTime, showtimeId, selectedSeatsOthers = [] }) => {
             console.log("Ghế của user:", selectedSeatsOfUser);
             console.log("Ghế đã được giữ bởi người khác:", selectedSeatsOthers);
 
@@ -38,7 +38,7 @@ export const CurrentSeatProvider = ({ children }) => {
                         seat_price: seat.seat_type.price,
                         seat_type: seat.seat_type.type_name
                     }));
-
+                    setShowtimeId(showtimeId);
                     setSelectedSeats(formattedSeats);
                     setEndTime(endTime);
                 } catch (error) {

@@ -12,6 +12,7 @@ const DetailMovie = () => {
       try {
         const res = await fetchData(`/admin/movie/${movieId}/details-movie`);
         setMovieInfo(res.data);
+        console.log(res.data);
       } catch (error) {
         console.error("Error fetching detail movie:", error);
       }
@@ -38,7 +39,7 @@ const DetailMovie = () => {
 
   return (
     <>
-      <section class="details-banner bg_img" data-background={movieInfo.img_bg}>
+      <section className="details-banner bg_img" style={{ backgroundImage: `url(${movieInfo.img_bg})` }}>
         <div class="container">
           <div class="details-banner-wrapper">
             <div class="details-banner-thumb">
@@ -147,7 +148,7 @@ const DetailMovie = () => {
               </div>
             </div>
             <div class="custom-button" style={{ cursor: "pointer" }}>
-              <a href={`/starcinema/movie-schedule/${movieId}`} style={{color: "white"}}>book tickets</a>
+              <a href={`/starcinema/movie-schedule/${movieId}`} style={{ color: "white" }}>book tickets</a>
             </div>
           </div>
         </div>

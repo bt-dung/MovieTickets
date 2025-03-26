@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i,800&amp;display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 /*
 Template Name: Boleto - Online Ticket Booking Website HTML Template
@@ -2043,7 +2044,22 @@ input[type="submit"] {
   left: 0;
   bottom: 0;
   right: 0;
-  opacity: .3;
+  opacity: 0.3;
+}
+
+.banner-section .title-page-ticket {
+  font-family: 'Poppins', sans-serif;
+  font-size: 80px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #00ffea;
+  text-shadow: 0 0 5px rgba(0, 255, 234, 0.8),
+    0 0 10px rgba(0, 255, 234, 0.6);
+  letter-spacing: 4px;
+  text-align: center;
+  position: relative;
+  margin: 50px 0;
+  /* animation: glow 1.5s infinite alternate; */
 }
 
 .banner-section .banner-content {
@@ -5376,7 +5392,6 @@ input[type="submit"] {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  margin: 0 -15px -20px;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -5451,9 +5466,13 @@ input[type="submit"] {
 }
 
 .page-title {
-  padding: 30px 0;
+  padding: 20px 0;
   border-top: 1px solid #17305f;
   border-bottom: 1px solid #17305f;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*Movie-Facility Section Starts Here*/
@@ -9885,6 +9904,20 @@ aside {
   }
 }
 
+/* @keyframes glow {
+  0% {
+    text-shadow: 0 0 10px rgba(0, 255, 234, 0.8),
+      0 0 20px rgba(0, 255, 234, 0.6),
+      0 0 30px rgba(0, 255, 234, 0.4);
+  }
+
+  100% {
+    text-shadow: 0 0 15px rgba(0, 255, 234, 1),
+      0 0 25px rgba(0, 255, 234, 0.8),
+      0 0 35px rgba(0, 255, 234, 0.6);
+  }
+} */
+
 .custom-button {
   cursor: pointer;
   background-image: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);
@@ -9981,6 +10014,281 @@ aside {
     -webkit-transform: scale(1, 1);
     opacity: 0;
   }
+}
+
+@keyframes blinkEffect {
+  0% {
+    background-color: #e0f7fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  50% {
+    background-color: #b3e5fc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  100% {
+    background-color: #e0f7fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.reserved-seat {
+  background-color: #fffae6;
+  padding: 15px;
+  margin: 20px auto;
+  border-radius: 8px;
+  width: 70%;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  position: relative;
+  animation: blinkEffect 0.5s ease-in-out infinite;
+}
+
+.reserved-seat p {
+  margin: 0 10px;
+}
+
+.reserved-seat .button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 350px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.reserved-seat .pay-button {
+  margin-right: auto;
+}
+
+.reserved-seat .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 40px;
+  color: rgb(127, 205, 231);
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+}
+
+.reserved-seat .close-button:hover {
+  color: red;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.timeleft {
+  margin-left: auto;
+}
+
+.info-content {
+  color: #ffcc00;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.pay-button,
+.cancel-button {
+  font-weight: bold;
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pay-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.pay-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+/* Danh sách hóa đơn */
+.order-list {
+  padding: 20px 0;
+}
+
+.order-list-gruop {
+  padding: 30px;
+  border-radius: 5px;
+  background-color: rgba(0, 53, 102, 0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.order-list-gruop.list-title {
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.order-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 550px;
+  width: 90%;
+  gap: 15px;
+  padding: 20px;
+  overflow: auto;
+}
+
+.order-grid .order-item {
+  width: 100%;
+  padding-bottom: 25px;
+}
+
+.order-grid .order-item .order-date {
+  padding-left: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #00ffea;
+  font-size: 25px;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.order-grid .order-item .order-date::after {
+  content: ":";
+  margin-left: 5px;
+}
+
+.content-order {
+  justify-content: space-around;
+  align-items: center;
+  width: 95%;
+  gap: 20px;
+  padding: 30px 0 30px 30px;
+  color: #01173f;
+  font-weight: 700;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.order-main {
+  gap: 30px;
+  display: flex;
+}
+
+.content-order .order-section {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: auto;
+  padding: 20px;
+}
+
+.content-order .order-section .order-child {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-order .order-section .order-booked {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-order .order-section .order-booked h4 {
+  color: inherit;
+  margin: 20px 40px;
+}
+
+.content-order .order-section .order-booked p {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.content-order .order-section .order-child h4 {
+  color: inherit;
+  margin: 20px 40px;
+}
+
+.content-order .order-section .order-child p {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.content-order h3 {
+  color: inherit;
+  font-style: italic;
+  margin: 20px 40px;
+}
+
+.order-card {
+  display: flex;
+  width: 100%;
+  background: rgba(248, 249, 250, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  margin-bottom: 10px;
+}
+
+.order-card:hover {
+  transform: scale(1.02);
+}
+
+.order-id,
+.order-total {
+  color: #000;
+  font-size: 18px;
+  margin: 5px 10px;
+}
+
+.order-status {
+  font-size: 16px;
+  margin-right: 20px;
+  margin-left: auto;
+}
+
+.order-status.pending {
+  color: #ffc107;
+}
+
+.order-status.paid {
+  color: #28a745;
+}
+
+.order-status.cancelled {
+  color: #dc3545;
 }
 
 /*# sourceMappingURL=main.css.map */

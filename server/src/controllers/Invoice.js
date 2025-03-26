@@ -31,15 +31,10 @@ const InvoiceController = {
         }
     },
 
-    getInvoice: async (req, res) => {
+    getInvoiceById: async (req, res) => {
         const { id } = req.params;
         try {
-            const invoice = await Invoices.findByPk(id, {
-                include: {
-                    model: Tickets,
-                    attributes: ['seat_id', 'showtime_id'],
-                },
-            });
+            const invoice = await Invoices.fetchInvoicebyId(id);
             return res.json(invoice);
         } catch (error) {
             console.error("Fetching invoice error:", error);
@@ -49,9 +44,25 @@ const InvoiceController = {
 
     getInvoiceByUser: async (req, res) => {
         const { userId } = req.params;
+        const formatDate = (dateStr) => {
+            const date = new Date(dateStr);
+            return date.toISOString().split('T')[0];
+        }
         try {
             const invoices = await Invoices.fetchInvoiceByUser(userId);
-            return res.json(invoices);
+            const groupedInvoices = invoices.reduce((acc, invoice) => {
+                const date = formatDate(invoice.purchase_date);
+                console.log(date);
+
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+
+                acc[date].push(invoice.dataValues);
+
+                return acc;
+            }, {});
+            return res.json(groupedInvoices);
         } catch (error) {
             console.error("Error when get invoices of user:", error);
             return res.status(404).json({ status: "FAILED", message: error.message });

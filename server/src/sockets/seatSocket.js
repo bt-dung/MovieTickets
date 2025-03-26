@@ -4,30 +4,49 @@ module.exports = function SeatSocket(io) {
         console.log("User connected:", socket.id);
 
         socket.on("get_held_seats", ({ showtimeId, userId }) => {
-            const statusCurrentSeats = showtimeSeats[showtimeId];
-            console.log("status Seats:", statusCurrentSeats);
-            if (statusCurrentSeats) {
-                const userSeatStatus = statusCurrentSeats.find(seatInfo => seatInfo.userId === userId);
-                const userSeats = userSeatStatus ? userSeatStatus.selectedSeats : [];
-                const endTime = userSeatStatus ? userSeatStatus.endTime : '';
-                const otherSeats = statusCurrentSeats
-                    .filter(seatInfo => seatInfo.userId !== userId)
-                    .flatMap(seatInfo => seatInfo.selectedSeats);
-                console.log("seat holding:", userSeats);
+            console.log("user:", userId);
+            if (!showtimeId) {
+                const userSeatEntry = Object.entries(showtimeSeats)
+                    .flatMap(([id, seats]) => seats.map(seat => ({ ...seat, showtimeId: id })))
+                    .find(seatInfo => seatInfo.userId === userId);
+
+                const userSeats = userSeatEntry ? userSeatEntry.selectedSeats : [];
+                const endTime = userSeatEntry ? userSeatEntry.endTime : '';
+                const showtimeId = userSeatEntry ? userSeatEntry.showtimeId : '';
+
                 socket.emit("seat_status_current", {
                     selectedSeatsOfUser: userSeats,
                     endTime: endTime,
-                    selectedSeatsOthers: otherSeats
-                });
-            } else {
-                socket.emit("seat_status_current", {
-                    selectedSeatsOfUser: [],
+                    showtimeId: showtimeId,
                     selectedSeatsOthers: []
                 });
-            }
+            } else {
+                const statusCurrentSeats = showtimeSeats[showtimeId];
+                console.log("status Seats:", statusCurrentSeats);
+                if (statusCurrentSeats) {
+                    const userSeatStatus = statusCurrentSeats.find(seatInfo => seatInfo.userId === userId);
+                    const userSeats = userSeatStatus ? userSeatStatus.selectedSeats : [];
+                    const endTime = userSeatStatus ? userSeatStatus.endTime : '';
+                    const otherSeats = statusCurrentSeats
+                        .filter(seatInfo => seatInfo.userId !== userId)
+                        .flatMap(seatInfo => seatInfo.selectedSeats);
+                    console.log("seat holding:", userSeats);
+                    socket.emit("seat_status_current", {
+                        selectedSeatsOfUser: userSeats,
+                        endTime: endTime,
+                        selectedSeatsOthers: otherSeats
+                    });
+                } else {
+                    socket.emit("seat_status_current", {
+                        selectedSeatsOfUser: [],
+                        selectedSeatsOthers: []
+                    });
+                }
+            };
         });
 
         socket.on("hold_seat", ({ showtimeId, selectedSeats, userId, endTime }) => {
+            if (!showtimeId || !userId) return;
             Object.keys(showtimeSeats).forEach((id) => {
                 if (id !== showtimeId) {
                     showtimeSeats[id] = showtimeSeats[id].filter(seat => seat.userId !== userId);

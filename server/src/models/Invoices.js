@@ -1,4 +1,4 @@
-const { DataTypes, Op } = require('sequelize');
+const { DataTypes, Op, fn, col } = require('sequelize');
 const { sequelize } = require('../database/db');
 const User = require("./User");
 const InvoiceService = require("./InvoiceService");
@@ -99,13 +99,39 @@ Invoices.getAllInvoicebyTheater = async (theaterId, dateTime, page, limit) => {
     }
 };
 Invoices.fetchInvoicebyId = async function (invoiceId) {
+    const Service = sequelize.models.services;
+    const Seats = sequelize.models.seats;
+    const SeatType = sequelize.models.seat_type;
     try {
-        const invoice = await Invoices.findByPk(invoiceId);
+        const invoice = await Invoices.findByPk(invoiceId, {
+            include: [{
+                model: Tickets,
+                required: false,
+                include: [{
+                    model: Seats,
+                    as: 'seat',
+                    attributes: ['seat_name'],
+                    require: false,
+                    include: [{
+                        model: SeatType,
+                        attributes: ['price'],
+                    }],
+                }]
+            }, {
+                model: InvoiceService,
+                required: false,
+                include: [{
+                    model: Service,
+                    attributes: ["name"],
+                }]
+            }]
+        });
         return invoice;
     } catch (error) {
         throw error;
     }
 };
+
 Invoices.createInvoice = async (invoiceData) => {
     try {
         const { user_id, email, TotalAmount, theater_id } = invoiceData;
@@ -130,6 +156,7 @@ Invoices.fetchInvoiceByUser = async function (userId) {
     try {
         const invoices = await Invoices.findAll({
             where: { user_id: userId },
+            order: [[fn("DATE", col("purchase_date")), "DESC"]],
         })
         return invoices;
     } catch (error) {

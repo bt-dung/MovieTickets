@@ -73,7 +73,7 @@ const Login = () => {
     <>
       <section
         className="account-section bg_img"
-        data-background="assets/images/account/account-bg.jpg"
+        style={{ backgroundImage: `url("assets/images/account/account-bg.jpg")` }}
       >
         <div className="container">
           <div className="padding-top padding-bottom">
@@ -95,7 +95,7 @@ const Login = () => {
                     type="text"
                     placeholder="Enter Your Email"
                     id="email2"
-                    style={{background: "white", padding: "5px", borderRadius: "5px"}}
+                    style={{ background: "white", padding: "5px", borderRadius: "5px" }}
                   />
                   {errors.email && (
                     <small className="text-danger d-block mt-1">
@@ -114,7 +114,7 @@ const Login = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       id="pass3"
-                      style={{ background: "white", padding: "5px", borderRadius: "5px"}}
+                      style={{ background: "white", padding: "5px", borderRadius: "5px" }}
                     />
                   </div>
                   {errors.password && (

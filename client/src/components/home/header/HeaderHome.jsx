@@ -33,7 +33,7 @@ const HeaderHome = () => {
                         <NavLink to="/starcinema/movie" className={({ isActive }) => isActive ? 'active' : ''}>Movie</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/starcinema/tickets" className={({ isActive }) => isActive ? 'active' : ''}>Ticket</NavLink>
+                        <NavLink to="/starcinema/orders/order-tracking" className={({ isActive }) => isActive ? 'active' : ''}>Ticket</NavLink>
                     </li>
                     <li>
                         <NavLink to="/starcinema/theater" className={({ isActive }) => isActive ? 'active' : ''}>Theater</NavLink>
