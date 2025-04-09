@@ -1,4 +1,4 @@
-const { DataTypes, Op, fn, col } = require('sequelize');
+const { DataTypes, Op, fn, col, literal } = require('sequelize');
 const { sequelize } = require('../database/db');
 const User = require("./User");
 const InvoiceService = require("./InvoiceService");
@@ -233,6 +233,26 @@ Invoices.deleteInvoice = async (id) => {
         return deletedRowsCount;
     } catch (error) {
         console.error("Error deleting screen:", error);
+        throw error;
+    }
+};
+Invoices.RevenueAnalyst = async function (theaterId) {
+    try {
+        const whereCondition = theaterId ? { theater_id: theaterId } : {};
+
+        const revenue = await Invoices.findAll({
+            attributes: [
+                [fn("SUM", col("TotalAmount")), "totalRevenue"],
+                [fn("DATE_FORMAT", col("purchase_date"), "%Y-%m"), "month"]
+            ],
+            where: whereCondition,
+            group: [fn("DATE_FORMAT", col("purchase_date"), "%Y-%m")],
+            raw: true
+        });
+
+        return revenue;
+    } catch (error) {
+        console.error("Error fetching revenue:", error);
         throw error;
     }
 };

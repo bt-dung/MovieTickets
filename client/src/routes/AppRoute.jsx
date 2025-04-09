@@ -6,7 +6,6 @@ import SeatPlan from "../pages/home/seatplan/SeatPlan";
 import FinalInvoice from "../pages/home/invoice/FinalInvoice";
 import PaymentSuccess from "../pages/home/payment/PaymentSuccess";
 
-import Admin from '../pages/admin/Admin';
 import User from '../pages/admin/users/Users'
 import Movie from '../pages/admin/movies/Movies'
 import Theater from '../pages/admin/theaters/Theater'
@@ -36,6 +35,7 @@ import ServiceOptions from "../pages/home/service/Service";
 import PaymentCancel from "../pages/home/payment/PaymentCancel";
 import OrderTracking from "../pages/home/ticket/OrderTracking";
 import DetailOrder from "../pages/home/ticket/DetailOrder";
+import Dashboard from "../pages/admin/DashBoard";
 
 
 export const userRoutes = [
@@ -54,7 +54,7 @@ export const userRoutes = [
 ];
 
 export const adminRoutes = [
-    { path: '/dashboard', component: Admin, layout: MainLayoutAdmin },
+    { path: '/dashboard', component: Dashboard, layout: MainLayoutAdmin },
     { path: '/users', component: User, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/add-user', component: AddUser, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },
     { path: '/edit-user/:userId', component: EditUser, layout: MainLayoutAdmin, allowedRoles: ["admin_role"] },

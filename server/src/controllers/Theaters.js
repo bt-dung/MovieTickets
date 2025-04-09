@@ -20,7 +20,7 @@ const getAllTheater = async (req, res) => {
 const getTheater = async (req, res) => {
     const { id } = req.params;
     try {
-        const theater = await Theaters.findByPk(id);
+        const theater = await Theaters.getTheaterInfo(id);
         return res.json(theater);
     } catch (error) {
         console.log(error);
@@ -55,7 +55,7 @@ const updateTheater = async (req, res) => {
         const updatedTheater = await Theaters.updateTheater(id, data);
         return res.status(200).json({
             status: "SUCCESS",
-            message: 'User updated successfully',
+            message: 'Theater updated successfully',
             theater: updatedTheater
         });
     } catch (error) {

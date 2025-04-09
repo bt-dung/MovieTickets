@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/db')
 const Screens = require('./Screens');
 const Area = require('./Area');
+const User = require('./User');
 
 
 const Theaters = sequelize.define('theaters', {
@@ -75,6 +76,29 @@ Theaters.getTheaters = async function (area_id) {
         throw error;
     }
 };
+Theaters.getTheaterInfo = async function (id) {
+    try {
+        const theater = await Theaters.findByPk(id);
+        if (!theater) throw new Error("Theater not found");
+
+        const manager = await User.findOne({
+            where: { id: theater.manager_id },
+            attributes: ['id', 'name']
+        });
+
+        const theaterWithManager = {
+            ...theater.toJSON(),
+            manager
+        };
+
+        return theaterWithManager;
+    } catch (error) {
+        console.error('Get Theater Info Error:', error);
+        throw error;
+    }
+};
+
+
 Theaters.insertTheater = async (theaterData) => {
     try {
         const existedTheater = await Theaters.findOne({ where: { name: theaterData.name, address: theaterData.address } });

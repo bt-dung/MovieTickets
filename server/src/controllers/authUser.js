@@ -232,7 +232,6 @@ const verified = (req, res) => {
 const loginUser = async (req, res) => {
     try {
         let { email, password } = await req.body;
-        console.log("EMAIL:", email);
         email = email.trim();
         password = password.trim();
 
@@ -243,6 +242,7 @@ const loginUser = async (req, res) => {
             })
         } else {
             const user = await User.login(email, password);
+            console.log("user:", user);
             let theaterIds = null;
             if (user.role_id == 2) {
                 const theaters = await Theaters.findAll({

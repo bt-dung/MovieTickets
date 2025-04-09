@@ -170,14 +170,6 @@ const create_table_movies = [
         FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
 
-    `CREATE TABLE IF NOT EXISTS seat_hold (
-    id SERIAL PRIMARY KEY,
-    showtime_id INT NOT NULL,
-    user_id INT NOT NULL,
-    selected_seats JSON NOT NULL,
-    end_time BIGINT NOT NULL
-    );`,
-
     `CREATE TABLE IF NOT EXISTS user_verification (
         user_id INT NOT NULL,
         uniqueString VARCHAR(255),

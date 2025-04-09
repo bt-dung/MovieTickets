@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchData, postData, deleteData } from "../../../api/api";
+import { fetchData, postData, updateData, deleteData } from "../../../api/api";
 import "./DetailTheater.css";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
@@ -23,6 +23,9 @@ const DetailTheater = () => {
     const [address, setAddress] = useState("");
     const [totalScreens, setTotalScreens] = useState(0);
     const [totalSeats, setTotalSeats] = useState(0);
+    const [managerInfo, setManager] = useState('');
+    const [managers, setManagers] = useState([]);
+    const [selectManagerID, setManagerId] = useState('');
 
     useEffect(() => {
         const getTheater = async (page = 0) => {
@@ -33,6 +36,11 @@ const DetailTheater = () => {
                 setAddress(res.address);
                 setTotalScreens(res.total_screens);
                 setTotalSeats(res.total_seats);
+                setManager(res.manager.name);
+
+                const managersResponse = await fetchData('/admin/managers');
+                console.log(managersResponse);
+                setManagers(managersResponse);
 
                 const movieTheater = await fetchData(`/api/v1/movies-theater/${theaterId}?pageNumber=${page}&limit=8`);
                 setTotalPages(movieTheater.totalPages);
@@ -43,7 +51,32 @@ const DetailTheater = () => {
         };
         getTheater(currentPage);
     }, [theaterId, currentPage]);
+    useEffect(() => {
+        console.log("quan ly mơi: ", selectManagerID);
+        const updateManager = async () => {
+            try {
+                const data = { manager_id: selectManagerID };
+                const response = await updateData(`/api/v1/theaters/${theaterId}/update`, data);
+                if (response.status === 'SUCCESS') {
+                    const result = await Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'Okay',
+                    });
 
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating theater:', error);
+            }
+        }
+        if (selectManagerID !== "") {
+            updateManager();
+        }
+    }, [selectManagerID])
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
             setCurrentPage(page);
@@ -147,6 +180,7 @@ const DetailTheater = () => {
                                     <h1 className="text-purple-400 font-weight-bold">{name}</h1>
                                 </div>
                             </div>
+
                             <div className="row">
                                 <div className="col-sm-2">
                                     <p className="text-primary">Address</p>
@@ -158,6 +192,40 @@ const DetailTheater = () => {
                                     <p>: {address}</p>
                                     <p>: {totalScreens}</p>
                                     <p>: {totalSeats}</p>
+                                </div>
+                                <div className="col-sm-2 ms-auto mr-5 d-flex justify-content-center h-auto">
+                                    <div className="p-2 bg-light border rounded shadow-sm h-auto">
+                                        <p className="mb-0 fw-bold text-dark mb-2">
+                                            Manager: <span className="text-primary">{managerInfo}</span>
+                                        </p>
+                                        <div className="p-2 bg-light border rounded shadow-sm w-auto">
+                                            <select
+                                                id="manager_id"
+                                                className="form-control"
+                                                style={{ border: "none" }}
+                                                value={selectManagerID}
+                                                onChange={(e) => {
+                                                    const newManagerId = e.target.value;
+                                                    const selectedManager = managers.find((m) => m.id === parseInt(newManagerId));
+                                                    const confirmChange = window.confirm(
+                                                        `Bạn có chắc muốn đổi quản lý sang: ${selectedManager?.name} (ID: ${selectedManager?.id}) không?`
+                                                    );
+                                                    if (confirmChange) {
+                                                        setManagerId(newManagerId);
+                                                    }
+                                                }}
+                                                required
+                                            >
+                                                <option value="" disabled>{"Change Manager"}</option>
+                                                {managers.map((manager) => (
+                                                    <option key={manager.id} value={manager.id}>
+                                                        {manager.id} - {manager.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
 

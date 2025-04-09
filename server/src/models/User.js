@@ -51,7 +51,9 @@ const User = sequelize.define('User', {
     },
 }, {
     tableName: 'users',
-    timestamps: false,
+    createdAt: 'createdAt',
+    updatedAt: false,
+    timestamps: true,
 });
 
 User.associate = (models) => {
@@ -90,9 +92,10 @@ User.insertUser = async (userData) => {
 };
 
 User.login = async function (email, password) {
+    console.log(email, password)
     try {
         const user = await User.findOne({ where: { email } });
-
+        console.log("user", user);
         if (!user) {
             throw new Error("User not found");
         }
@@ -141,5 +144,12 @@ User.deleteUser = async function (id) {
         throw error;
     }
 };
+// User.analystUser = async function (time) {
+//     try {
+
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 
 module.exports = User;

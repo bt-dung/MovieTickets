@@ -60,7 +60,7 @@ app.use("/api/v1", Screen);
 app.use("/api/v1", Seat);
 app.use("/api/v1", Invoice);
 app.use("/api/v1", Ticket);
-app.use("/api/v1", MakePaymentRoute(io));
+app.use("/api/v1", MakePaymentRoute());
 app.use("/api/v1", Service);
 app.use("/api/v1", GenreRoute);
 

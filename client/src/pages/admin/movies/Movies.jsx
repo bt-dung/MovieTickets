@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Icon from "@mdi/react";
-import {
-  mdiSquareEditOutline,
-  mdiDeleteOutline,
-  mdiPlusCircleOutline,
-} from "@mdi/js";
-import { fetchData } from "../../../api/api";
+import { mdiSquareEditOutline, mdiDeleteOutline, mdiPlusCircleOutline } from "@mdi/js";
+import { fetchData, postData } from "../../../api/api";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -13,25 +9,33 @@ const Movies = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    const fetchMovies = async (page = 1) => {
+    const fetchMovies = async () => {
       try {
-        const response = await fetchData(`/admin/movies?pageNumber=${page}&limit=3`);
-        console.log(response);
-        setMovies(response.content);
-        setTotalPages(response.totalPages);
+        const response = await postData(`/admin/movies?pageNumber=${currentPage}&limit=3`);
+        setMovies(response.content || []);
+        setTotalPages(response.totalPages || 0);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching movies:", error);
       }
     };
 
-    fetchMovies(currentPage);
+    fetchMovies();
   }, [currentPage]);
 
   const handlePageChange = (page) => {
-    if (page >= 1 && page < totalPages) {
+    if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
+
+  const maxPagesToShow = 10;
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+  let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+  if (endPage === totalPages) {
+    startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+  }
+
+  const visiblePages = Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
 
   return (
     <>
@@ -42,64 +46,40 @@ const Movies = () => {
             <div className="card-body">
               <div className="row mb-2">
                 <div className="col-sm-4">
-                  <a href="add-user.html" className="btn btn-danger mb-2">
+                  <a href="add-movie.html" className="btn btn-danger mb-2">
                     <Icon path={mdiPlusCircleOutline} size={1} /> Add Movie
                   </a>
                 </div>
               </div>
 
               <div className="table-responsive">
-                <table
-                  className="table table-centered table-striped dt-responsive nowrap w-100"
-                  id="products-datatable"
-                >
+                <table className="table table-centered table-striped dt-responsive nowrap w-100">
                   <thead>
                     <tr>
-                      <th style={{ width: "20px" }}></th>
-                      <th style={{ width: "100px" }}>ID</th>
-                      <th style={{ width: "400px" }}>Movie Name</th>
+                      <th>#</th>
+                      <th>ID</th>
+                      <th>Movie Name</th>
                       <th>Release Date</th>
-                      <th>*Rate</th>
+                      <th>Rate</th>
                       <th>Poster</th>
-                      <th style={{ width: "20px" }}>Action</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {movies.length > 0 ? (
                       movies.map((movie, index) => (
-                        <tr key={index}>
-                          <td>
-                            <div className="custom-control custom-checkbox">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                id={`customCheck${index}`}
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor={`customCheck${index}`}
-                              >
-                                &nbsp;
-                              </label>
-                            </div>
-                          </td>
-                          <td>
-                            <a
-                              href="javascript:void(0);"
-                              className="text-body font-weight-semibold"
-                            >
-                              {movie.id}
-                            </a>
-                          </td>
+                        <tr key={movie.id}>
+                          <td>{index + 1}</td>
+                          <td>{movie.id}</td>
                           <td>{movie.title}</td>
                           <td>{movie.release_date}</td>
                           <td>{movie.vote_average}</td>
-                          <td><img src={movie.img_poster} width={100} /></td>
+                          <td><img src={movie.img_poster} width={100} alt={movie.title} /></td>
                           <td>
-                            <a href="" className="action-icon">
+                            <a href="#" className="action-icon">
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </a>
-                            <a href="" className="action-icon">
+                            <a href="#" className="action-icon">
                               <Icon path={mdiDeleteOutline} size={1} />
                             </a>
                           </td>
@@ -107,9 +87,7 @@ const Movies = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="text-center">
-                          No users found.
-                        </td>
+                        <td colSpan="7" className="text-center">No movies found.</td>
                       </tr>
                     )}
                   </tbody>
@@ -119,40 +97,15 @@ const Movies = () => {
               <nav className="d-flex justify-content-center">
                 <ul className="pagination">
                   <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                    <a
-                      className="page-link"
-                      href="javascript:void(0);"
-                      aria-label="Previous"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                      <span aria-hidden="true">&laquo;</span>
-                      <span className="sr-only">Previous</span>
-                    </a>
+                    <a className="page-link" href="#" onClick={() => handlePageChange(currentPage - 1)}>&laquo;</a>
                   </li>
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <li
-                      key={index}
-                      className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
-                    >
-                      <a
-                        className="page-link"
-                        href="javascript:void(0);"
-                        onClick={() => handlePageChange(index + 1)}
-                      >
-                        {index + 1}
-                      </a>
+                  {visiblePages.map((page) => (
+                    <li key={page} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                      <a className="page-link" href="#" onClick={() => handlePageChange(page)}>{page}</a>
                     </li>
                   ))}
                   <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                    <a
-                      className="page-link"
-                      href="javascript:void(0);"
-                      aria-label="Next"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                      <span aria-hidden="true">&raquo;</span>
-                      <span className="sr-only">Next</span>
-                    </a>
+                    <a className="page-link" href="#" onClick={() => handlePageChange(currentPage + 1)}>&raquo;</a>
                   </li>
                 </ul>
               </nav>
