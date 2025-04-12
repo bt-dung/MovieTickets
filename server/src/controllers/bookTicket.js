@@ -97,6 +97,18 @@ const makePayment = async (req, res) => {
         };
 
         const paymentLink = await payos.createPaymentLink(order);
+        console.log("payment create", paymentLink);
+        if (!paymentLink) {
+            try {
+                await Invoices.updateInvoice(invoice.id, { PaymentStatus: "Cancelled" });
+                await Invoices.deleteInvoice(invoice.id);
+                console.log("Payment order created failed!!");
+                throw new Error("Failed to created payment order.");
+            } catch (updateError) {
+                console.error("Error updating invoice status:", updateError);
+                throw updateError;
+            }
+        }
         console.log("Redirecting to:", paymentLink.checkoutUrl);
         return res.status(200).json({ checkoutUrl: paymentLink.checkoutUrl });
     } catch (error) {

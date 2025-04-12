@@ -2,7 +2,7 @@ import React from "react";
 import { mdiArrowUpBold, mdiArrowDownBold } from "@mdi/js";
 import Icon from "@mdi/react";
 
-const ItemStatistic = ({ title, value, percent, icon, change }) => {
+const ItemStatistic = ({ time, title, value, percent, icon, change }) => {
     return (
         <div className="col-lg-6">
             <div className="card widget-flat">
@@ -17,7 +17,7 @@ const ItemStatistic = ({ title, value, percent, icon, change }) => {
                             <Icon path={change === "up" ? mdiArrowUpBold : mdiArrowDownBold} size={1} />
                             {percent} %
                         </span>
-                        <span className="text-nowrap">Since last month</span>
+                        <span className="text-nowrap">Since last {time}</span>
                     </p>
                 </div>
             </div>

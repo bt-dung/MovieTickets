@@ -236,9 +236,12 @@ Invoices.deleteInvoice = async (id) => {
         throw error;
     }
 };
-Invoices.RevenueAnalyst = async function (theaterId) {
+Invoices.RevenueAnalystInYear = async function (theaterId) {
     try {
-        const whereCondition = theaterId ? { theater_id: theaterId } : {};
+        const whereCondition = {
+            ...(theaterId ? { theater_id: theaterId } : {}),
+            PaymentStatus: 'Paid'
+        };
 
         const revenue = await Invoices.findAll({
             attributes: [
@@ -256,5 +259,63 @@ Invoices.RevenueAnalyst = async function (theaterId) {
         throw error;
     }
 };
+Invoices.analystOrder = async function (startTime, endTime) {
+    try {
+        const count = await Invoices.count({
+            where: {
+                purchase_date: {
+                    [Op.between]: [new Date(startTime), new Date(endTime)]
+                },
+                PaymentStatus: 'Paid'
+            }
+        });
 
+        return { totalOrders: count };
+    } catch (error) {
+        throw error;
+    }
+};
+
+Invoices.analystRevenues = async function (startTime, endTime) {
+    try {
+        const sumAmount = await Invoices.sum('TotalAmount', {
+            where: {
+                purchase_date: {
+                    [Op.between]: [new Date(startTime), new Date(endTime)]
+                },
+                PaymentStatus: 'Paid'
+            }
+        }) ?? 0;
+        return sumAmount ?? 0;
+    } catch (error) {
+        throw error;
+    }
+};
+
+Invoices.analystTickets = async function (startTime, endTime) {
+    try {
+        const invoices = await Invoices.findAll({
+            where: {
+                purchase_date: {
+                    [Op.between]: [new Date(startTime), new Date(endTime)]
+                },
+                PaymentStatus: 'Paid'
+            },
+            attributes: ['id']
+        });
+        const invoiceIds = invoices.map(inv => inv.id);
+        if (invoiceIds.length === 0) return 0;
+        const totalTickets = await Tickets.count({
+            where: {
+                invoice_id: {
+                    [Op.in]: invoiceIds
+                }
+            }
+        });
+
+        return totalTickets;
+    } catch (error) {
+        throw error;
+    }
+};
 module.exports = Invoices;

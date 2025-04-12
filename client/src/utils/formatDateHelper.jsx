@@ -31,3 +31,10 @@ export const formatHour = (start_time) => {
     })
     return startTimeConfig;
 };
+
+export const formatMonth = (time) => {
+    const date = new Date(time);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+};

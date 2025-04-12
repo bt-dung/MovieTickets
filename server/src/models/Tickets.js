@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op, fn, col, literal } = require('sequelize');
 const { sequelize } = require('../database/db');
 const Seats = require("./Seat");
 const SeatType = require("./SeatType");
@@ -91,6 +91,44 @@ Tickets.getTicketsbyInvoice = async function (invoice_id) {
     } catch (error) {
         throw error;
     }
+};
+Tickets.theBestMoviesAnalystics = async function (month) {
+    const Movies = sequelize.models.movies;
+    try {
+        const result = await Tickets.findAll({
+            include: [{
+                model: Showtime,
+                required: true,
+                where: literal(`DATE_FORMAT(STR_TO_DATE(showtime.date_time, '%Y/%m/%d'), '%Y-%m') = '${month}'`),
+                attributes: ["date_time"],
+                include: [{
+                    model: Movies,
+                    as: 'movie',
+                    attributes: ['id', 'title'],
+                },]
+            }],
+            attributes: [
+                [fn('COUNT', col('Tickets.id')), 'ticketCount'],
+                [col('showtime.movie.title'), 'movieName'],
+            ],
+            group: ['showtime.movie.id', 'showtime.movie.title'],
+            having: literal('COUNT(Tickets.id) > 0'),
+            order: [[literal('ticketCount'), 'DESC']],
+            limit: 5,
+            raw: true,
+            nest: true,
+        });
+
+        console.log(JSON.stringify(result));
+        const formatted = result.map(item => ({
+            movie: item.movieName,
+            tickets: Number(item.ticketCount)
+        }));
+
+        return formatted;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -102,7 +140,7 @@ Tickets.createTicket = async (ticketData) => {
         const existingTicket = await Tickets.findOne({ where: { showtime_id: ticketData.showtime_id, seat_id: ticketData.seat_id } });
         if (existingTicket) {
             console.log(`Seat ${ticketData.seat_id} booked!!`);
-            return { existingTicket, titleMovie };
+            return { existingTicket };
         }
         const newTicket = await Tickets.create(ticketData);
         return newTicket;

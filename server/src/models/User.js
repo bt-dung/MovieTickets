@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op, fn } = require('sequelize');
 const { sequelize } = require('../database/db');
 const bcrypt = require('bcrypt');
 
@@ -144,12 +144,21 @@ User.deleteUser = async function (id) {
         throw error;
     }
 };
-// User.analystUser = async function (time) {
-//     try {
 
-//     } catch (error) {
-//         throw error;
-//     }
-// }
+User.analystUser = async function (startTime, endTime) {
+    try {
+        const count = await User.count({
+            where: {
+                createdAt: {
+                    [Op.between]: [new Date(startTime), new Date(endTime)]
+                }
+            }
+        });
+
+        return { totalUsers: count };
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = User;

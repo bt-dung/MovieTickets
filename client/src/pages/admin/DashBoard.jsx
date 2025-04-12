@@ -4,14 +4,21 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import ItemStatistic from "../../components/admin/statistic/ItemStatistic";
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { fetchData } from "../../api/api";
-import { mdiCalendarRange, mdiAccountMultiplePlus, mdiCartPlus, mdiCurrencyUsd, mdiPulse } from "@mdi/js";
+import { formatMonth } from "../../utils/formatDateHelper";
+import { mdiAccountMultiplePlus, mdiCartPlus, mdiCurrencyUsd, mdiPulse } from "@mdi/js";
 
 const Dashboard = () => {
   const [dataRevenueAnalyst, setRevenue] = useState([]);
   const [selectedDateTime, setSelectedDateTime] = useState("day");
+  const [userAnalyst, setUserAnalyst] = useState("");
+  const [orderAnalyst, setOrderAnalyst] = useState("");
+  const [revenueAnalyst, setRevenueAnalyst] = useState("");
+  const [ticketAnalyst, setTicketAnalyst] = useState("");
+  const [month, setMonth] = useState(formatMonth(Date.now()));
+  const [theBestMovieofMonth, setMovie] = useState([]);
   useEffect(() => {
     const getRevenueAnalyst = async () => {
-      const resAnalyst = await fetchData(`/api/v1/revenue-analyst`);
+      const resAnalyst = await fetchData(`/admin/revenue-analyst`);
       const formattedData = resAnalyst.data.map(item => ({
         ...item,
         totalRevenue: parseFloat(item.totalRevenue) || 0,
@@ -21,9 +28,28 @@ const Dashboard = () => {
     getRevenueAnalyst();
   }, []);
   useEffect(() => {
-    console.log(dataRevenueAnalyst);
-  }, [dataRevenueAnalyst])
+    const fetchAnalysts = async () => {
+      const resUserAnalyst = await fetchData(`/admin/analytics/users?key=${selectedDateTime}`);
+      setUserAnalyst(resUserAnalyst);
+      const resOrderAnalyst = await fetchData(`/admin/analytics/orders?key=${selectedDateTime}`);
+      setOrderAnalyst(resOrderAnalyst);
+      const resRevenueAnalyst = await fetchData(`/admin/analytics/revenues?key=${selectedDateTime}`);
+      setRevenueAnalyst(resRevenueAnalyst);
+      const resTicketAnalyst = await fetchData(`/admin/analytics/tickets?key=${selectedDateTime}`);
+      setTicketAnalyst(resTicketAnalyst);
+    }
+    fetchAnalysts();
+  }, [selectedDateTime]);
 
+  useEffect(() => {
+    const fetchTheBestMoviesofMonth = async () => {
+      const resTheBestMovie = await fetchData(`/admin/analystics/movies?month=${month}`);
+      console.log(resTheBestMovie);
+      setMovie(resTheBestMovie);
+    };
+
+    fetchTheBestMoviesofMonth();
+  }, [month]);
   const chartParams = {
     yAxis: [
       {
@@ -52,30 +78,34 @@ const Dashboard = () => {
       },
     },
   };
+  const chartSetting = {
+    xAxis: [
+      {
+        label: 'TICKETS SOLD',
+      },
+    ],
+    width: 1300,
+    height: 500,
+    margin: {
+      left: 250,
+      right: 50,
+      top: 50,
+      bottom: 50,
+    },
+  };
+  const valueFormatter = (value) => `${value} ticket`;
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setMonth(value);
+    onChange && onChange(value);
+  };
+
   return (
     dataRevenueAnalyst.length > 0 ? (
       <>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
-              <div className="page-title-right">
-                <form className="form-inline">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control form-control-light"
-                        id="dash-daterange"
-                      />
-                      <div className="input-group-append">
-                        <span className="input-group-text bg-primary border-primary text-white">
-                          <Icon path={mdiCalendarRange} size={1} />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
               <h1 className="text-muted mb-3">Dashboard</h1>
             </div>
           </div>
@@ -97,10 +127,10 @@ const Dashboard = () => {
               </select>
             </div>
             <div className="row">
-              <ItemStatistic title={"Customers"} value={120} percent={1.08} icon={mdiAccountMultiplePlus} change={"up"} />
-              <ItemStatistic title={"Orders"} value={120} percent={1.08} icon={mdiCartPlus} change={"up"} />
-              <ItemStatistic title={"Revenue"} value={120} percent={1.08} icon={mdiCurrencyUsd} change={"up"} />
-              <ItemStatistic title={"Growth"} value={120} percent={1.08} icon={mdiPulse} change={"up"} />
+              <ItemStatistic time={selectedDateTime} title={"Customers"} value={userAnalyst?.current} percent={userAnalyst?.percentage} icon={mdiAccountMultiplePlus} change={userAnalyst?.status} />
+              <ItemStatistic time={selectedDateTime} title={"Orders"} value={orderAnalyst?.current} percent={orderAnalyst?.percentage} icon={mdiCartPlus} change={orderAnalyst?.status} />
+              <ItemStatistic time={selectedDateTime} title={"Revenue"} value={revenueAnalyst?.current} percent={revenueAnalyst?.percentage} icon={mdiCurrencyUsd} change={revenueAnalyst?.status} />
+              <ItemStatistic time={selectedDateTime} title={"Tickets"} value={ticketAnalyst?.current} percent={ticketAnalyst?.percentage} icon={mdiPulse} change={ticketAnalyst?.status} />
             </div>
           </div>
           <div className="col-xl-7 col-lg-6">
@@ -122,6 +152,55 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <div className="d-flex mt-4 flex-column align-items-center">
+          <div className="w-100 position-relative mb-3" style={{ maxWidth: "1200px" }}>
+            <h1
+              className="text-center"
+              style={{ color: "#ff5733", fontWeight: "bold" }}
+            >
+              Movie Rating
+            </h1>
+
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                textAlign: "right",
+              }}
+            >
+              <input
+                type="month"
+                id="monthPicker"
+                className="form-control"
+                onChange={handleChange}
+                defaultValue={month}
+              />
+              {month && (
+                <p className="mt-2">
+                  Choosed month: <strong>{month}</strong>
+                </p>
+              )}
+            </div>
+          </div>
+
+          <BarChart
+            dataset={theBestMovieofMonth}
+            yAxis={[{ scaleType: "band", dataKey: "movie" }]}
+            series={[
+              {
+                dataKey: "tickets",
+                label: "Tickets Sold",
+                valueFormatter,
+                color: "#FFA500",
+              },
+            ]}
+            layout="horizontal"
+            grid={{ vertical: true }}
+            {...chartSetting}
+          />
+        </div>
+
       </>
     ) : (<></>)
   );

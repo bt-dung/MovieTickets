@@ -114,17 +114,6 @@ const InvoiceController = {
         }
     },
 
-    getRevenueAnalyst: async (req, res) => {
-        const { theaterId } = req.query;
-        console.log(theaterId);
-        try {
-            const revenue = await Invoices.RevenueAnalyst(theaterId);
-            return res.status(200).json({ status: "SUCCESS", data: revenue, message: 'Getting Revenue Analyst successfully' });
-        } catch (error) {
-            console.error("Error when get revenue analyst: ", error);
-            return res.status(400).json({ status: "FAILED", message: error.message });
-        }
-    },
 };
 
 module.exports = InvoiceController;
