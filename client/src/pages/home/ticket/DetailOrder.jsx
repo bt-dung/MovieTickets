@@ -65,7 +65,9 @@ const DetailOrder = () => {
                             <div className="order-booked">
                                 <h4>Ticket booked</h4>
                                 <p><span style={{ display: "inline-block", minWidth: "100px" }}>Seats :</span> x{invoice?.tickets?.length}   {invoice?.tickets?.map(ticket => ticket.seat?.seat_name).join(", ")}</p>
-                                <p><span style={{ display: "inline-block", minWidth: "100px" }}>Price :</span> {Math.floor(invoice?.tickets?.reduce((total, ticket) => total + ticket.seat?.seat_type?.price, 0)).toLocaleString()} VND</p>
+                                <p><span style={{ display: "inline-block", minWidth: "100px" }}>Price :</span> {Math.floor(
+                                    invoice?.tickets?.reduce((total, ticket) => total + (+ticket?.seat?.seat_type?.price || 0), 0)
+                                ).toLocaleString()} VND</p>
                                 {invoice?.invoice_services?.length !== 0 && (<>
                                     <h4>Service</h4>
                                     {invoice?.invoice_services?.map((service) => (<>

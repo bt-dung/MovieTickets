@@ -79,7 +79,7 @@ const Home = () => {
                 <div className="row align-items-center mb--20">
                   <div className="col-lg-6 mb-20">
                     <div className="search-ticket-header">
-                      <h6 className="category">welcome to Boleto</h6>
+                      <h6 className="category">welcome to Stars Cinema</h6>
                       <h3 className="title">what are you looking for</h3>
                     </div>
                   </div>

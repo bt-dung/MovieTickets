@@ -16,11 +16,13 @@ export const CurrentSeatProvider = ({ children }) => {
     const [selectedService, setSelectedService] = useState([]);
 
     const fetchHeldSeats = async ({ showtimeId, userId }) => {
-        console.log(showtimeId);
+        console.log("showtime_id:", showtimeId);
         console.log("user:", userId);
         if (!showtimeId) {
+            console.log(1111);
             socket.emit("get_held_seats", { userId });
         } else {
+            console.log(2222);
             socket.emit("get_held_seats", { showtimeId: showtimeId, userId });
         }
 
@@ -38,7 +40,10 @@ export const CurrentSeatProvider = ({ children }) => {
                         seat_price: seat.seat_type.price,
                         seat_type: seat.seat_type.type_name
                     }));
-                    setShowtimeId(showtimeId);
+                    if (showtimeId && !currentShowtimeId) {
+                        console.log("dat lai suat chieu");
+                        setShowtimeId(showtimeId);
+                    }
                     setSelectedSeats(formattedSeats);
                     setEndTime(endTime);
                 } catch (error) {

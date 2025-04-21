@@ -41,12 +41,12 @@ const AnalysticsController = {
     },
     getOrderAnalytics: async (req, res) => {
         try {
-            const { key } = req.query;
+            const { theaterId, key } = req.query;
 
             const { currentStart, currentEnd, previousStart, previousEnd } = getTimeRangesFromKey(key);
 
-            const current = await Invoices.analystOrder(currentStart, currentEnd);
-            const previous = await Invoices.analystOrder(previousStart, previousEnd);
+            const current = await Invoices.analystOrder(theaterId, currentStart, currentEnd);
+            const previous = await Invoices.analystOrder(theaterId, previousStart, previousEnd);
 
             const change = current.totalOrders - previous.totalOrders;
             const percentage = previous.totalOrders === 0 ? 100 : (change / previous.totalOrders) * 100;
@@ -67,12 +67,12 @@ const AnalysticsController = {
     },
     getRevenueAnalytics: async (req, res) => {
         try {
-            const { key } = req.query;
+            const { theaterId, key } = req.query;
 
             const { currentStart, currentEnd, previousStart, previousEnd } = getTimeRangesFromKey(key);
 
-            const current = await Invoices.analystRevenues(currentStart, currentEnd);
-            const previous = await Invoices.analystRevenues(previousStart, previousEnd);
+            const current = await Invoices.analystRevenues(theaterId, currentStart, currentEnd);
+            const previous = await Invoices.analystRevenues(theaterId, previousStart, previousEnd);
 
             const change = current - previous;
             const percentage = previous === 0 ? 100 : (change / previous) * 100;
@@ -93,12 +93,12 @@ const AnalysticsController = {
     },
     getTicketAnalytics: async (req, res) => {
         try {
-            const { key } = req.query;
+            const { theaterId, key } = req.query;
 
             const { currentStart, currentEnd, previousStart, previousEnd } = getTimeRangesFromKey(key);
 
-            const current = await Invoices.analystTickets(currentStart, currentEnd);
-            const previous = await Invoices.analystTickets(previousStart, previousEnd);
+            const current = await Invoices.analystTickets(theaterId, currentStart, currentEnd);
+            const previous = await Invoices.analystTickets(theaterId, previousStart, previousEnd);
 
             const change = current - previous;
             const percentage = previous === 0 ? 100 : (change / previous) * 100;

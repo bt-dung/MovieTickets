@@ -10,13 +10,13 @@ const SideBar = () => {
       <div className="left-side-menu">
         <a href="/dashboard" className="logo text-center">
           <span className="logo-lg">
-            <img src="/assets/images/logo/logo1.png" alt="" height="80" className="rounded-circle" />
+            <img src="/assets/images/logo/logo3.jpeg" alt="" height="80" />
           </span>
         </a>
         <div className="h-100" id="left-side-menu-container" data-simplebar>
           <ul className="metismenu side-nav">
             <li className="side-nav-item mt-5">
-              <a href="dashboard" className="side-nav-link d-flex align-items-center py-2">
+              <a href="/admin/dashboard" className="side-nav-link d-flex align-items-center py-2">
                 <Icon path={mdiViewDashboard} size={1.5} className="me-3" />
                 <span>Dashboard</span>
               </a>

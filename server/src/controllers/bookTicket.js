@@ -7,6 +7,10 @@ const QRCode = require('qrcode');
 const dotenv = require('dotenv');
 const PayOs = require('@payos/node');
 const FormatDate = require('../config/formatDate');
+const { uploadQRCode, addOverlayToImage } = require('../scripts/cloudinaryImages');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
+const path = require('path');
 
 dotenv.config();
 
@@ -179,39 +183,50 @@ const sendTicketEmail = async ({ userId, email, ticketInfo }) => {
             `Showtime: ${FormatDate.formatHour(showtime.start_time)}~${FormatDate.formatHour(showtime.end_time)}\n`
         )).join('\n');
         console.log(qrData);
-        const dataToString = JSON.stringify(qrData);
-        const qrCodeImage = await QRCode.toDataURL(dataToString);
-        console.log("QRCODE image:", qrCodeImage);
+        // const dataToString = JSON.stringify(qrData);
+        // const qrCodeImage = await QRCode.toDataURL(dataToString);
+        // console.log("QRCODE image:", qrCodeImage);
+        const qrPath = path.join(__dirname, 'temp_qr.png');
+        await QRCode.toFile(qrPath, qrData);
+        const qrId = await uploadQRCode(qrPath);
+        console.log("qrPublicId:", qrId);
+        let overlayUrl;
+        if (qrId) {
+            overlayUrl = await addOverlayToImage(qrId);
+        };
 
+        console.log("Final Ticket URL:", overlayUrl);
         const mailOptions = {
             from: process.env.AUTH_EMAIL,
             to: email,
-            subject: `🎟️ Vé Xem Phim - ${showtime.movie.title}`,
+            subject: `🎟️ Movie Tickets - ${showtime.movie.title}`,
             html: `
-                <div style="max-width:600px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:10px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
-                    <h2 style="text-align:center; color:#e50914;">🎬 Xác Nhận Đặt Vé</h2>
-                    <p style="font-size:16px;">Cảm ơn bạn đã đặt vé! Dưới đây là thông tin vé của bạn:</p>
+                <div style="max-width:700px; margin:0 auto; padding:20px; border:1px solid #ddd; border-radius:10px; font-family:Arial, sans-serif; background-color:#f9f9f9;">
+                    <h2 style="text-align:center; color:#e50914;">🎬 Confirm Booking</h2>
+                    <p style="font-size:16px;">Thank you for booking! Here is your ticket information:</p>
 
                     <div style="padding:15px; border:1px solid #ccc; border-radius:8px; background-color:#fff;">
-                        <p><strong>Mã Vé:</strong> ${tickets[0].invoice_id}</p>
-                        <p><strong>Phim:</strong> ${showtime.movie.title}</p>
-                        <p><strong>Ngày Chiếu:</strong> ${showtime.date_time}</p>
-                        <p><strong>Giờ Chiếu:</strong> ${FormatDate.formatHour(showtime.start_time)}~${FormatDate.formatHour(showtime.end_time)}</p>
-                        <p><strong>Ghế:</strong> ${tickets.map(ticket => ticket.seat.seat_name).join(", ")}</p>
+                        <p><strong>Ticket code:</strong> ${tickets[0].invoice_id}</p>
+                        <p><strong>Movie:</strong> ${showtime.movie.title}</p>
+                        <p><strong>Date:</strong> ${showtime.date_time}</p>
+                        <p><strong>Showtime:</strong> ${FormatDate.formatHour(showtime.start_time)}~${FormatDate.formatHour(showtime.end_time)}</p>
+                        <p><strong>Seats:</strong> ${tickets.map(ticket => ticket.seat.seat_name).join(", ")}</p>
                     </div>
 
-                    <p style="margin-top:20px;">Vui lòng xuất trình mã QR dưới đây khi vào rạp:</p>
+                    <p style="margin-top:20px;">Please present the QR code below upon entering the theater:</p>
                     <div style="text-align:center; margin-top:10px;">
-                        <img src="cid:qrcode" alt="QR Code" width="200" style="border:1px solid #ccc; padding:5px; border-radius:8px;"/>
+                        <img src="cid:qrcode" alt="QR Code"/>
                     </div>
 
-                    <p style="text-align:center; margin-top:20px; font-size:14px; color:#777;">🎞️ Chúc bạn có một buổi xem phim vui vẻ!</p>
+                    <p style="text-align:center; margin-top:20px; font-size:14px; color:#777;">🎞️ Have a great time at the movies!</p>
                 </div>
             `,
             attachments: [{
-                filename: "qrcode.png",
-                content: qrCodeImage.split(";base64,").pop(),
-                encoding: "base64",
+                // filename: "qrcode.png",
+                // content: qrCodeImage.split(";base64,").pop(),
+                // encoding: "base64",
+                filename: "ticket.jpg",
+                path: overlayUrl,
                 cid: "qrcode"
             }]
         };

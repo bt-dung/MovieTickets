@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
-
+const dotenv = require('dotenv');
+dotenv.config();
 const authorize = (allowedRoles) => {
     return (req, res, next) => {
         try {
-
             const token =
                 req.cookies.token || req.headers.authorization?.split(" ")[1];
             if (!token) {
@@ -14,7 +14,7 @@ const authorize = (allowedRoles) => {
             }
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            if (!allowedRoles.includes(decoded.role_id)) {
+            if (!allowedRoles.includes(decoded.role)) {
                 return res.status(403).json({
                     status: "Failed",
                     message: "Access forbidden: Insufficient permissions",

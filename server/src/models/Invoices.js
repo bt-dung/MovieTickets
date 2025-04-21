@@ -237,12 +237,13 @@ Invoices.deleteInvoice = async (id) => {
     }
 };
 Invoices.RevenueAnalystInYear = async function (theaterId) {
+    console.log("theater id: ", theaterId);
     try {
         const whereCondition = {
-            ...(theaterId ? { theater_id: theaterId } : {}),
+            ...(theaterId && theaterId !== 'null' ? { theater_id: theaterId } : {}),
             PaymentStatus: 'Paid'
         };
-
+        console.log(whereCondition);
         const revenue = await Invoices.findAll({
             attributes: [
                 [fn("SUM", col("TotalAmount")), "totalRevenue"],
@@ -253,38 +254,45 @@ Invoices.RevenueAnalystInYear = async function (theaterId) {
             raw: true
         });
 
+        if (revenue.length === 0) {
+            return [{ totalRevenue: 0, month: "No data" }];
+        }
         return revenue;
     } catch (error) {
         console.error("Error fetching revenue:", error);
         throw error;
     }
 };
-Invoices.analystOrder = async function (startTime, endTime) {
+Invoices.analystOrder = async function (theaterId, startTime, endTime) {
     try {
+        const whereCondition = {
+            ...(theaterId && theaterId !== 'null' ? { theater_id: theaterId } : {}),
+            purchase_date: {
+                [Op.between]: [new Date(startTime), new Date(endTime)]
+            },
+            PaymentStatus: 'Paid'
+        };
         const count = await Invoices.count({
-            where: {
-                purchase_date: {
-                    [Op.between]: [new Date(startTime), new Date(endTime)]
-                },
-                PaymentStatus: 'Paid'
-            }
+            where: whereCondition,
         });
-
+        console.log(count);
         return { totalOrders: count };
     } catch (error) {
         throw error;
     }
 };
 
-Invoices.analystRevenues = async function (startTime, endTime) {
+Invoices.analystRevenues = async function (theaterId, startTime, endTime) {
     try {
+        const whereCondition = {
+            ...(theaterId && theaterId !== 'null' ? { theater_id: theaterId } : {}),
+            purchase_date: {
+                [Op.between]: [new Date(startTime), new Date(endTime)]
+            },
+            PaymentStatus: 'Paid'
+        };
         const sumAmount = await Invoices.sum('TotalAmount', {
-            where: {
-                purchase_date: {
-                    [Op.between]: [new Date(startTime), new Date(endTime)]
-                },
-                PaymentStatus: 'Paid'
-            }
+            where: whereCondition,
         }) ?? 0;
         return sumAmount ?? 0;
     } catch (error) {
@@ -292,15 +300,17 @@ Invoices.analystRevenues = async function (startTime, endTime) {
     }
 };
 
-Invoices.analystTickets = async function (startTime, endTime) {
+Invoices.analystTickets = async function (theaterId, startTime, endTime) {
     try {
-        const invoices = await Invoices.findAll({
-            where: {
-                purchase_date: {
-                    [Op.between]: [new Date(startTime), new Date(endTime)]
-                },
-                PaymentStatus: 'Paid'
+        const whereCondition = {
+            ...(theaterId && theaterId !== 'null' ? { theater_id: theaterId } : {}),
+            purchase_date: {
+                [Op.between]: [new Date(startTime), new Date(endTime)]
             },
+            PaymentStatus: 'Paid'
+        };
+        const invoices = await Invoices.findAll({
+            where: whereCondition,
             attributes: ['id']
         });
         const invoiceIds = invoices.map(inv => inv.id);

@@ -259,6 +259,13 @@ const loginUser = async (req, res) => {
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "Strict",
+                maxAge: 3600000
+            });
+
             return res.status(200).json({
                 status: "Success",
                 message: "Login successful",

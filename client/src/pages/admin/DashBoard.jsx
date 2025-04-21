@@ -5,9 +5,11 @@ import ItemStatistic from "../../components/admin/statistic/ItemStatistic";
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { fetchData } from "../../api/api";
 import { formatMonth } from "../../utils/formatDateHelper";
+import { useUser } from "../../context/UserContext";
 import { mdiAccountMultiplePlus, mdiCartPlus, mdiCurrencyUsd, mdiPulse } from "@mdi/js";
 
 const Dashboard = () => {
+  const { user } = useUser();
   const [dataRevenueAnalyst, setRevenue] = useState([]);
   const [selectedDateTime, setSelectedDateTime] = useState("day");
   const [userAnalyst, setUserAnalyst] = useState("");
@@ -18,7 +20,8 @@ const Dashboard = () => {
   const [theBestMovieofMonth, setMovie] = useState([]);
   useEffect(() => {
     const getRevenueAnalyst = async () => {
-      const resAnalyst = await fetchData(`/admin/revenue-analyst`);
+      const resAnalyst = await fetchData(`/admin/revenue-analyst?theaterId=${user?.theater_id}`);
+      console.log(resAnalyst);
       const formattedData = resAnalyst.data.map(item => ({
         ...item,
         totalRevenue: parseFloat(item.totalRevenue) || 0,
@@ -31,11 +34,11 @@ const Dashboard = () => {
     const fetchAnalysts = async () => {
       const resUserAnalyst = await fetchData(`/admin/analytics/users?key=${selectedDateTime}`);
       setUserAnalyst(resUserAnalyst);
-      const resOrderAnalyst = await fetchData(`/admin/analytics/orders?key=${selectedDateTime}`);
+      const resOrderAnalyst = await fetchData(`/admin/analytics/orders?theaterId=${user?.theater_id}&&key=${selectedDateTime}`);
       setOrderAnalyst(resOrderAnalyst);
-      const resRevenueAnalyst = await fetchData(`/admin/analytics/revenues?key=${selectedDateTime}`);
+      const resRevenueAnalyst = await fetchData(`/admin/analytics/revenues?theaterId=${user?.theater_id}&&key=${selectedDateTime}`);
       setRevenueAnalyst(resRevenueAnalyst);
-      const resTicketAnalyst = await fetchData(`/admin/analytics/tickets?key=${selectedDateTime}`);
+      const resTicketAnalyst = await fetchData(`/admin/analytics/tickets?theaterId=${user?.theater_id}&&key=${selectedDateTime}`);
       setTicketAnalyst(resTicketAnalyst);
     }
     fetchAnalysts();

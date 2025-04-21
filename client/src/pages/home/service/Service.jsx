@@ -31,7 +31,7 @@ const ServiceOptions = () => {
             }
         }
         fetchShowtime(showtimeId);
-        fetchHeldSeats(showtimeId, user.id);
+        fetchHeldSeats({ showtimeId, userId: user.id });
     }, [showtimeId, user, setUserID]);
 
     return (<>

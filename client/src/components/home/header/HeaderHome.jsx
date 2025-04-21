@@ -20,9 +20,9 @@ const HeaderHome = () => {
     return (<>
         <div className="container">
             <div className="header-wrapper">
-                <div className="logo1">
+                <div className="logo1" style={{ width: "250px" }}>
                     <a href="/starcinema/home">
-                        <img src="../../../../assets/images/logo/logo.png" alt="logo" />
+                        <img src="../../../../assets/images/logo/logo2.jpeg" alt="logo" />
                     </a>
                 </div>
                 <ul className={`menu ${isAction ? "active" : ""}`}>

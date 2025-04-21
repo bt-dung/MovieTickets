@@ -43,7 +43,7 @@ const FinalInvoice = () => {
             }
         }
         fetchShowtime(showtimeId);
-        fetchHeldSeats(showtimeId, user.id);
+        fetchHeldSeats({ showtimeId, userId: user.id });
     }, [showtimeId, user, setUserID]);
 
     const handleSelectPayment = (paymentMethod) => {
@@ -221,14 +221,10 @@ const FinalInvoice = () => {
                                                 <h5>Use your mobile banking app to scan the QR code and complete your payment instantly.</h5>
                                             </div>
                                         )}
-                                        {selectedPayment === "Debit Card" && (
-                                            <div className="payment-bubble">
-                                                <h5>Log in to your PayPal account to make a payment quickly and securely.</h5>
-                                            </div>
-                                        )}
                                         {selectedPayment === "Paypal" && (
                                             <div className="payment-bubble">
-                                                <h5>Log in to your PayPal account to make a payment quickly and securely.</h5>
+                                                <h2>WARNING</h2>
+                                                <h5>Feature is being updated, please come back later.</h5>
                                             </div>
                                         )}
                                     </div>

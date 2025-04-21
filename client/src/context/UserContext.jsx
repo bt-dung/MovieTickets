@@ -11,6 +11,7 @@ export const UserProvider = (props) => {
         const token = localStorage.getItem("token");
         if (token && TokenService.isTokenValid()) {
             const userData = TokenService.decodeToken();
+            console.log(userData);
             setUser(userData);
             setIsLoggedIn(true);
         }

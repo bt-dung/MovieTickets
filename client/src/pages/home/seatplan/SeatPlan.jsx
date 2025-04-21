@@ -11,7 +11,7 @@ import proceedURL from "/assets/images/movie/movie-bg-proceed.jpg";
 import { useCurrentSeat } from "../../../context/SeatContext";
 const SeatPlan = () => {
     const { user, isLoggedIn } = useUser();
-    const { selectedSeats, setSelectedSeats, setShowtimeId, userId, setUserID, fetchHeldSeats } = useCurrentSeat();
+    const { selectedSeats, setSelectedSeats, currentShowtimeId, setShowtimeId, userId, setUserID, fetchHeldSeats } = useCurrentSeat();
     const { theaterId, showtimeId } = useParams();
     const [showtime, setShowtime] = useState('');
     const [theater, setTheater] = useState(null);
@@ -22,7 +22,7 @@ const SeatPlan = () => {
             navigate("/login");
             return;
         }
-        if (user.id !== userId) {
+        if (user.id !== userId || !currentShowtimeId) {
             setUserID(user.id);
             setShowtimeId(showtimeId);
         }
@@ -39,7 +39,7 @@ const SeatPlan = () => {
             }
         }
         fetchShowtime(showtimeId);
-        fetchHeldSeats(showtimeId, user.id);
+        fetchHeldSeats({ showtimeId, userId: user.id });
     }, [showtimeId, user, setUserID]);
     const onClickBookedSeat = useCallback(async (e) => {
         e.preventDefault();

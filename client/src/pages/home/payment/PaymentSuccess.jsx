@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
             <div className="container-xxl">
                 <div className="checkout-widget">
                     <div className="d-flex justify-content-center align-items-center">
-                        <div>Thanh toán thành công</div>
+                        <div className="text-success">Payment successful!!</div>
                         <a href="/starcinema/home">Back to home</a>
                     </div>
                 </div>

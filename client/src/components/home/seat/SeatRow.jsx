@@ -22,8 +22,8 @@ const SeatRow = ({ seats, rowLabel, selectedSeats, toggleSeatSelection, occupied
         <li className="seat-line">
             <span>{rowLabel}</span>
             <ul className="seat--area">
-                {groupedSeats.map((group) => (
-                    <li className="front-seat">
+                {groupedSeats.map((group, groupIndex) => (
+                    <li key={groupIndex} className="front-seat">
                         <ul>
                             {group.map((seat) => {
                                 const isSelected = selectedSeats.some(selectedSeat => selectedSeat?.id === seat.id && selectedSeat?.seat_name === seat.seat_name);

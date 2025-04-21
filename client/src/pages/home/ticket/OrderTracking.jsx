@@ -15,12 +15,10 @@ const OrderTracking = () => {
     const [noticeHoldingSeat, setNotice] = useState(false);
     const [showtime, setShowtime] = useState(null);
     useEffect(() => {
-        if (selectedSeats.length === 0) {
-            if (user.id != userId) {
-                setUserID(user.id);
-            }
-            fetchHeldSeats({ userId: user.id });
+        if (user.id != userId) {
+            setUserID(user.id);
         }
+        fetchHeldSeats({ userId: user.id });
         const fetchInvoice = async (userId) => {
             try {
                 const res = await fetchData(`/api/v1/user/${userId}/invoices`);
@@ -33,6 +31,8 @@ const OrderTracking = () => {
         fetchInvoice(user.id);
     }, [user]);
     useEffect(() => {
+        console.log("showtime_id:", currentShowtimeId);
+        console.log("selectedSeats:", selectedSeats);
         if (currentShowtimeId) {
             const fetchShowtime = async (currentShowtimeId) => {
                 try {
