@@ -1,7 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { fetchData } from "../../../api/api";
 import SeatSelectionModal from "./SeatSelectionModal ";
+import ScrollingText from "../../effect/ScrollingText";
 const ScheduleItem = ({ schedules }) => {
     const [showWarning, setShowWarning] = useState(false);
     const [selectedShowtime, setSelectedShowtime] = useState(null);
@@ -29,7 +30,7 @@ const ScheduleItem = ({ schedules }) => {
                     <i class="far fa-heart"></i>
                     <i class="fas fa-heart"></i>
                 </div>
-                <a href="#0" class="name">{theaterDetail?.name || "Unknown Theater"}</a>
+                <ScrollingText text={theaterDetail?.name} />
                 <div class="location-icon">
                     <i class="fas fa-map-marker-alt"></i>
                 </div>

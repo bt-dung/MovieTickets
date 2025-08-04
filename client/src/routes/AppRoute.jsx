@@ -36,7 +36,7 @@ import PaymentCancel from "../pages/home/payment/PaymentCancel";
 import OrderTracking from "../pages/home/ticket/OrderTracking";
 import DetailOrder from "../pages/home/ticket/DetailOrder";
 import Dashboard from "../pages/admin/DashBoard";
-
+import Contact from "../pages/home/contact/Contact";
 
 export const userRoutes = [
     { path: "/home", component: Home, layout: MainLayoutHome, allowedRoles: ["user_role"] },
@@ -51,6 +51,7 @@ export const userRoutes = [
     { path: "/payment-cancel/:showtimeId", component: PaymentCancel, allowedRoles: ["user_role"] },
     { path: "/orders/order-tracking", component: OrderTracking, layout: MainLayoutHome, allowedRoles: ["user_role"] },
     { path: "/orders/detail-order/:invoiceId", component: DetailOrder, layout: MainLayoutHome, allowedRoles: ["user_role"] },
+    { path: "/contact", component: Contact, layout: MainLayoutHome, allowedRoles: ["user_role"] },
 ];
 
 export const adminRoutes = [

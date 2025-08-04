@@ -90,6 +90,7 @@ Showtime.insertShowtime = async (showtimeData) => {
     try {
         const existingShowtimes = await Showtime.findAll({
             where: {
+                date_time: showtimeData.date_time,
                 screen_id: showtimeData.screen_id,
                 [Op.or]: [
                     {

@@ -12,6 +12,7 @@ import { CurrentSeatProvider } from "./context/SeatContext";
 import { UserProvider, useUser } from "./context/UserContext";
 import { userRoutes, adminRoutes } from "./routes/AppRoute";
 import { getRoutesByRole } from "./utils/routeHelper";
+import Signup from "./pages/register/Signup";
 
 
 const env = import.meta.env;
@@ -43,6 +44,7 @@ function AppRoutes() {
       <div className="App">
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {availableRoutes.map((route, index) => {
             const Page = route.component;
             const allowedRoles = route.allowedRoles || ["user_role", "manager_role", "admin_role"];

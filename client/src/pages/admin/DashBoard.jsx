@@ -155,6 +155,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <div className="line"></div>
         <div className="d-flex mt-4 flex-column align-items-center">
           <div className="w-100 position-relative mb-3" style={{ maxWidth: "1200px" }}>
             <h1

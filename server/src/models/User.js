@@ -68,6 +68,16 @@ User.associate = (models) => {
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
     });
+
+    User.hasMany(models.Notification, {
+        foreignKey: 'user_id',
+        as: 'sentNotifications'
+    });
+
+    User.hasMany(models.Notification, {
+        foreignKey: 'admin_id',
+        as: 'receivedNotifications'
+    });
 };
 
 /**
@@ -101,7 +111,7 @@ User.login = async function (email, password) {
         }
 
         if (!user.verified) {
-            throw new Error("Account not verified");
+            throw new Error("Account not verified!! Please complete the verification process before logging into the system. Thank you!");
         }
 
         const auth = await bcrypt.compare(password, user.password);

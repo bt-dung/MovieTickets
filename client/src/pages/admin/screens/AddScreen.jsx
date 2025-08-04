@@ -54,10 +54,10 @@ const AddScreen = () => {
             return false;
         }
 
-        if (total_column > 10) {
+        if (total_column > 14) {
             Swal.fire({
                 title: 'Validation Error',
-                text: 'Columns must not exceed 10.',
+                text: 'Columns must not exceed 14.',
                 icon: 'error',
                 confirmButtonText: 'Okay',
             });

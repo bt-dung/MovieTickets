@@ -3,7 +3,7 @@ import { postData } from "../../api/api";
 import { useNavigate } from 'react-router-dom';
 import TokenService from "../../service/TokenService";
 import { useUser } from "../../context/UserContext";
-
+import Swal from 'sweetalert2';
 const env = await import.meta.env;
 const BASE_URL_WEB = (env.VITE_BASE_URL_WEB);
 const BASE_URL_ADMIN = (env.VITE_BASE_URL_ADMIN);
@@ -64,6 +64,13 @@ const Login = () => {
         Navigate(`${BASE_URL_ADMIN}/dashboard`);
       }
     } catch (error) {
+      console.log("fadfadsfs: ", error?.response.data)
+      Swal.fire({
+        title: error.response.data.status,
+        text: error.response.data.message,
+        icon: 'error',
+        confirmButtonText: 'Okay',
+      });
       console.log("Error:", error);
     }
 
@@ -135,7 +142,7 @@ const Login = () => {
                 </div>
               </form>
               <div className="option">
-                Don't have an account? <a href="sign-up.html">sign up now</a>
+                Don't have an account? <a href="/signup">sign up now</a>
               </div>
             </div>
           </div>

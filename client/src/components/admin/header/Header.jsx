@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../../../context/UserContext';
 import Icon from '@mdi/react';
-import { mdiAccountArrowRight, mdiAccountBoxOutline, mdiLogout } from '@mdi/js';
+import { mdiAccountArrowRight, mdiAccountBoxOutline, mdiLogout, mdiBell } from '@mdi/js';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNotification, removeNotification } from '../../../redux/slices/notification';
+
 const Header = () => {
   const { user } = useUser();
   const [role, setRole] = useState("");
+  const dispatch = useDispatch();
+  const notifications = useSelector((state) => state.notification.notifications);
 
   const handleLogout = () => {
     try {
@@ -37,7 +42,21 @@ const Header = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown d-flex align-items-center">
+              <a className='nav-link dropdown-toggle arrow-none mr-3 position-relative'>
+                {notifications.unreadCount > 0 && (
+                <span className='text-danger position-absolute' style={{
+                  top: '-8px',
+                  right: '-8px',
+                  fontSize: '16px',
+                  backgroundColor: '#fff',
+                  padding: '2px 6px',
+                  fontWeight: 'bold',
+                }}>{notifications.unreadCount}</span>)}
+                <span>
+                  <Icon path={mdiBell} size={1} />
+                </span>
+              </a>
               <a
                 className="nav-link dropdown-toggle nav-user arrow-none"
                 data-bs-toggle="dropdown"

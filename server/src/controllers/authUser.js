@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
     date_of_birth = date_of_birth.trim();
     address = address.trim();
     password = password.trim();
-    if (!name || !email || !numberphone || !date_of_birth || !address || !password) {
+    if (!name || !email || !numberphone || !password) {
         return res.json({
             status: "FAILED",
             message: "Empty input fields!",
@@ -63,13 +63,6 @@ const registerUser = async (req, res) => {
         return res.json({
             status: "FAILED",
             message: "Invalid numberphone entered!",
-        });
-    }
-    const dateFormat = "YYYY-MM-DD";
-    if (!dayjs(date_of_birth, dateFormat, true).isValid()) {
-        return res.json({
-            status: "FAILED",
-            message: "Invalid date of birth entered! Use format YYYY-MM-DD.",
         });
     }
     const hashedPassword = await bcrypt.hash(password, 10);

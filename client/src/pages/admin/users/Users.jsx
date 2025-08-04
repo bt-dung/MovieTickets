@@ -21,10 +21,10 @@ const User = () => {
   const roleCurrent = userCurrent.user?.role;
 
   useEffect(() => {
-    const fetchUsers = async (page = 0) => {
+    const fetchUsers = async () => {
       try {
         const response = await fetchData(
-          `/admin/users?pageNumber=${page}&limit=8`
+          `/admin/users?pageNumber=${currentPage}&limit=8&search=${inputSearch}`
         );
         setUsers(response.content);
         setTotalPages(response.totalPages);
@@ -33,13 +33,14 @@ const User = () => {
       }
     };
 
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchUsers();
+  }, [currentPage, inputSearch]);
 
   useEffect(() => {
-    if (inputSearch.trim() === "") {
-      setUserFilter(users);
-    }
+    const filtered = users.filter((item) =>
+      item.name.toLowerCase().includes(inputSearch.toLowerCase())
+    );
+    setUserFilter(filtered);
   }, [inputSearch, users]);
 
   const handlePageChange = (page) => {
@@ -88,13 +89,6 @@ const User = () => {
     }
   };
 
-  const handleSearch = () => {
-    const filterUser = users.filter((item) =>
-      item.name.toLowerCase().includes(inputSearch.toLowerCase())
-    );
-    setUserFilter(filterUser);
-  };
-
   return (
     <>
       <h1 className="text-muted mb-3">USERS</h1>
@@ -122,8 +116,6 @@ const User = () => {
                   <span
                     className="input-group-text"
                     id="search-icon"
-                    style={{ cursor: "pointer" }}
-                    onClick={handleSearch}
                   >
                     <Icon path={mdiMagnify} size={1} />
                   </span>
@@ -151,8 +143,8 @@ const User = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {userFilter.length > 0 ? (
-                      userFilter.map((user, index) => (
+                    {users.length > 0 ? (
+                      users.map((user, index) => (
                         <tr key={index}>
                           <td>
                             <div className="custom-control custom-checkbox">
@@ -169,14 +161,7 @@ const User = () => {
                               </label>
                             </div>
                           </td>
-                          <td>
-                            <a
-                              href="javascript:void(0);"
-                              className="text-body font-weight-semibold"
-                            >
-                              {user.id}
-                            </a>
-                          </td>
+                          <td>{user.id}</td>
                           <td>{user.name}</td>
                           <td>{user.email}</td>
                           <td>{user.numberphone}</td>
@@ -205,7 +190,7 @@ const User = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="text-center">
+                        <td colSpan="9" className="text-center">
                           No users found.
                         </td>
                       </tr>

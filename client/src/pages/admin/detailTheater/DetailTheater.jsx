@@ -184,8 +184,8 @@ const DetailTheater = () => {
                             <div className="row">
                                 <div className="col-sm-2">
                                     <p className="text-primary">Address</p>
-                                    <p className="text-primary">Total Seats</p>
                                     <p className="text-primary">Total Screens</p>
+                                    <p className="text-primary">Total Seats</p>
                                 </div>
 
                                 <div className="col-sm-2">

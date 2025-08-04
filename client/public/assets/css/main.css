@@ -2,16 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 /*
-Template Name: Boleto - Online Ticket Booking Website HTML Template
-Template URI: http://pixner.net/boleto/
-Author: pixelaxis
-Author URI: https: //themeforest.net/user/pixelaxis
-Description: Boleto | Online Ticket Booking Website HTML Template. Boleto is a Pixel-Perfect Powerful,
-Online Ticket Booking Website HTML Template for all types of Cinema Hall and Online Premium TV Channel.
-Version: 1.0.0
-Text Domain: 
-*/
-/*
 ///// CSS Index \\
 1. Reset CSS Start
 2. General CSS
@@ -4901,8 +4891,8 @@ input[type="submit"] {
 
 .seat-plan-wrapper li .movie-schedule {
   width: calc(100% - 45%);
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   padding: 30px;
   -webkit-box-pack: justify;
@@ -4912,25 +4902,19 @@ input[type="submit"] {
 }
 
 .seat-plan-wrapper li .movie-schedule .item {
+  box-sizing: border-box;
   color: #ffffff;
   padding: 5px;
-  width: 20%;
-  text-align: center;
   background: #162f5f;
-  position: relative;
-  mask-position: center center;
-  -webkit-mask-position: center center;
   text-align: center;
   mask-image: url(img/movie-seat.png);
   -webkit-mask-image: url(img/movie-seat.png);
-  -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
   mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
   cursor: pointer;
-  -webkit-transition: all ease 0.3s;
   transition: all ease 0.3s;
-  margin: 5px;
 }
 
 .seat-plan-wrapper li .movie-schedule .item:hover {
@@ -10033,6 +10017,16 @@ aside {
   }
 }
 
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 .reserved-seat {
   background-color: #fffae6;
   padding: 15px;
@@ -10289,6 +10283,14 @@ aside {
 
 .order-status.cancelled {
   color: #dc3545;
+}
+
+.line {
+  position: relative;
+  width: 90%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 30px auto;
 }
 
 

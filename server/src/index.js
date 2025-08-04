@@ -24,6 +24,7 @@ const Analystics = require("./routes/analystics.route");
 const MakePaymentRoute = require("./routes/bookTicket.route");
 const Service = require("./routes/service.route");
 const GenreRoute = require("./routes/genre.route");
+const Notification = require("./routes/notification.route");
 
 dotenv.config();
 
@@ -64,6 +65,7 @@ app.use("/admin", authorize(["admin_role", "manager_role"]), Analystics);
 app.use("/api/v1", MakePaymentRoute());
 app.use("/api/v1", Service);
 app.use("/api/v1", GenreRoute);
+app.use("/api/v1", Notification);
 
 
 createTableDB();
